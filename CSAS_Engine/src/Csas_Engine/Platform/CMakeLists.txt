@@ -6,7 +6,7 @@ project(CSAS_Platform)
 set(CMAKE_CXX_STANDARD 17)
 
 
-
+add_subdirectory(OpenGL/)
 
 # 生成链接库
 
@@ -32,3 +32,10 @@ target_link_libraries(CSAS_Platform
         INTERFACE
         glfw glad::glad
         )
+target_link_libraries(CSAS_Platform
+
+        INTERFACE
+        glfw glad::glad
+        CSAS_Platform_OpenGL
+        )
+#CSAS_Platform_OpenGL

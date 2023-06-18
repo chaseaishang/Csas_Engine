@@ -6,6 +6,7 @@
 #include "Csas_Engine/Events/include/KeyEvent.h"
 #include "Csas_Engine/Events/include/ApplicationEvent.h"
 #include "Csas_Engine/Events/include/MouseEvent.h"
+#include "Csas_Engine/Platform/OpenGL/OpenGLContext.h"
 namespace CsasEngine
 {
 
@@ -43,9 +44,11 @@ void LinuxWindow::Init(const WindowProps& props)
     }
 
     m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-    glfwMakeContextCurrent(m_Window);
-    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    CSAS_CORE_ASSERT(status, "Failed to initialize Glad!");
+    // init Context
+    m_Context = new OpenGLContext(m_Window);
+    m_Context->Init();
+
+
     glfwSetWindowUserPointer(m_Window, &m_Data);
     SetVSync(true);
 
@@ -145,7 +148,8 @@ void LinuxWindow::Shutdown()
 void LinuxWindow::OnUpdate()
 {
     glfwPollEvents();
-    glfwSwapBuffers(m_Window);
+    m_Context->SwapBuffers();
+//    glfwSwapBuffers(m_Window);
 }
 
 void LinuxWindow::SetVSync(bool enabled)

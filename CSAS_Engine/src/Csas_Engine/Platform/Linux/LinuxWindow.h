@@ -5,7 +5,7 @@
 #include "Csas_Engine/Csaspch.h"
 #include "GLFW/glfw3.h"
 #include "Csas_Engine/Window.h"
-
+#include "Csas_Engine/Renderer/GraphicsContext.h"
 namespace CsasEngine {
 
 class LinuxWindow : public Window
@@ -31,7 +31,7 @@ private:
 
 private:
     GLFWwindow* m_Window;
-
+    GraphicsContext* m_Context;
     struct WindowData
     {
         std::string Title;

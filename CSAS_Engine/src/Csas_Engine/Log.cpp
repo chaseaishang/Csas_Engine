@@ -18,3 +18,4 @@ void Log::Init()
     s_ClientLogger->set_level(spdlog::level::trace);
 }
 }
+//ENABLE_SPDLOG_STD(const unsigned char*)

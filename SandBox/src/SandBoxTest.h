@@ -29,7 +29,11 @@ public:
     }
     void OnEvent(CsasEngine::Event& event) override
     {
-        CSAS_TRACE("{0}", event);
+        if (event.GetEventType() == CsasEngine::EventType::KeyPressed)
+        {
+            CsasEngine::KeyPressedEvent& e = (CsasEngine::KeyPressedEvent&)event;
+            CSAS_TRACE("{0}", (char)e.GetKeyCode());
+        }
     }
 };
 

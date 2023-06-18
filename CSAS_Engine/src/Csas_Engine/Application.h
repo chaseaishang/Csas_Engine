@@ -13,6 +13,10 @@
 #include "Csas_Engine/Window.h"
 #include "Csas_Engine/LayerStack.h"
 #include "Csas_Engine/ImGui/ImGuiLayer.h"
+
+#include "Csas_Engine/Renderer/Shader.h"
+#include "Csas_Engine/Renderer/Buffer.h"
+#include "Csas_Engine/Renderer/VertexArray.h"
 namespace CsasEngine
 {
 class Application
@@ -32,10 +36,19 @@ public:
 private:
     bool OnWindowClose(WindowCloseEvent& e);
 
+    std::shared_ptr<Shader> m_Shader;
+    std::shared_ptr<VertexArray> m_VertexArray;
+
+    std::shared_ptr<Shader> m_BlueShader;
+    std::shared_ptr<VertexArray> m_SquareVA;
+
+
+
     std::unique_ptr<Window> m_Window;
     ImGuiLayer* m_ImGuiLayer;
     bool m_Running = true;
     LayerStack m_LayerStack;
+
     static Application* s_Instance;
 
 };

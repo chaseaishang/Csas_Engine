@@ -44,5 +44,5 @@ public:
 #define CSAS_WARN(...)     ::CsasEngine::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define CSAS_INFO(...)     ::CsasEngine::Log::GetClientLogger()->info(__VA_ARGS__)
 #define CSAS_TRACE(...)    ::CsasEngine::Log::GetClientLogger()->trace(__VA_ARGS__)
-
+//#define ENABLE_SPDLOG_STD(type) template <> struct fmt::formatter<type> : ostream_formatter{};
 
