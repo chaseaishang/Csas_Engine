@@ -2,46 +2,45 @@
 // Created by chaseaishang on 23-6-16.
 //
 #pragma once
-#include "Csas_Engine/Csaspch.h"
 #include "GLFW/glfw3.h"
-#include "Csas_Engine/Window.h"
+#include "Csas_Engine/Core/Window.h"
 #include "Csas_Engine/Renderer/GraphicsContext.h"
 namespace CsasEngine {
 
-class LinuxWindow : public Window
-{
-public:
-    LinuxWindow(const WindowProps& props);
-    virtual ~LinuxWindow();
-
-    void OnUpdate() override;
-
-    inline unsigned int GetWidth() const override { return m_Data.Width; }
-    inline unsigned int GetHeight() const override { return m_Data.Height; }
-
-    inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-    void SetVSync(bool enabled) override;
-    bool IsVSync() const override;
-
-    inline void* GetNativeWindow() const override { return m_Window; };
-
-private:
-    virtual void Init(const WindowProps& prop);
-    virtual void Shutdown();
-
-private:
-    GLFWwindow* m_Window;
-    GraphicsContext* m_Context;
-    struct WindowData
+    class LinuxWindow : public Window
     {
-        std::string Title;
-        unsigned int Width, Height;
-        bool VSync;
+    public:
+        LinuxWindow(const WindowProps& props);
+        virtual ~LinuxWindow();
 
-        EventCallbackFn EventCallback;
+        void OnUpdate() override;
+
+        inline unsigned int GetWidth() const override { return m_Data.Width; }
+        inline unsigned int GetHeight() const override { return m_Data.Height; }
+
+        // Window attributes
+        inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+        void SetVSync(bool enabled) override;
+        bool IsVSync() const override;
+
+        inline virtual void* GetNativeWindow() const { return m_Window; }
+    private:
+        virtual void Init(const WindowProps& props);
+        virtual void Shutdown();
+    private:
+        GLFWwindow* m_Window;
+        Scope<GraphicsContext> m_Context;
+
+        struct WindowData
+        {
+            std::string Title;
+            unsigned int Width, Height;
+            bool VSync;
+
+            EventCallbackFn EventCallback;
+        };
+
+        WindowData m_Data;
     };
 
-    WindowData m_Data;
-
-};
 }

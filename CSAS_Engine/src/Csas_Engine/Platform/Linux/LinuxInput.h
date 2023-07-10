@@ -4,20 +4,24 @@
 
 
 #pragma once
-#include "Csas_Engine/Input.h"
+#include "Csas_Engine/Core/Input.h"
 namespace CsasEngine
 {
 
 
 class LinuxInput: public Input
 {
+public:
+    LinuxInput();
 protected:
-    virtual bool IsKeyPressedImpl(int keycode) override;
+    virtual bool IsKeyPressedImpl(KeyCode key) override;
 
-    virtual bool IsMouseButtonPressedImpl(int button) override;
-    virtual std::pair<float, float> GetMousePosImpl() override;
+    virtual bool IsMouseButtonPressedImpl(MouseCode button) override;
+    virtual std::pair<float, float> GetMousePositionImpl() override;
     virtual float GetMouseXImpl() override;
     virtual float GetMouseYImpl() override;
+
+
 };
 
 

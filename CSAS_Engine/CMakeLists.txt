@@ -14,7 +14,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 # 生成链接库
 
-add_library (CSAS_Engine "")
+add_library (CSAS_Engine INTERFACE)
 add_subdirectory(vendor/ImGui/)
+add_subdirectory(vendor/stb_image)
 add_subdirectory(src/Csas_Engine/)
 

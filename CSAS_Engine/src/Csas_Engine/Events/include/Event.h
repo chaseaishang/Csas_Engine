@@ -1,7 +1,7 @@
 #pragma once
 #include "Csas_Engine/Csaspch.h"
 
-#include "Csas_Engine/Core.h"
+#include "Csas_Engine/Core/Core.h"
 
 namespace CsasEngine {
 

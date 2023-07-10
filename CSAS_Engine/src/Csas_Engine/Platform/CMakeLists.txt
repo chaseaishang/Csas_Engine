@@ -5,37 +5,27 @@ project(CSAS_Platform)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
+add_subdirectory(Linux/)
 add_subdirectory(OpenGL/)
 
 # 生成链接库
 
-add_library (CSAS_Platform)
-
-aux_source_directory(Linux/ PLATFORM_DIR_LIB_SRCS)
+add_library (CSAS_Platform INTERFACE)
 
 target_include_directories(CSAS_Platform
         INTERFACE
         Linux
-        PRIVATE
-        Linux
+        ${CSAS_ENGINE_VENDOR_PATH}
         ${CSAS_ENGINE_SRC_PATH}
         ${VCPKGHEAD_PATH}
         )
-target_precompile_headers(CSAS_Platform PRIVATE ${CSAS_ENGINE_SRC_PATH}/Csas_Engine/Csaspch.h)
-target_sources(CSAS_Platform
-        PRIVATE
-        ${PLATFORM_DIR_LIB_SRCS}
-        )
+target_precompile_headers(CSAS_Platform INTERFACE ${CSAS_ENGINE_SRC_PATH}/Csas_Engine/Csaspch.h)
 target_link_libraries(CSAS_Platform
 
         INTERFACE
-        glfw glad::glad
-        )
-target_link_libraries(CSAS_Platform
-
-        INTERFACE
+        CSAS_Core
         glfw glad::glad
         CSAS_Platform_OpenGL
+        CSAS_Platform_Linux
         )
 #CSAS_Platform_OpenGL

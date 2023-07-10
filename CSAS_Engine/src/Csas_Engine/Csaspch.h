@@ -11,10 +11,13 @@
 
 #include <string>
 #include <sstream>
+#include <array>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include "Csas_Engine/Log.h"
+
+#include "Csas_Engine/Core/Log.h"
+#include "Csas_Engine/Debug/Instrumentor.h"
 
 
 

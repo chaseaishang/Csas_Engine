@@ -27,10 +27,11 @@ target_sources(CSAS_Renderer
         ${RENDERER_DIR_LIB_SRCS}
         )
 target_link_libraries(CSAS_Renderer
-
-        INTERFACE
+        PUBLIC
+        CSAS_Core
+        CSAS_Platform
         glfw glad::glad
-        CSAS_Platform_OpenGL
+        glm::glm
         )
 
 
