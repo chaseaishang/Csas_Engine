@@ -7,6 +7,7 @@ set(VCPKGHEAD_PATH /home/chaseaishang/tools/vcpkg/installed/x64-linux/include)
 set(CSAS_ENGINE_SRC_PATH /home/chaseaishang/code/CSAS_Engine/CSAS_Engine/src)
 set(CSAS_ENGINE_VENDOR_PATH /home/chaseaishang/code/CSAS_Engine/CSAS_Engine/vendor)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 
@@ -17,5 +18,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_library (CSAS_Engine INTERFACE)
 add_subdirectory(vendor/ImGui/)
 add_subdirectory(vendor/stb_image)
+add_subdirectory(vendor/entt)
 add_subdirectory(src/Csas_Engine/)
 

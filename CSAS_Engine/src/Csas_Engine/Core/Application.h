@@ -20,14 +20,14 @@ namespace CsasEngine
     class Application
     {
     public:
-        Application();
+        Application(const std::string& name = "Csas App");
         virtual ~Application();
 
         void OnEvent(Event& e);
 
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
-
+        ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
         inline Window& GetWindow() { return *m_Window; }
         void Close();
         inline static Application& Get() { return *s_Instance; }

@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 
 # 生成链接库
+#find_package(unofficial-shaderc CONFIG REQUIRED)
+
 
 add_library (CSAS_Platform_OpenGL)
 
@@ -34,4 +36,6 @@ target_link_libraries(CSAS_Platform_OpenGL
         INTERFACE
         glfw glad::glad
         Stb_image
+        PRIVATE
+        #unofficial::shaderc::shaderc
         )

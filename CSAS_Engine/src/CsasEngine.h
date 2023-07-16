@@ -14,7 +14,10 @@
 #include "Csas_Engine/Renderer/OrthographicCameraController.h"
 
 #include "Csas_Engine/ImGui/ImGuiLayer.h"
-
+#include "Csas_Engine/Scene/Scene.h"
+#include "Csas_Engine/Scene/Components.h"
+#include "Csas_Engine/Scene/Entity.h"
+#include "Csas_Engine/Scene/ScriptableEntity.h"
 // ---Renderer------------------------
 #include "Csas_Engine/Renderer/Renderer.h"
 #include "Csas_Engine/Renderer/Renderer2D.h"
