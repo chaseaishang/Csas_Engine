@@ -27,7 +27,7 @@ target_sources(CSAS_Scene
         PRIVATE
         ${SCENE_DIR_LIB_SRCS}
         )
-
+target_link_libraries(CSAS_Scene PUBLIC CSAS_Component)
 
 
 

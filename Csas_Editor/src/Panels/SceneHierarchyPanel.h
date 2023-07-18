@@ -6,7 +6,7 @@
 #include "Csas_Engine/Core/Core.h"
 #include "Csas_Engine/Core/Log.h"
 #include "Csas_Engine/Scene/Scene.h"
-#include "Csas_Engine/Scene/Entity.h"
+#include "Csas_Engine/Component/Entity.h"
 
 namespace CsasEngine {
 

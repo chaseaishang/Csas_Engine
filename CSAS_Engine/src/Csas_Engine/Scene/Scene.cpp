@@ -4,8 +4,8 @@
 #include "Csas_Engine/Csaspch.h"
 
 #include "Scene.h"
-#include "Entity.h"
-#include "Components.h"
+#include "Csas_Engine/Component/Entity.h"
+#include "Csas_Engine/Component/AllComponent.h"
 #include "Csas_Engine/Renderer/Renderer2D.h"
 #include "Csas_Engine/Renderer/Renderer3D.h"
 #include "SceneCamera.h"
@@ -24,7 +24,6 @@ namespace CsasEngine {
     {
 
         Entity entity = { m_Registry.create(), this };
-        entity.AddComponent<TransformComponent>();
         auto& tag = entity.AddComponent<TagComponent>();
         tag.Tag = name.empty() ? "Entity" : name;
         return entity;
@@ -86,15 +85,14 @@ namespace CsasEngine {
         Camera* mainCamera = nullptr;
         glm::mat4 cameraTransform;
         {
-            auto view = m_Registry.view<TransformComponent, CameraComponent>();
+            auto view = m_Registry.view<CameraComponent>();
             for (auto entity : view)
             {
-                auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+                auto  camera = view.get<CameraComponent>(entity);
 
                 if (camera.Primary)
                 {
                     mainCamera = &camera.Camera;
-                    cameraTransform = transform.GetTransform();
                     break;
                 }
             }

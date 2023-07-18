@@ -133,8 +133,9 @@ namespace CsasEngine {
         ImGui::Text("Quads: %d", stats.QuadCount);
         ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-
+        ImGui::Separator();
+        ImGui::Text("Time ave %.3f ms/frame",1000.0f / ImGui::GetIO().Framerate);
+        ImGui::Text("(%.1f FPS)",ImGui::GetIO().Framerate);
 
         ImGui::End();
 

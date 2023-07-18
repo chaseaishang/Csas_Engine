@@ -6,7 +6,7 @@
 #include "ImGui/include/imgui.h"
 #include <ImGui/include/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
-#include "Csas_Engine/Scene/Components.h"
+#include "Csas_Engine/Component/AllComponent.h"
 
 namespace CsasEngine {
 
@@ -55,9 +55,9 @@ namespace CsasEngine {
         if (opened)
         {
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-            bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-            if (opened)
-                ImGui::TreePop();
+//            bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
+//            if (opened)
+//                ImGui::TreePop();
             ImGui::TreePop();
         }
 
@@ -168,55 +168,29 @@ namespace CsasEngine {
 
                 ImGui::Checkbox("Primary", &cameraComponent.Primary);
 
-                const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-                const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
-                if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-                        if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
-                        {
-                            currentProjectionTypeString = projectionTypeStrings[i];
-                            camera.SetProjectionType((SceneCamera::ProjectionType)i);
-                        }
 
-                        if (isSelected)
-                            ImGui::SetItemDefaultFocus();
-                    }
-
-                    ImGui::EndCombo();
-                }
 
                 if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
                 {
-                    float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
+                    float perspectiveVerticalFov = cameraComponent.fov;
                     if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFov))
-                        camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
-                    float perspectiveNear = camera.GetPerspectiveNearClip();
+                        cameraComponent.fov=perspectiveVerticalFov;
+                    float perspectiveNear = cameraComponent.near_clip;
                     if (ImGui::DragFloat("Near", &perspectiveNear))
-                        camera.SetPerspectiveNearClip(perspectiveNear);
-                    float perspectiveFar = camera.GetPerspectiveFarClip();
+                        cameraComponent.near_clip=perspectiveNear;
+                    float perspectiveFar = cameraComponent.far_clip;
                     if (ImGui::DragFloat("Far", &perspectiveFar))
-                        camera.SetPerspectiveFarClip(perspectiveFar);
+                        cameraComponent.far_clip=perspectiveFar;
+                    //position
+                    auto& tc = cameraComponent.trans;
+                    DrawVec3Control("Translation", tc.Translation);
+
+                    //Spin
+                    ImGui::Checkbox("SpinEnale", &camera.SpinEnable);
+
                 }
 
-                if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-                {
-                    float orthoSize = camera.GetOrthographicSize();
-                    if (ImGui::DragFloat("Size", &orthoSize))
-                        camera.SetOrthographicSize(orthoSize);
 
-                    float orthoNear = camera.GetOrthographicNearClip();
-                    if (ImGui::DragFloat("Near", &orthoNear))
-                        camera.SetOrthographicNearClip(orthoNear);
-
-                    float orthoFar = camera.GetOrthographicFarClip();
-                    if (ImGui::DragFloat("Far", &orthoFar))
-                        camera.SetOrthographicFarClip(orthoFar);
-
-                    ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);
-                }
 
 
                 ImGui::TreePop();

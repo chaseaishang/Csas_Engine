@@ -126,15 +126,6 @@ namespace CsasEngine {
 
         StartBatch();
     }
-    void Renderer2D::BeginScene(const OrthographicCamera& camera)
-    {
-        CSAS_PROFILE_FUNCTION();
-
-        s_Data->TextureShader->Bind();
-        s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
-        StartBatch();
-    }
 
     void Renderer2D::EndScene()
     {

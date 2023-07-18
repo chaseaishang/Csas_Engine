@@ -84,7 +84,7 @@ namespace CsasEngine {
 
     void Renderer3D::BeginScene(const Camera &camera, const glm::mat4 &transform)
     {
-        glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+        glm::mat4 viewProj = camera.GetViewProjection();
 
         s_Data->CubeShader->Bind();
 
