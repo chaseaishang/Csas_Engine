@@ -7,6 +7,8 @@
 #include "Entity.h"
 #include "Components.h"
 #include "Csas_Engine/Renderer/Renderer2D.h"
+#include "Csas_Engine/Renderer/Renderer3D.h"
+#include "SceneCamera.h"
 #include "glm/glm.hpp"
 namespace CsasEngine {
 
@@ -26,12 +28,47 @@ namespace CsasEngine {
         auto& tag = entity.AddComponent<TagComponent>();
         tag.Tag = name.empty() ? "Entity" : name;
         return entity;
+    };
+    void Scene::On2DUpdate(Camera &main_camera, glm::mat4& cameraTransform)
+    {
+        Renderer2D::BeginScene(main_camera, cameraTransform);
+
+        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+        for (auto entity : group)
+        {
+            auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+            Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+        }
+
+        Renderer2D::EndScene();
+    }
+
+    void Scene::On3DUpdate(Camera &main_camera, glm::mat4 &cameraTransform)
+    {
+        Renderer3D::BeginScene(main_camera, cameraTransform);
+        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+        for (auto entity : group)
+        {
+            auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+            Renderer3D::DrawCube(transform.GetTransform(), sprite.Color);
+        }
+
+        Renderer3D::EndScene();
     }
 
     void Scene::OnUpdate(Timestep ts) {
         // Update scripts
         {
-            m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+
+
+
+
+
+
+            m_Registry.view<NativeScriptComponent>().each(
+                    [=](auto entity, auto& nsc)
           {
               if (!nsc.Instance)
               {
@@ -43,6 +80,7 @@ namespace CsasEngine {
 
               nsc.Instance->OnUpdate(ts);
           });
+
         }
         // Render 2D
         Camera* mainCamera = nullptr;
@@ -64,17 +102,15 @@ namespace CsasEngine {
         }
         if (mainCamera)
         {
-            Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-            auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-            for (auto entity : group)
+            if(m_2DScene)
             {
-                auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-                Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+                On2DUpdate(*mainCamera,cameraTransform);
+            }
+            else
+            {
+                On3DUpdate(*mainCamera,cameraTransform);
             }
 
-            Renderer2D::EndScene();
         }
 
 
@@ -94,5 +130,8 @@ namespace CsasEngine {
         }
 
     }
+
+
+
 
 }

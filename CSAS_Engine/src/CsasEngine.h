@@ -1,13 +1,16 @@
 #pragma once
 
 // For use by Hazel applications
+#include "Csas_Engine/Core/Log.h"
 #include "Csas_Engine/Core/Core.h"
 #include "Csas_Engine/Core/Application.h"
 #include "Csas_Engine/Core/Layer.h"
-#include "Csas_Engine/Core/Log.h"
+
 
 #include "Csas_Engine/Core/Timestep.h"
-
+#include "Csas_Engine/Events/include/Event.h"
+#include "Csas_Engine/Events/include/KeyEvent.h"
+#include "Csas_Engine/Events/include/MouseEvent.h"
 #include "Csas_Engine/Core/Input.h"
 #include "Csas_Engine/Core/KeyCodes.h"
 #include "Csas_Engine/Core/MouseCodes.h"

@@ -3,17 +3,15 @@
 //
 
 #pragma once
-#include "Csas_Engine/Csaspch.h"
 #include "Core.h"
+
+
+
+
 
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 #include <fmt/ostream.h>
-
-
-
-
-
 namespace CsasEngine {
 
 

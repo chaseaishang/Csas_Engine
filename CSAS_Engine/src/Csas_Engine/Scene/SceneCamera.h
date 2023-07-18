@@ -39,16 +39,30 @@ namespace CsasEngine {
         void SetProjectionType(ProjectionType type) { m_ProjectionType = type; RecalculateProjection(); }
     private:
         void RecalculateProjection();
+        void CalcCameraVectors();
     private:
         ProjectionType m_ProjectionType = ProjectionType::Orthographic;
-
+//for 3D
+        float m_AspectRatio = 0.0f;
         float m_PerspectiveFOV = glm::radians(45.0f);
         float m_PerspectiveNear = 0.01f, m_PerspectiveFar = 1000.0f;
+        // Z
+        glm::vec3 cameraDirection;
+        // X
+        glm::vec3 cameraRight;
+        // Y
+        glm::vec3 cameraUp;
+        glm::mat4 model;
+        glm::vec3 worldUp;
+        glm::vec3 front;
 
+        //for 2D
         float m_OrthographicSize = 10.0f;
         float m_OrthographicNear = -1.0f, m_OrthographicFar = 1.0f;
 
-        float m_AspectRatio = 0.0f;
+
+
+
     };
 
 

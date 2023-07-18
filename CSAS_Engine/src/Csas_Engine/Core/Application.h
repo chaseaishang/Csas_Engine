@@ -7,7 +7,6 @@
 
 
 #include "Csas_Engine/Core/Core.h"
-#include "Csas_Engine/Core/Log.h"
 #include "Csas_Engine/Core/Window.h"
 #include "Csas_Engine/Events/include/ApplicationEvent.h"
 

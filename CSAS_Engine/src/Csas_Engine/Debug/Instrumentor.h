@@ -10,6 +10,8 @@
 #include <iomanip>
 #include <string>
 #include <thread>
+#define CSAS_PROFILE 0
+#if CSAS_PROFILE
 
 namespace CsasEngine {
 
@@ -161,8 +163,7 @@ namespace CsasEngine {
     };
 }
 
-#define CSAS_PROFILE 0
-#if CSAS_PROFILE
+
 // Resolve which function signature macro will be used. Note that this only
 // is resolved when the (pre)compiler starts, so the syntax highlighting
 // could mark the wrong one in your editor!
