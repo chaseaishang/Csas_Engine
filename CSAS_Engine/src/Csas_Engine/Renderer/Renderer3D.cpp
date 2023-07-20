@@ -426,7 +426,10 @@ namespace CsasEngine {
 
     }
 
+    void Renderer3D::DrawTestUniforBLock()
+    {
 
+    }
 
 
 }

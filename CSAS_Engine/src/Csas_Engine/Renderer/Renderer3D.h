@@ -20,6 +20,7 @@ namespace CsasEngine {
         static void DrawSphere(const glm::mat4 &transform,const glm::vec4 &tintColor = glm::vec4(1.0f));
         static void
         DrawCube(const glm::mat4 &transform,const glm::vec4 &tintColor = glm::vec4(1.0f));
+        static void DrawTestUniforBLock();
         // Primitives
 
         // Stats
