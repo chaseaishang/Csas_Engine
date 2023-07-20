@@ -24,7 +24,7 @@ namespace CsasEngine {
     public:
         SceneCamera();
         virtual ~SceneCamera() = default;
-        void SetCamera3D(CameraComponent*Camera3D){m_Camera3D=Camera3D;};     //TODO Remove
+        void SetCamera3D(CameraComponent*Camera3D);     //TODO Remove
         void SetMousePosition(float x,float y){mouse_x=x;mouse_y=y;}//TODO Remove
         void SetOrthographic(float size, float nearClip, float farClip);
         void SetPerspective(float verticalFOV, float nearClip, float farClip);

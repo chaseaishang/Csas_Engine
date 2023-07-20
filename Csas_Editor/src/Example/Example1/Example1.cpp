@@ -14,10 +14,10 @@ void CsasEngine::Example1::OnAttach()
     m_Scene=m_ActiveScene;
     // Entity
     auto square = m_ActiveScene->CreateEntity("Green Square");
-    square.AddComponent<TransformComponent>();
+    square.AddComponent<TransformComponent>(glm::vec3{-0.5,0,0});
     square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
     auto redSquare = m_ActiveScene->CreateEntity("Red Square");
-    redSquare.AddComponent<TransformComponent>();
+    redSquare.AddComponent<TransformComponent>(glm::vec3{+0.5,0,0});
     redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
     m_SquareEntity = square;
 
@@ -30,7 +30,7 @@ void CsasEngine::Example1::OnAttach()
     m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 
 
-    auto&cc=m_CameraEntity.AddComponent<CameraComponent>();
+    auto&cc=m_CameraEntity.AddComponent<CameraComponent>(glm::vec3 {0,0,3});
     cc.Primary= true;
     cc.Camera.SetProjectionType(SceneCamera::ProjectionType::Perspective);
     float mousex=Input::GetMouseX();

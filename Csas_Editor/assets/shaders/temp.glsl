@@ -30,11 +30,6 @@ layout(location = 1)  in vec3 v_Normal;
 layout(location = 2)  in vec2 v_UV;
 void main()
 {
-//    vec3 Normal=(v_Normal+1)*0.5f;
-//    color =vec4(Normal,1.0);
-
+    //color =vec4(0.971f,  0.572f,  0.833f,1.0f);
     color = v_Color;
-
-
-    //
 }

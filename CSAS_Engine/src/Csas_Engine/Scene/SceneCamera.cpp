@@ -47,18 +47,14 @@ namespace CsasEngine {
     {
         if (m_ProjectionType == ProjectionType::Perspective)
         {
-            m_Projection = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
-        }
-        else
-        {
-            float orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
-            float orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
-            float orthoBottom = -m_OrthographicSize * 0.5f;
-            float orthoTop = m_OrthographicSize * 0.5f;
 
-            m_Projection = glm::ortho(orthoLeft, orthoRight,
-                                      orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
+
+
+            m_Projection = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+
+
         }
+
 
     }
 
@@ -186,6 +182,19 @@ namespace CsasEngine {
                 );
 
 
+
+    }
+
+    void SceneCamera::SetCamera3D(CameraComponent *Camera3D)
+    {
+        m_Camera3D=Camera3D;
+        //init Matrix
+        auto&position=m_Camera3D->trans.Translation;
+        auto&forward=m_Camera3D->forward;
+        auto &up=m_Camera3D->up;
+        m_View=glm::lookAt(position,position+forward,up);
+        m_Projection = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+        m_ViewProjection=m_Projection*m_View;
 
     }
 

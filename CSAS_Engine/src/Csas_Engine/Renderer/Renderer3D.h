@@ -37,6 +37,8 @@ namespace CsasEngine {
         static void ResetStats();
 
         static Statistics GetStats();
+    private:
+        bool Debug=true;
     };
 
 
