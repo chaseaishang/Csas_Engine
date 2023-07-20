@@ -27,6 +27,7 @@ namespace CsasEngine {
         uint32_t m_VertexBufferIndex = 0;
         std::vector<Ref<VertexBuffer>> m_VertexBuffers;
         Ref<IndexBuffer> m_IndexBuffer;
+        static uint32_t curr_bound_vertex_array;
     };
 
 

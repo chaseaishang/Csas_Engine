@@ -22,7 +22,7 @@ namespace CsasEngine {
 
     namespace SphereSpec
     {
-
+        static uint8_t SphereVertexSize=sizeof(CubeVertex);
         constexpr float PI = glm::pi<float>();
         constexpr float PI_2 = glm::half_pi<float>();
         constexpr unsigned int n_rows  = 100;
@@ -106,6 +106,69 @@ namespace CsasEngine {
                 20, 23, 22,   20, 22, 21
                 };
 
+
+    }
+    static void  CreatSphere(std::vector<CubeVertex>&VBO,std::vector<uint32_t>&IBO)
+    {
+        float radius=0.5f;
+        constexpr float PI = SphereSpec::PI;
+        constexpr float PI_2 = SphereSpec::PI_2;
+
+        // default LOD = 100x100 mesh grid size
+        unsigned int n_rows  = SphereSpec::n_rows ;
+        unsigned int n_cols  = SphereSpec::n_cols ;
+        unsigned int n_verts = SphereSpec::n_verts;
+        unsigned int n_tris  = SphereSpec::n_tris ;
+
+        std::vector<CubeVertex>& vertices=VBO;
+        std::vector<uint32_t> &indices=IBO;
+        vertices.reserve(n_verts);
+        indices.reserve(n_tris * 3);
+
+        for (unsigned int col = 0; col <= n_cols; ++col)
+        {
+            for (unsigned int row = 0; row <= n_rows; ++row)
+            {
+                // unscaled uv coordinates ~ [0, 1]
+                float u = static_cast<float>(col) / n_cols;  //fix
+                float v = static_cast<float>(row) / n_rows;
+
+                float theta = PI * v - PI_2;  // ~ [-PI/2, PI/2], latitude from south to north pole
+                float phi = PI * 2 * u;       // ~ [0, 2PI], longitude around the equator circle   fix
+
+                float x = cos(phi) * cos(theta);
+                float y = sin(theta);
+                float z = sin(phi) * cos(theta) * (-1);
+
+                // for a unit sphere centered at the origin, normal = position
+                // binormal is normal rotated by 90 degrees along the latitude (+theta)
+
+                CubeVertex vertex {};
+                vertex.Position = glm::vec3(x, y, z) * radius;
+                vertex.Color    = glm::vec4(1.0f);
+                vertex.Normal   = glm::vec3(x, y, z);
+                vertex.UV       = glm::vec2(u, v);
+
+
+                vertices.push_back(vertex);
+            }
+        }
+
+        for (unsigned int col = 0; col < n_cols; ++col) {
+            for (unsigned int row = 0; row < n_rows; ++row) {
+                auto index = col * (n_rows + 1);
+
+                // counter-clockwise winding order
+                indices.push_back(index + row + 1);//1
+                indices.push_back(index + row);// 0
+                indices.push_back(index + row + 1 + n_rows);//101
+
+                // counter-clockwise winding order
+                indices.push_back(index + row + 1 + n_rows + 1);//102
+                indices.push_back(index + row + 1);   //1
+                indices.push_back(index + row + 1 + n_rows);//101
+            }
+        }
 
     }
 
@@ -211,8 +274,50 @@ namespace CsasEngine {
             delete CubeIndices;
 
         }
-       //===========================================================================================
+        //Sphere Init Begin==================================================================================================
+        {
+            s_Data->SphereVertexArray = VertexArray::Create();
 
+            std::vector<CubeVertex> &VBO = s_Data->SphereVBO;
+            std::vector<uint32_t>&IBO=s_Data->SphereIBO;
+
+            CreatSphere(VBO, IBO);
+            s_Data->SphereShader = Shader::Create("assets/shaders/Cube.glsl");
+
+            s_Data->SphereVertexBuffer = VertexBuffer::Create(SphereSpec::MaxVertices * sizeof(CubeVertex));
+            s_Data->SphereVertexBuffer->SetLayout({
+                                                        {ShaderDataType::Float3, "a_Position"},
+                                                        {ShaderDataType::Float4, "a_Color"},
+                                                        {ShaderDataType::Float3, "a_Normal"},
+                                                        {ShaderDataType::Float2, "a_UV"}
+                                                });
+            uint8_t SphereLayoutSize=                 (3+4+3+2                 )*4;
+            if(SphereLayoutSize!=SphereSpec::SphereVertexSize)
+                CSAS_CORE_WARN("SphereLayoutSize!=SphereSpec::SphereVertexSize");
+            s_Data->SphereVertexBufferBase = new CubeVertex[SphereSpec::MaxVertices];
+            s_Data->SphereVertexArray->AddVertexBuffer(s_Data->SphereVertexBuffer);
+            //Init cube Vertex data
+            for (int i = 0; i < SphereSpec::OneSphereVertices; i++)
+                s_Data->SphereVertexPositions[i] = {VBO[i].Position, 1.0f};
+
+            uint32_t *SphereIndices = new uint32_t[SphereSpec::MaxIndices];
+            //IBO 36
+            int SphereIndex = 0;
+            for (int i = 0; i < SphereSpec::MaxIndices; i += SphereSpec::OneSphereIndices) {
+                for (int offset = 0; offset < SphereSpec::OneSphereIndices; offset++) {
+                    SphereIndices[i + offset] =
+                            IBO[offset] + SphereIndex * SphereSpec::OneSphereVertices;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                }
+                SphereIndex++;
+
+            }
+
+
+            Ref <IndexBuffer> SphereIB = IndexBuffer::Create(SphereIndices, SphereSpec::MaxIndices);
+            s_Data->SphereVertexArray->SetIndexBuffer(SphereIB);
+            delete SphereIndices;
+
+        }
 
     }
 
@@ -224,10 +329,10 @@ namespace CsasEngine {
 
 
         s_Data->CubeShader->SetMat4("u_ViewProjection", viewProj);
-//        s_Data->SphereShader->Bind();
-//        s_Data->SphereShader->SetMat4("u_ViewProjection", viewProj);
-//
-//        s_Data->CubeShader->Unbind();
+        s_Data->SphereShader->Bind();
+        s_Data->SphereShader->SetMat4("u_ViewProjection", viewProj);
+
+        s_Data->CubeShader->Unbind();
         //2.2  0    0   0
         //0    2.4  0   0
         //0    0    -1.0  0
@@ -250,6 +355,8 @@ namespace CsasEngine {
         {
             s_Data->SphereVertexBufferPtr->Position=transform*s_Data->SphereVertexPositions[i];
             s_Data->SphereVertexBufferPtr->Color=glm::vec4({0.971f,  0.572f,  0.833f,1.0});
+            s_Data->SphereVertexBufferPtr->Normal=s_Data->SphereVBO[i].Normal;
+            s_Data->SphereVertexBufferPtr->UV=s_Data->SphereVBO[i].UV;
             s_Data->SphereVertexBufferPtr++;
         }
         s_Data->SphereIndexCount += SphereSpec::OneSphereIndices;
@@ -278,6 +385,8 @@ namespace CsasEngine {
     {
         if(s_Data->CubeIndexCount)
         {
+            s_Data->CubeVertexArray->Bind();
+            s_Data->CubeShader->Bind();
             uint32_t dataSize=(uint32_t)((uint8_t*)(s_Data->CubeVertexBufferPtr) - (uint8_t*)(s_Data->CubeVertexBufferBase));
             //   dataSize   <==>   sizeof(CubeVertex)*static_cast<CubeVertex*>(BufferPtr-BufferBase)
             //uint32_t dataSize1=(uint32_t)((CubeVertex*)(s_Data->CubeVertexBufferPtr) - (CubeVertex*)(s_Data->CubeVertexBufferBase));
@@ -285,13 +394,15 @@ namespace CsasEngine {
             RenderCommand::DrawIndexed(s_Data->CubeVertexArray, s_Data->CubeIndexCount);
             s_Data->Stats.DrawCalls++;
         }
-//        if(s_Data->SphereIndexCount)
-//        {
-////            uint32_t dataSize=(uint32_t)((uint8_t*)(s_Data->SphereVertexBufferPtr) - (uint8_t*)(s_Data->SphereVertexBufferBase));
-////            s_Data->SphereVertexBuffer->SetData(s_Data->SphereVertexBufferBase,dataSize);
-////            RenderCommand::DrawIndexed(s_Data->SphereVertexArray, s_Data->SphereIndexCount);
-//            s_Data->Stats.DrawCalls++;
-//        }
+        if(s_Data->SphereIndexCount)
+        {
+            s_Data->SphereVertexArray->Bind();
+            s_Data->SphereShader->Bind();
+            uint32_t dataSize=(uint32_t)((uint8_t*)(s_Data->SphereVertexBufferPtr) - (uint8_t*)(s_Data->SphereVertexBufferBase));
+            s_Data->SphereVertexBuffer->SetData(s_Data->SphereVertexBufferBase,dataSize);
+            RenderCommand::DrawIndexed(s_Data->SphereVertexArray, s_Data->SphereIndexCount);
+            s_Data->Stats.DrawCalls++;
+        }
 
 
     }

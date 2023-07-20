@@ -401,7 +401,7 @@ namespace CsasEngine {
     void OpenGLShader::Bind() const
     {
         CSAS_PROFILE_FUNCTION();
-
+        //glActiveShaderProgram()
         glUseProgram(m_RendererID);
     }
 

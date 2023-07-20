@@ -8,7 +8,7 @@
 #include <glad/glad.h>
 
 namespace CsasEngine {
-
+    uint32_t OpenGLVertexArray::curr_bound_vertex_array=0;
     static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
     {
         switch (type)
@@ -40,22 +40,30 @@ namespace CsasEngine {
     OpenGLVertexArray::~OpenGLVertexArray()
     {
         CSAS_PROFILE_FUNCTION();
-
+        this->Unbind();
         glDeleteVertexArrays(1, &m_RendererID);
     }
 
     void OpenGLVertexArray::Bind() const
     {
         CSAS_PROFILE_FUNCTION();
+        if(curr_bound_vertex_array!=m_RendererID)
+        {
+            glBindVertexArray(m_RendererID);
+            curr_bound_vertex_array=m_RendererID;
+        }
 
-        glBindVertexArray(m_RendererID);
     }
 
     void OpenGLVertexArray::Unbind() const
     {
         CSAS_PROFILE_FUNCTION();
+        if (curr_bound_vertex_array == m_RendererID)
+        {
+            curr_bound_vertex_array = 0;
+            glBindVertexArray(0);
+        }
 
-        glBindVertexArray(0);
     }
 
     void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
@@ -122,7 +130,7 @@ namespace CsasEngine {
     void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
     {
         CSAS_PROFILE_FUNCTION();
-
+        //glVertexArrayElementBuffer(m_RendererID,indexBuffer.get())
         glBindVertexArray(m_RendererID);
         indexBuffer->Bind();
 
