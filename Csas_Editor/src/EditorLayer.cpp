@@ -130,12 +130,14 @@ namespace CsasEngine {
         auto stats = Renderer3D::GetStats();
         ImGui::Text("Renderer3D Stats:");
         ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-        ImGui::Text("Quads: %d", stats.QuadCount);
+        ImGui::Text("Quads: %d", stats.CubeCount);
         ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
         ImGui::Separator();
         ImGui::Text("Time ave %.3f ms/frame",1000.0f / ImGui::GetIO().Framerate);
         ImGui::Text("(%.1f FPS)",ImGui::GetIO().Framerate);
+        ImGui::Separator();
+        ImGui::Text("%.5f",stats.z);
 
         ImGui::End();
 

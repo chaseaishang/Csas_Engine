@@ -69,6 +69,14 @@ namespace CsasEngine {
         uint32_t* quadIndices = new uint32_t[s_Data->MaxIndices];
 
         uint32_t offset = 0;
+        /*   0  1  2
+         *   2  3  0
+         *
+         *   4  5  7
+         *
+         *
+         *
+         */
         for (uint32_t i = 0; i < s_Data->MaxIndices; i += 6)
         {
             quadIndices[i + 0] = offset + 0;

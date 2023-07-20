@@ -21,6 +21,12 @@ void CsasEngine::Example1::OnAttach()
     redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
     m_SquareEntity = square;
 
+//    auto Sphere=m_ActiveScene->CreateEntity("Color Sphere");
+//    Sphere.AddComponent<TransformComponent>();
+//    auto &Sprite=Sphere.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+//    Sprite.style=1;
+
+
     m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 
 

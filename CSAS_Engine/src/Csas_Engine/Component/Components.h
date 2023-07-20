@@ -20,7 +20,7 @@ namespace CsasEngine {
     struct SpriteRendererComponent
     {
         glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
-
+        int style=0;//0 cube 1 sphere          TODO Remove
         SpriteRendererComponent() = default;
         SpriteRendererComponent(const SpriteRendererComponent&) = default;
         SpriteRendererComponent(const glm::vec4& color)

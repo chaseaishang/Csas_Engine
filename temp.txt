@@ -104,6 +104,12 @@ glBindTexture(GL_TEXTURE_2D, texture);
 
 
 
+            float u = (float)row / (float)n_rows;
+            float v = (float)col / (float)n_cols;
+
+            float x = cos(u * PI * 2) * sin(v * PI);
+            float y = cos(v * PI);
+            float z = sin(u * PI * 2) * sin(v * PI);
 
 
 

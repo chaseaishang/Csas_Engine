@@ -50,8 +50,16 @@ namespace CsasEngine {
         for (auto entity : group)
         {
             auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+            auto style=sprite.style;
+            if(style==0)
+            {
+                Renderer3D::DrawCube(transform.GetTransform(), sprite.Color);
+            }
+            else
+            {
+                Renderer3D::DrawSphere(transform.GetTransform(),sprite.Color);
+            }
 
-            Renderer3D::DrawCube(transform.GetTransform(), sprite.Color);
         }
 
         Renderer3D::EndScene();
