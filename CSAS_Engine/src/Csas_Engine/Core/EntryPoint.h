@@ -24,6 +24,7 @@ int main(int argc, char** argv)
 
     CSAS_PROFILE_BEGIN_SESSION("Startup", "HazelProfile-Shutdown.json");
     delete app;
+
     CSAS_PROFILE_END_SESSION();
 
 }

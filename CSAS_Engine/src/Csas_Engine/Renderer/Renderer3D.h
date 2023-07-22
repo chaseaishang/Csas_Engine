@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Camera.h"
-
+#include "Csas_Engine/Component/Mesh.h"
 namespace CsasEngine {
     class Renderer3D {
 
@@ -20,6 +20,7 @@ namespace CsasEngine {
         static void DrawSphere(const glm::mat4 &transform,const glm::vec4 &tintColor = glm::vec4(1.0f));
         static void
         DrawCube(const glm::mat4 &transform,const glm::vec4 &tintColor = glm::vec4(1.0f));
+        static void DrawMesh(MeshComponent&mesh,const Camera &camera);
         static void DrawTestUniforBLock();
         // Primitives
 
@@ -39,7 +40,7 @@ namespace CsasEngine {
 
         static Statistics GetStats();
     private:
-        bool Debug=true;
+
     };
 
 

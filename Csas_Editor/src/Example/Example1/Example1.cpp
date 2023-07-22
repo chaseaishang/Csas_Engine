@@ -13,20 +13,12 @@ void CsasEngine::Example1::OnAttach()
     m_ActiveScene = CreateRef<Scene>();
     m_Scene=m_ActiveScene;
     // Entity
-    auto square = m_ActiveScene->CreateEntity("Green Square");
-    square.AddComponent<TransformComponent>(glm::vec3{-0.5,0,0});
-    square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
-    auto redSquare = m_ActiveScene->CreateEntity("Red Square");
-    redSquare.AddComponent<TransformComponent>(glm::vec3{+0.5,0,0});
-    redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-    m_SquareEntity = square;
 
-    auto Sphere=m_ActiveScene->CreateEntity("Color Sphere");
-    Sphere.AddComponent<TransformComponent>();
-    auto &Sprite=Sphere.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
-    Sprite.style=1;
+    auto Cube=m_ActiveScene->CreateEntity("Green Cube");
+    Cube.AddComponent<MeshComponent>(Primitive::Cube);
 
 
+    //Camera
     m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 
 

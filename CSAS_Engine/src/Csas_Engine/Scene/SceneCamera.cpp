@@ -5,7 +5,7 @@
 #include "SceneCamera.h"
 #include "Csas_Engine/Component/Camera3D.h"
 #include <glm/gtc/matrix_transform.hpp>
-
+#include "glm/gtx/string_cast.hpp"
 #include <Csas_Engine/Core/Input.h>
 #include <Csas_Engine/Events/include/MouseEvent.h>
 
@@ -14,7 +14,6 @@ namespace CsasEngine {
 
     SceneCamera::SceneCamera()
     {
-        RecalculateProjection();
     }
 
     void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
@@ -39,7 +38,9 @@ namespace CsasEngine {
     {
         m_AspectRatio = (float)width / (float)height;
         float &fov    =this->m_Camera3D->fov;
-        m_Projection=glm::perspective(glm::radians(fov),m_AspectRatio,m_PerspectiveNear,m_PerspectiveFar);
+        auto&near=m_Camera3D->near_clip;
+        auto&far=m_Camera3D->far_clip;
+        m_Projection=glm::perspective(glm::radians(fov),m_AspectRatio,near,far);
         m_ViewProjection=m_Projection*m_View;
     }
 
@@ -188,14 +189,32 @@ namespace CsasEngine {
     void SceneCamera::SetCamera3D(CameraComponent *Camera3D)
     {
         m_Camera3D=Camera3D;
-        //init Matrix
         auto&position=m_Camera3D->trans.Translation;
         auto&forward=m_Camera3D->forward;
         auto &up=m_Camera3D->up;
-        m_View=glm::lookAt(position,position+forward,up);
-        m_Projection = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
-        m_ViewProjection=m_Projection*m_View;
+        auto&fov=m_Camera3D->fov;
+        CSAS_CORE_WARN("position={0}",glm::to_string(position));
+        CSAS_CORE_WARN("forward={0}",glm::to_string(forward));
+        CSAS_CORE_WARN("up={0}",glm::to_string(up));
+        CSAS_CORE_WARN("fov={0}",fov);
 
+        //init Matrix
+        init();
+
+
+    }
+
+    void SceneCamera::init()
+    {
+        auto&position=m_Camera3D->trans.Translation;
+        auto&forward=m_Camera3D->forward;
+        auto &up=m_Camera3D->up;
+        auto&fov=m_Camera3D->fov;
+        m_AspectRatio=1280.0f/720.0f;
+        m_View=glm::lookAt(position,position+forward,up);
+        m_Projection = glm::perspective(glm::radians(fov), m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+        m_ViewProjection=m_Projection*m_View;
+        CSAS_CORE_WARN("m_ViewProjection={0}",glm::to_string(m_ViewProjection));
     }
 
 

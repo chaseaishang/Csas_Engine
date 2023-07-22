@@ -11,7 +11,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "glm/gtx/string_cast.hpp"
 namespace CsasEngine {
+    static bool Debug= false;
+
     struct CubeVertex
     {
         glm::vec3 Position;
@@ -229,6 +232,10 @@ namespace CsasEngine {
 
     void Renderer3D::Init()
     {//float* vertices, uint32_t size
+        if(!Debug)
+        {
+
+
         s_Data=new Renderer3DData;
         //Cube Init Begin==================================================================================================
         {
@@ -318,7 +325,11 @@ namespace CsasEngine {
             delete SphereIndices;
 
         }
-
+        }
+        else
+        {
+            s_Data=new Renderer3DData;
+        }
     }
 
     void Renderer3D::BeginScene(const Camera &camera, const glm::mat4 &transform)
@@ -378,7 +389,8 @@ namespace CsasEngine {
 
         s_Data->CubeIndexCount += 36;
         s_Data->Stats.CubeCount++;
-        s_Data->Stats.z=(s_Data->CubeVertexBufferPtr-1)->UV.x;
+        s_Data->Stats.z=(s_Data->CubeVertexBufferPtr-1)->Position.x;
+        
 
     }
     void Renderer3D::Flush()
@@ -419,15 +431,46 @@ namespace CsasEngine {
 
     void Renderer3D::Shutdown()
     {
-        delete [] s_Data->CubeVertexBufferBase;
-        delete [] s_Data->SphereVertexBufferBase;
-        delete s_Data;
+        if(!Debug)
+        {
+            delete [] s_Data->CubeVertexBufferBase;
+            delete [] s_Data->SphereVertexBufferBase;
+            delete s_Data;
+        }
+        else
+        {
+            delete s_Data;
+        }
+
 
 
     }
 
     void Renderer3D::DrawTestUniforBLock()
     {
+
+    }
+
+    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera)
+    {
+        auto &vao=mesh.m_VAO;
+        auto&shader=mesh.m_Shader;
+
+
+       auto transform=mesh.transform.GetTransform();
+
+        auto& viewProj=camera.GetViewProjection();
+
+        mesh.Update();
+        shader->Bind();
+
+
+        shader->SetMat4("u_ViewProjection", viewProj);
+
+
+        shader->SetMat4("model",transform);
+        vao->Bind();
+        RenderCommand::DrawIndexed(vao);
 
     }
 

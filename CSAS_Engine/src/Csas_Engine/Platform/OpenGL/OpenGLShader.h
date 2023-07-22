@@ -56,7 +56,7 @@ namespace CsasEngine {
         std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;
 
         std::unordered_map<std::string,ShaderDataType> m_Uniform;
-
+        bool ForRender=true;
     };
 
 

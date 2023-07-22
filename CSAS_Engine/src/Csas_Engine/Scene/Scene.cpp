@@ -10,6 +10,7 @@
 #include "Csas_Engine/Renderer/Renderer3D.h"
 #include "SceneCamera.h"
 #include "glm/glm.hpp"
+#include "glm/gtx/string_cast.hpp"
 namespace CsasEngine {
 
 
@@ -45,24 +46,34 @@ namespace CsasEngine {
 
     void Scene::On3DUpdate(Camera &main_camera, glm::mat4 &cameraTransform)
     {
-        Renderer3D::BeginScene(main_camera, cameraTransform);
-        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-        for (auto entity : group)
-        {
-            auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-            auto style=sprite.style;
-            if(style==0)
-            {
-                Renderer3D::DrawCube(transform.GetTransform(), sprite.Color);
-            }
-            else
-            {
-                Renderer3D::DrawSphere(transform.GetTransform(),sprite.Color);
-            }
 
+        auto view = m_Registry.view<MeshComponent>();
+        for(auto entity : view)
+        {
+            auto mesh=view.get<MeshComponent>(entity);
+            Renderer3D::DrawMesh(mesh,main_camera);
         }
 
-        Renderer3D::EndScene();
+
+
+//        Renderer3D::BeginScene(main_camera, cameraTransform);
+//        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+//        for (auto entity : group)
+//        {
+//            auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+//            auto style=sprite.style;
+//            if(style==0)
+//            {
+//                Renderer3D::DrawCube(transform.GetTransform(), sprite.Color);
+//            }
+//            else
+//            {
+//                Renderer3D::DrawSphere(transform.GetTransform(),sprite.Color);
+//            }
+//
+//        }
+//
+//        Renderer3D::EndScene();
     }
 
     void Scene::OnUpdate(Timestep ts) {
@@ -90,31 +101,33 @@ namespace CsasEngine {
 
         }
         // Render 2D
-        Camera* mainCamera = nullptr;
+        Camera *MainCamera;
         glm::mat4 cameraTransform;
         {
             auto view = m_Registry.view<CameraComponent>();
             for (auto entity : view)
             {
-                auto  camera = view.get<CameraComponent>(entity);
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Need & reference
+            // otherwise the camera.Camera will be randomly initialize
+                auto&  camera = view.get<CameraComponent>(entity);
 
                 if (camera.Primary)
                 {
-                    mainCamera = &camera.Camera;
+                    MainCamera=&(camera.Camera);
                     break;
                 }
             }
 
         }
-        if (mainCamera)
+        if (MainCamera)
         {
             if(m_2DScene)
             {
-                On2DUpdate(*mainCamera,cameraTransform);
+                On2DUpdate(*MainCamera,cameraTransform);
             }
             else
             {
-                On3DUpdate(*mainCamera,cameraTransform);
+                On3DUpdate(*MainCamera,cameraTransform);
             }
 
         }

@@ -23,8 +23,10 @@ namespace CsasEngine {
         enum class Direction { W, A, S, D };
     public:
         SceneCamera();
+        void init();
         virtual ~SceneCamera() = default;
         void SetCamera3D(CameraComponent*Camera3D);     //TODO Remove
+        CameraComponent&GetCamera3D(){return *m_Camera3D;};
         void SetMousePosition(float x,float y){mouse_x=x;mouse_y=y;}//TODO Remove
         void SetOrthographic(float size, float nearClip, float farClip);
         void SetPerspective(float verticalFOV, float nearClip, float farClip);

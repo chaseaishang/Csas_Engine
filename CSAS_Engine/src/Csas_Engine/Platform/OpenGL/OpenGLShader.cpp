@@ -7,7 +7,9 @@
 #include "ShaderInclude.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-namespace CsasEngine {
+namespace CsasEngine
+{
+    static uint32_t curr_bound_shader = 0;  // keep track of the current rendering state
     namespace Utils {
 
         ShaderDataType ShaderDataTypeFromGL(GLint type) {
@@ -266,6 +268,7 @@ namespace CsasEngine {
         }
 
     }
+
     void OpenGLShader::CreateORGetBinaryProgram(const std::unordered_map<GLenum, std::string>& shaderSources)
     {
         std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
@@ -305,9 +308,9 @@ namespace CsasEngine {
                 glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
                 // We don't need the program anymore.
                 glDeleteProgram(program);
+                printf("%s",infoLog.data());
 
-
-                CSAS_CORE_ERROR("{0}", infoLog.data());
+                CSAS_CORE_ERROR("isLinked == GL_FALSE {0}", infoLog.data());
                 CSAS_CORE_ASSERT(false, "Shader link failure!");
                 return;
             }
@@ -402,14 +405,23 @@ namespace CsasEngine {
     {
         CSAS_PROFILE_FUNCTION();
         //glActiveShaderProgram()
-        glUseProgram(m_RendererID);
+        if (m_RendererID != curr_bound_shader) {
+            glUseProgram(m_RendererID);
+            curr_bound_shader = m_RendererID;
+        }
+
+
     }
 
     void OpenGLShader::Unbind() const
     {
         CSAS_PROFILE_FUNCTION();
+        if (m_RendererID == curr_bound_shader)
+        {
+            curr_bound_shader = 0;
+            glUseProgram(0);
+        }
 
-        glUseProgram(0);
     }
 
     void OpenGLShader::SetInt(const std::string& name, int value)
@@ -503,8 +515,11 @@ namespace CsasEngine {
 
     void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)
     {
+
+
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+        //glProgramUniform4fv(m_RendererID,location,1,glm::value_ptr(matrix));
     }
 
 
