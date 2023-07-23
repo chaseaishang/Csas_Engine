@@ -16,8 +16,9 @@ void CsasEngine::Example1::OnAttach()
 
     auto Cube=m_ActiveScene->CreateEntity("Green Cube");
     Cube.AddComponent<MeshComponent>(Primitive::Cube);
-
-
+    m_Cube=Cube;
+    m_Quad=m_ActiveScene->CreateEntity("Quad");
+    m_Quad.AddComponent<MeshComponent>(Primitive::Quad);
     //Camera
     m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 

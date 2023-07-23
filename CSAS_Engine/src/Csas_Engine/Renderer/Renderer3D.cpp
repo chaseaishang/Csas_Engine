@@ -22,7 +22,10 @@ namespace CsasEngine {
         glm::vec3 Normal;
         glm::vec2 UV;
     };
-
+    namespace CameraSpec
+    {
+        glm::mat4 ViewProjMatrix;
+    }
     namespace SphereSpec
     {
         static uint8_t SphereVertexSize=sizeof(CubeVertex);
@@ -205,7 +208,7 @@ namespace CsasEngine {
 
         struct Renderer3DData
         {
-
+             Ref<UniformBuffer> CameraUBO;
              Ref <VertexArray> CubeVertexArray;
              Ref <VertexBuffer> CubeVertexBuffer;
              Ref <Shader> CubeShader;
@@ -232,9 +235,6 @@ namespace CsasEngine {
 
     void Renderer3D::Init()
     {//float* vertices, uint32_t size
-        if(!Debug)
-        {
-
 
         s_Data=new Renderer3DData;
         //Cube Init Begin==================================================================================================
@@ -325,11 +325,7 @@ namespace CsasEngine {
             delete SphereIndices;
 
         }
-        }
-        else
-        {
-            s_Data=new Renderer3DData;
-        }
+        s_Data->CameraUBO=UniformBuffer::Create(sizeof(CameraSpec::ViewProjMatrix),0);
     }
 
     void Renderer3D::BeginScene(const Camera &camera, const glm::mat4 &transform)
@@ -463,12 +459,27 @@ namespace CsasEngine {
 
         mesh.Update();
         shader->Bind();
-
-
-        shader->SetMat4("u_ViewProjection", viewProj);
-
-
+        s_Data->CameraUBO->SetData(glm::value_ptr(viewProj),sizeof(CameraSpec::ViewProjMatrix));
         shader->SetMat4("model",transform);
+//        switch (mesh.m_primitive)
+//        {
+//            case Primitive::Quad:
+//            {
+//
+//                break;
+//            }
+//            case Primitive::Cube:
+//            {
+//                shader->SetMat4("u_ViewProjection", viewProj);
+//                shader->SetMat4("model",transform);
+//                break;
+//            }
+//
+//        }
+
+
+
+
         vao->Bind();
         RenderCommand::DrawIndexed(vao);
 

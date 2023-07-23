@@ -11,6 +11,7 @@ namespace CsasEngine
     class VertexArray;
     class VertexBuffer;
     class IndexBuffer;
+    class BufferLayout;
     class Shader;
     struct Vertex
     {
@@ -19,7 +20,7 @@ namespace CsasEngine
         glm::vec3 Normal;
         glm::vec2 UV;
     };
-    enum class Primitive {None,Cube,Sphere};
+    enum class Primitive {None,Cube,Sphere,Quad};
     struct MeshComponent
     {
     public:
@@ -41,7 +42,8 @@ namespace CsasEngine
     private:
         void CreatCube(float size=1.0);
         void CreatSphere(float radius = 1.0f);
-        void CreateBuffers(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+        void CreatQuad(float size=1.0);
+        void CreateBuffers(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices,BufferLayout &layout);
 
     };
 }

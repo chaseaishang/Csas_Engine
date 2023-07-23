@@ -6,6 +6,8 @@
 
 #include "Camera.h"
 #include "Csas_Engine/Component/Mesh.h"
+#include "UniformBuffer.h"
+
 namespace CsasEngine {
     class Renderer3D {
 

@@ -30,6 +30,7 @@ namespace CsasEngine {
 
         Ref<Scene> m_ActiveScene;
         Entity m_Cube;
+        Entity m_Quad;
         Entity m_CameraEntity;
         bool m_PrimaryCamera = true;
         Ref <Texture2D> m_CheckerboardTexture;
