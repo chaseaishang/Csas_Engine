@@ -1,20 +1,24 @@
 #include "EditorLayer.h"
 #include "ImGui/include/imgui.h"
-
+#include "UI/EditorUI.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Example.h"
+#include "Example1/Example1.h"
 #include <Renderer3D.h>
 
 namespace CsasEngine {
-
+    bool EditorLayer::switch_Scene= false;
     EditorLayer::EditorLayer()
             : Layer("EditorLayer")
     {
+
     }
 
     void EditorLayer::OnAttach()
     {
         CSAS_PROFILE_FUNCTION();
+
         m_example=Example::getInstance();
         m_example->OnAttach();
 
@@ -22,19 +26,31 @@ namespace CsasEngine {
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
         m_Framebuffer = Framebuffer::Create(fbSpec);
+
         m_ActiveScene =m_example->get_Scene();
+
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach()
     {
+        m_Framebuffer= nullptr;
+        m_ActiveScene=nullptr;
+        m_example= nullptr;
+
         CSAS_PROFILE_FUNCTION();
     }
 
     void EditorLayer::OnUpdate(Timestep ts)
     {
         CSAS_PROFILE_FUNCTION();
-
+        if(switch_Scene)
+        {
+            ExampleMenu::DelOldScene();
+            OnDetach();
+            OnAttach();
+            switch_Scene= false;
+        }
         // Resize
         if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
                 m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
@@ -54,6 +70,7 @@ namespace CsasEngine {
 
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         RenderCommand::Clear();
+
         m_example->Update(ts);
         // Update scene
         m_ActiveScene->OnUpdate(ts);
@@ -111,50 +128,44 @@ namespace CsasEngine {
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
 
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                // Disabling fullscreen would allow the window to be moved to the front of other windows,
-                // which we can't undo at the moment without finer window depth/z control.
-                //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
 
-                if (ImGui::MenuItem("Exit")) Application::Get().Close();
-                ImGui::EndMenu();
-            }
-
-            ImGui::EndMenuBar();
-        }
+        EditorUI::MenuSetting();
         m_SceneHierarchyPanel.OnImGuiRender();
-        ImGui::Begin("Stats");
+        {
+            ImGui::Begin("Stats");
 
-        auto stats = Renderer3D::GetStats();
-        ImGui::Text("Renderer3D Stats:");
-        ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-        ImGui::Text("Quads: %d", stats.CubeCount);
-        ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-        ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-        ImGui::Separator();
-        ImGui::Text("Time ave %.3f ms/frame",1000.0f / ImGui::GetIO().Framerate);
-        ImGui::Text("(%.1f FPS)",ImGui::GetIO().Framerate);
-        ImGui::Separator();
-        ImGui::Text("%.5f",stats.z);
+            auto stats = Renderer3D::GetStats();
+            ImGui::Text("Renderer3D Stats:");
+            ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+            ImGui::Text("Quads: %d", stats.CubeCount);
+            ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+            ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+            ImGui::Separator();
+            ImGui::Text("Time ave %.3f ms/frame", 1000.0f / ImGui::GetIO().Framerate);
+            ImGui::Text("(%.1f FPS)", ImGui::GetIO().Framerate);
+            ImGui::Separator();
+            ImGui::Text("%.5f", stats.z);
 
-        ImGui::End();
+            ImGui::End();
+        }
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-        ImGui::Begin("Viewport");
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
+            ImGui::Begin("Viewport");
 
-        m_ViewportFocused = ImGui::IsWindowFocused();
-        m_ViewportHovered = ImGui::IsWindowHovered();
-        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+            m_ViewportFocused = ImGui::IsWindowFocused();
+            m_ViewportHovered = ImGui::IsWindowHovered();
+            Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-        uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-        ImGui::End();
+            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+            m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
+            uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+            ImGui::Image(reinterpret_cast<void *>(textureID), ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
+                         ImVec2{1, 0});
+            ImGui::End();
+        }
         ImGui::PopStyleVar();
+
 
         ImGui::End();
 
@@ -162,7 +173,6 @@ namespace CsasEngine {
 
     void EditorLayer::OnEvent(Event& e)
     {
-
         m_example->OnEvent(e);
     }
 

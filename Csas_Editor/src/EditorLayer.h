@@ -19,12 +19,13 @@ namespace CsasEngine {
         void OnUpdate(Timestep ts) override;
         virtual void OnImGuiRender() override;
         void OnEvent(Event &e) override;
+        static void SetSwitchScene(bool flag){switch_Scene=flag;};
     private:
 
         // Temp
         Ref <Framebuffer> m_Framebuffer= nullptr;
         Ref<Scene> m_ActiveScene= nullptr;
-
+        static  bool switch_Scene;
         SceneCamera m_EditCamera;
         bool m_PrimaryCamera = true;
 

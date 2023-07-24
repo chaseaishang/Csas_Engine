@@ -209,7 +209,7 @@ namespace CsasEngine {
         struct Renderer3DData
         {
              Ref<UniformBuffer> CameraUBO;
-            Ref<UniformBuffer>  BlobUBO;
+
              Ref <VertexArray> CubeVertexArray;
              Ref <VertexBuffer> CubeVertexBuffer;
              Ref <Shader> CubeShader;
@@ -328,7 +328,7 @@ namespace CsasEngine {
         }
         s_Data->CameraUBO=UniformBuffer::Create(sizeof(CameraSpec::ViewProjMatrix),0);
         //
-        s_Data->BlobUBO=UniformBuffer::Create(40,1);
+
     }
 
     void Renderer3D::BeginScene(const Camera &camera, const glm::mat4 &transform)
@@ -470,18 +470,13 @@ namespace CsasEngine {
             case Primitive::Quad:
             {
                 s_Data->CameraUBO->SetData(glm::value_ptr(viewProj),sizeof(CameraSpec::ViewProjMatrix));
-                s_Data->BlobUBO->SetData(glm::value_ptr(InnerColor),16,0);
-                s_Data->BlobUBO->SetData(glm::value_ptr(OuterColor),16,16);
-                s_Data->BlobUBO->SetData(&RadiusInner,sizeof(float ),32);
-                s_Data->BlobUBO->SetData(&RadiusOuter,sizeof(float ),36);
-
 
                 shader->SetMat4("model",transform);
                 break;
             }
             case Primitive::Cube:
             {
-                shader->SetMat4("u_ViewProjection", viewProj);
+                s_Data->CameraUBO->SetData(glm::value_ptr(viewProj),sizeof(CameraSpec::ViewProjMatrix));
                 shader->SetMat4("model",transform);
                 break;
             }

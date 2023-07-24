@@ -3,10 +3,11 @@
 //
 
 #include "Example1.h"
+#include "ImGui/include/imgui.h"
 
-CsasEngine::Example* CsasEngine::Example::m_Instance=new Example1();
 void CsasEngine::Example1::OnAttach()
 {
+    CSAS_INFO("Switch to Example1");
     CSAS_PROFILE_FUNCTION();
     m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
@@ -36,7 +37,7 @@ void CsasEngine::Example1::OnAttach()
 
 void CsasEngine::Example1::OnDetach()
 {
-    delete m_Instance;
+
 }
 
 void CsasEngine::Example1::Update(CsasEngine::Timestep ts)
@@ -46,7 +47,9 @@ void CsasEngine::Example1::Update(CsasEngine::Timestep ts)
 
 }
 
-void CsasEngine::Example1::OnImGuiRender() {
+void CsasEngine::Example1::OnImGuiRender()
+{
+
 
 }
 

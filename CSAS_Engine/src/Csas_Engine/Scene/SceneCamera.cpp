@@ -189,14 +189,7 @@ namespace CsasEngine {
     void SceneCamera::SetCamera3D(CameraComponent *Camera3D)
     {
         m_Camera3D=Camera3D;
-        auto&position=m_Camera3D->trans.Translation;
-        auto&forward=m_Camera3D->forward;
-        auto &up=m_Camera3D->up;
-        auto&fov=m_Camera3D->fov;
-        CSAS_CORE_WARN("position={0}",glm::to_string(position));
-        CSAS_CORE_WARN("forward={0}",glm::to_string(forward));
-        CSAS_CORE_WARN("up={0}",glm::to_string(up));
-        CSAS_CORE_WARN("fov={0}",fov);
+
 
         //init Matrix
         init();
@@ -214,7 +207,7 @@ namespace CsasEngine {
         m_View=glm::lookAt(position,position+forward,up);
         m_Projection = glm::perspective(glm::radians(fov), m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
         m_ViewProjection=m_Projection*m_View;
-        CSAS_CORE_WARN("m_ViewProjection={0}",glm::to_string(m_ViewProjection));
+
     }
 
 

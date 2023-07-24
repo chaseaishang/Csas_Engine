@@ -9,6 +9,9 @@ set(CSAS_ENGINE_VENDOR_PATH /home/chaseaishang/code/CSAS_Engine/CSAS_Engine/vend
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# 指定 库文件输出目录
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG 	/home/chaseaishang/code/CSAS_Engine/output/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RLEASE 	/home/chaseaishang/code/CSAS_Engine/output/lib)
 
 
 #aux_source_directory(./src/Csas_Engine DIR_LIB_SRCS)
