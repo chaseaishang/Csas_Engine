@@ -4,7 +4,7 @@ project(CSAS_Platform_OpenGL)
 #CSAS_PLATFORM_LINUX
 
 set(CMAKE_CXX_STANDARD 17)
-
+add_definitions(-DShaderDebug)
 
 
 

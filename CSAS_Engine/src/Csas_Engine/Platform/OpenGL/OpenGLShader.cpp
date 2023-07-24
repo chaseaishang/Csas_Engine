@@ -277,7 +277,12 @@ namespace CsasEngine
         std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() +m_Name+".cache");
 
         std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-        if (in.is_open())
+        bool NotDebug=true;
+        #ifdef ShaderDebug
+        NotDebug=false;
+        CSAS_CORE_WARN("ShaderDebug ON");
+        #endif
+        if (in.is_open()&&NotDebug)
         {
             GLuint program = glCreateProgram();
 
@@ -316,21 +321,23 @@ namespace CsasEngine
             }
             m_RendererID=program;
         }
-        else
-        {
-            m_OpenGLSourceCode=shaderSources;
+        else {
+            m_OpenGLSourceCode = shaderSources;
 
             GLint formats = 0;
             glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
-            if( formats < 1 ) {
+            if (formats < 1) {
                 CSAS_CORE_ERROR("{0}", "Driver does not support any binary formats.");
 
                 exit(EXIT_FAILURE);
             }
             Compile();
-            std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
-            if (out.is_open())
+            if (NotDebug)
             {
+
+
+            std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
+            if (out.is_open()) {
 
                 // Get the binary length
                 GLint length = 0;//10793
@@ -338,11 +345,12 @@ namespace CsasEngine
                 std::vector<GLubyte> buffer(length);
                 GLenum format = 0;
                 glGetProgramBinary(m_RendererID, length, NULL, &format, buffer.data());
-                CSAS_CORE_WARN("format={0},size={1}",(int)format,(int)length);
+                CSAS_CORE_WARN("format={0},size={1}", (int) format, (int) length);
 // Write the binary to a file.
-                out.write((char*)buffer.data(), length);
+                out.write((char *) buffer.data(), length);
                 out.flush();
                 out.close();
+                }
             }
         }
     }
