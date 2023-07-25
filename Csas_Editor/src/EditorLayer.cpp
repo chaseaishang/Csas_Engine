@@ -37,7 +37,7 @@ namespace CsasEngine {
         m_Framebuffer= nullptr;
         m_ActiveScene=nullptr;
         m_example= nullptr;
-
+        m_SceneHierarchyPanel={};
         CSAS_PROFILE_FUNCTION();
     }
 

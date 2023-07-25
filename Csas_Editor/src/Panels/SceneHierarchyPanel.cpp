@@ -7,7 +7,7 @@
 #include <ImGui/include/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "Csas_Engine/Component/AllComponent.h"
-
+#include "../UI/EditorUI.h"
 namespace CsasEngine {
 
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
@@ -168,6 +168,39 @@ namespace CsasEngine {
                 DrawVec3Control("Rotation", rotation);
                 tc.Rotation = glm::radians(rotation);
                 DrawVec3Control("Scale", tc.Scale, 1.0f);
+
+
+
+
+                ImGui::TreePop();
+            }
+        }
+        if(entity.HasComponent<Material_BasePrimitive>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(Material_BasePrimitive).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
+            {
+                auto& material=entity.GetComponent<Material_BasePrimitive>();
+                ImGui::Text("Material_Type    Material_BasePrimitive");
+
+               //float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+                //        ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+                //ImGui::ShowDemoWindow();
+
+                ImGui::TreePop();
+            }
+        }
+        if(entity.HasComponent<Material_BasePBR>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(Material_BasePrimitive).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
+            {
+
+
+                auto& material=entity.GetComponent<Material_BasePBR>();
+                EditorUI::DrawMaterial_PBR(material);
+
+                //float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+                //        ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+                //ImGui::ShowDemoWindow();
 
                 ImGui::TreePop();
             }

@@ -5,6 +5,9 @@
 #include "EditorUI.h"
 #include "ImGui/include/imgui.h"
 #include "Example.h"
+#include "Csas_Engine/Component/AllComponent.h"
+#include "glm/glm.hpp"
+#include <glm/gtc/type_ptr.hpp>
 namespace CsasEngine {
 
 
@@ -38,4 +41,24 @@ namespace CsasEngine {
         }
 
     }
+    void DrawMaterialInfo_PBR(Material_BasePBR::MaterialInfo &info)
+    {
+        Material_BasePBR::MaterialInfo temp=info;
+        if(ImGui::DragFloat3("Ka",glm::value_ptr(temp.Ka),0.2,0,1))
+            info.Ka=temp.Ka;
+        if(ImGui::DragFloat3("Kd",glm::value_ptr(temp.Kd),0.2,0,1))
+            info.Kd=temp.Kd;
+        if(ImGui::DragFloat3("Ks",glm::value_ptr(temp.Ks),0.2,0,1))
+            info.Ks=temp.Ks;
+        if(ImGui::DragFloat("Shininess",&temp.Shininess,5.0f,0.0f,150))
+            info.Shininess=temp.Shininess;
+    }
+    void EditorUI::DrawMaterial_PBR(Material_BasePBR & material)
+    {
+        ImGui::Text("Material_Type    Material_BasePBR");
+        auto &materialInfo=material.materialInfo;
+        DrawMaterialInfo_PBR(materialInfo);
+    }
+
+
 }

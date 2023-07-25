@@ -46,13 +46,29 @@ namespace CsasEngine {
 
     void Scene::On3DUpdate(Camera &main_camera, glm::mat4 &cameraTransform)
     {
-
-        auto view = m_Registry.view<MeshComponent>();
-        for(auto entity : view)
         {
-            auto mesh=view.get<MeshComponent>(entity);
-            Renderer3D::DrawMesh(mesh,main_camera);
+            auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>);
+
+            for (auto entity: group)
+            {
+                auto [material,mesh ] = group.get<Material_BasePBR, MeshComponent>(entity);
+
+                Renderer3D::DrawMesh(mesh, main_camera, material);
+            }
         }
+
+        {
+            auto group = m_Registry.group<Material_BasePrimitive>(entt::get<MeshComponent>);
+            for (auto entity: group)
+            {
+                auto [material,mesh ] = group.get<Material_BasePrimitive, MeshComponent>(entity);
+
+                Renderer3D::DrawMesh(mesh, main_camera, material);
+            }
+        }
+
+
+
 
 
 

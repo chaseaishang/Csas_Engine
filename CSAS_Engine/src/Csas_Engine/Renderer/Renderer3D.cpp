@@ -24,7 +24,7 @@ namespace CsasEngine {
     };
     namespace CameraSpec
     {
-        glm::mat4 ViewProjMatrix;
+        glm::mat4 ViewProjMatrix[2];
     }
     namespace SphereSpec
     {
@@ -459,10 +459,7 @@ namespace CsasEngine {
        auto transform=mesh.transform.GetTransform();
 
         auto& viewProj=camera.GetViewProjection();
-        static glm::vec4  InnerColor={1.0f, 1.0f, 0.75f, 1.0f};
-        static glm::vec4 OuterColor={0.0f, 0.0f, 0.0f, 0.0f};
-        static float RadiusInner=0.25f;
-        static float RadiusOuter=0.45f;
+
         mesh.Update();
         shader->Bind();
         switch (mesh.m_primitive)
@@ -489,6 +486,53 @@ namespace CsasEngine {
         vao->Bind();
         RenderCommand::DrawIndexed(vao);
 
+    }
+
+    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BasePrimitive &material)
+    {
+        auto &vao=mesh.m_VAO;
+        CameraSpec::ViewProjMatrix[0]=camera.GetView();
+        CameraSpec::ViewProjMatrix[1]=camera.GetProjection();
+
+        s_Data->CameraUBO->SetData(glm::value_ptr(CameraSpec::ViewProjMatrix[0]),sizeof(CameraSpec::ViewProjMatrix));
+        auto transform=mesh.transform.GetTransform();
+
+
+
+        mesh.Update();
+        //material Update
+        material.Update(transform);
+
+
+
+
+        vao->Bind();
+        RenderCommand::DrawIndexed(vao);
+    }
+
+    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BasePBR &material)
+    {
+        auto &vao=mesh.m_VAO;
+        CameraSpec::ViewProjMatrix[0]=camera.GetView();
+        CameraSpec::ViewProjMatrix[1]=camera.GetProjection();
+
+        s_Data->CameraUBO->SetData(glm::value_ptr(CameraSpec::ViewProjMatrix[0]),sizeof(CameraSpec::ViewProjMatrix));
+        auto transform=mesh.transform.GetTransform();
+
+
+        mesh.Update();
+        material.light.Position={5.0f,5.0f,2.0f};
+        material.light.La={ 0.4f, 0.4f, 0.4f};
+        material.light.Ld={1.0f, 1.0f, 1.0f};
+        material.light.Ls={1.0f, 1.0f, 1.0f};
+
+
+
+        //material Update
+        material.Update(transform);
+
+        vao->Bind();
+        RenderCommand::DrawIndexed(vao);
     }
 
 

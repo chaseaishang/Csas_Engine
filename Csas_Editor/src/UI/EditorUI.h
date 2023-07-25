@@ -5,12 +5,13 @@
 #pragma once
 
 namespace CsasEngine {
+    struct Material_BasePBR;
     class EditorUI
     {
     public:
         EditorUI()=default;
         static void MenuSetting();
-
+        static void DrawMaterial_PBR(Material_BasePBR&material);
 
     };
 }

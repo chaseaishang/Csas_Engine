@@ -10,7 +10,8 @@ layout(location = 2) in vec3 a_Normal;
 layout(location = 3) in vec2 a_UV;
 layout (std140, binding = 0) uniform Matrices
 {
-    mat4 u_ViewProjection;
+    mat4 View;
+    mat4 Projection;
 }Camera;
 layout(location = 0) uniform  mat4 model;
 
@@ -22,7 +23,8 @@ void main()
     v_Color  = a_Color;
     v_Normal = a_Normal;
     v_UV     = a_UV;
-    gl_Position = Camera.u_ViewProjection * model * vec4(a_Position, 1.0);
+    mat4 ViewProj= Camera.Projection*Camera.View;
+    gl_Position = ViewProj * model * vec4(a_Position, 1.0);
 }
 
 #type fragment

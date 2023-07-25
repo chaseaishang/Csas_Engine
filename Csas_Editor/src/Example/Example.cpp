@@ -17,7 +17,7 @@ namespace CsasEngine
     {
         RegisterExample<Example1>("Example1");
         RegisterExample<Example2>("Example2");
-        m_Instance=new Example1;
+        m_Instance=new Example2;
     }
 
     void ExampleMenu::UnRegisterAllExample()
