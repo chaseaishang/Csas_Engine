@@ -76,19 +76,16 @@ vec3 phongModel( vec3 position, vec3 norm )
 }
 void main()
 {
-
-
-    vec3 FrontColor=phongModel(v_Position,v_Normal);
-    vec3 BackColor=phongModel(v_Position,-v_Normal);
-
-
-    if( gl_FrontFacing )
+    const float scale = 15.0;
+    bvec2 toDiscard = greaterThan( fract(v_UV * scale), vec2(0.5,0.5) );
+    if(all(toDiscard))
     {
-        color = vec4(FrontColor,1.0)*v_Color;
-
-    } else {
-        color = vec4(BackColor, 1.0)*v_Color;
+        discard;
     }
+    vec3 phone_re=phongModel(v_Position,v_Normal);
+
+    color = vec4(phone_re,1.0)*v_Color;
+
 
     //
 }
