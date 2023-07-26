@@ -7,7 +7,10 @@
 #include "Mesh.h"
 
 namespace CsasEngine {
-
+    std::string Material::GetShader_name()
+    {
+        return m_Shader->GetName();
+    }
     Material_BasePrimitive::Material_BasePrimitive()
     {
         type = MaterialType::BasePrimitive;
@@ -27,7 +30,9 @@ namespace CsasEngine {
     Material_BasePBR::Material_BasePBR()
     {
         type = MaterialType::BasePBR;
-        m_Shader = Shader::Create("./assets/shaders/ADS_Light.glsl");
+        //ADS_Light_two_side
+        //ADS_Light
+        m_Shader = Shader::Create("./assets/shaders/ADS_LightSubroutine.glsl");
         materialInfo.Ka={0.9f, 0.5f, 0.3f};
         materialInfo.Kd={0.9f, 0.5f, 0.3f};
         materialInfo.Ks={0.8f, 0.8f, 0.8f};
@@ -47,7 +52,11 @@ namespace CsasEngine {
         m_Shader->SetFloat3("Material.Kd",materialInfo.Kd);
         m_Shader->SetFloat3("Material.Ks",materialInfo.Ks);
         m_Shader->SetFloat("Material.Shininess",materialInfo.Shininess);
+        //phongModel
+        //diffuseOnly
+        m_Shader->UseSubroutines("diffuseOnly",Shader::Shader_Type::Fragment);
     }
+
 
 
 }

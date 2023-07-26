@@ -56,6 +56,10 @@ namespace CsasEngine {
     void EditorUI::DrawMaterial_PBR(Material_BasePBR & material)
     {
         ImGui::Text("Material_Type    Material_BasePBR");
+        ImGui::Text("Shader_name%s",material.GetShader_name().c_str());
+        ImGui::SameLine();
+        ImGui::Button("Load_shader");
+        ImGui::NewLine();
         auto &materialInfo=material.materialInfo;
         DrawMaterialInfo_PBR(materialInfo);
     }

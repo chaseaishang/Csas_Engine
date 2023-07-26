@@ -19,9 +19,11 @@ namespace CsasEngine {
         virtual ~Material()=default;
         MaterialType GetType(){return type;}
         Ref<Shader> GetShader(){return m_Shader;}
+        std::string GetShader_name();
     protected:
         MaterialType type;
         Ref<Shader>m_Shader;
+        std::string Shader_name;
     };
     struct Material_BasePrimitive:public Material
     {
@@ -46,6 +48,7 @@ namespace CsasEngine {
             glm::vec3 Ks;
             float Shininess;
         };
+
     public:
         Material_BasePBR();
         void Update(glm::mat4 & model);

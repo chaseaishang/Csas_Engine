@@ -530,7 +530,22 @@ namespace CsasEngine
         //glProgramUniform4fv(m_RendererID,location,1,glm::value_ptr(matrix));
     }
 
+    void OpenGLShader::UseSubroutines(const std::string &name, Shader::Shader_Type type)
+    {
+        if(type==Shader_Type::Vertex)
+        {
+             GLuint loc=glGetSubroutineIndex( m_RendererID,
+                                  GL_VERTEX_SHADER,name.c_str());
+            glUniformSubroutinesuiv(GL_VERTEX_SHADER, 1, &loc);
 
+        }
+        else
+        {
+            GLuint loc=glGetSubroutineIndex( m_RendererID,
+                                             GL_FRAGMENT_SHADER,name.c_str());
+            glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &loc);
+        }
+    }
 
 
 }
