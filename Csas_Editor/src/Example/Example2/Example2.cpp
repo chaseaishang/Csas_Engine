@@ -23,9 +23,15 @@ namespace CsasEngine {
         m_Quad.AddComponent<MeshComponent>(Primitive::Quad);
         m_Quad.AddComponent<Material_BasePrimitive>();
 
-        m_Quad1=m_ActiveScene->CreateEntity("Quad1");
-        m_Quad1.AddComponent<MeshComponent>(Primitive::Quad);
-        m_Quad1.AddComponent<Material_BasePrimitive>();
+        m_Sphere=m_ActiveScene->CreateEntity("Sphere");
+        m_Sphere.AddComponent<MeshComponent>(Primitive::Sphere);
+        m_Sphere.AddComponent<Material_BasePBR>();
+
+        m_Torus=m_ActiveScene->CreateEntity("Torus");
+        m_Torus.AddComponent<MeshComponent>(Primitive::Torus);
+        m_Torus.AddComponent<Material_BasePBR>();
+
+
         //Camera
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 

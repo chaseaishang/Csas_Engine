@@ -32,7 +32,7 @@ namespace CsasEngine {
         type = MaterialType::BasePBR;
         //ADS_Light_two_side
         //ADS_Light
-        m_Shader = Shader::Create("./assets/shaders/ADS_Light_discard.glsl");
+        m_Shader = Shader::Create("./assets/shaders/ADS_Light.glsl");
         materialInfo.Ka={0.9f, 0.5f, 0.3f};
         materialInfo.Kd={0.9f, 0.5f, 0.3f};
         materialInfo.Ks={0.8f, 0.8f, 0.8f};

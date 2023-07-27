@@ -10,12 +10,18 @@ namespace CsasEngine
 {
 
 
-    namespace CubeSpec
-    {
-        static uint8_t CubeVertexSize=sizeof(Vertex);
-        static const uint32_t OneCubeVertices =  24 ;
-        static const uint32_t OneCubeIndices  =  36;
 
+    namespace SphereSpec
+    {
+        static uint8_t SphereVertexSize=sizeof(Vertex);
+        constexpr float PI = glm::pi<float>();
+        constexpr float PI_2 = glm::half_pi<float>();
+        constexpr unsigned int n_rows  = 100;
+        constexpr unsigned int n_cols  = 100;
+        constexpr unsigned int n_verts = (n_rows + 1) * (n_cols + 1);
+        constexpr unsigned int n_tris  = n_rows * n_cols * 2;
+        static const uint32_t OneSphereVertices =  n_verts ;
+        static const uint32_t OneSphereIndices  =  n_tris * 3;
     }
     MeshComponent::MeshComponent(Primitive primitive)
     {
@@ -23,8 +29,9 @@ namespace CsasEngine
         switch (primitive)
         {
             case Primitive::Cube:CreatCube(1);break;
-            case Primitive::Sphere:CreatSphere(1.0f);break;
+            case Primitive::Sphere:CreatSphere(0.5f);break;
             case Primitive::Quad:CreatQuad(1.0);break;
+            case Primitive::Torus:CreatTorus(0.5f,0.17);break;
             case Primitive::None: CSAS_ASSERT(false,"error primitive!");
         }
     }
@@ -32,8 +39,80 @@ namespace CsasEngine
     void MeshComponent::CreatSphere(float radius)
     {
 
-    }
+        constexpr float PI = SphereSpec::PI;
+        constexpr float PI_2 = SphereSpec::PI_2;
 
+        // default LOD = 100x100 mesh grid size
+        unsigned int n_rows  = SphereSpec::n_rows ;
+        unsigned int n_cols  = SphereSpec::n_cols ;
+        unsigned int n_verts = SphereSpec::n_verts;
+        unsigned int n_tris  = SphereSpec::n_tris ;
+
+        std::vector<Vertex>& vertices=m_vertices;
+        std::vector<uint32_t> &indices=m_indices;
+        vertices.reserve(n_verts);
+        indices.reserve(n_tris * 3);
+
+        for (unsigned int col = 0; col <= n_cols; ++col)
+        {
+            for (unsigned int row = 0; row <= n_rows; ++row)
+            {
+                // unscaled uv coordinates ~ [0, 1]
+                float u = static_cast<float>(col) / n_cols;  //fix
+                float v = static_cast<float>(row) / n_rows;
+
+                float theta = PI * v - PI_2;  // ~ [-PI/2, PI/2], latitude from south to north pole
+                float phi = PI * 2 * u;       // ~ [0, 2PI], longitude around the equator circle   fix
+
+                float x = cos(phi) * cos(theta);
+                float y = sin(theta);
+                float z = sin(phi) * cos(theta) * (-1);
+
+                // for a unit sphere centered at the origin, normal = position
+                // binormal is normal rotated by 90 degrees along the latitude (+theta)
+
+                Vertex vertex {};
+                vertex.Position = glm::vec3(x, y, z) * radius;
+                vertex.Color    = glm::vec4(1.0f);
+                vertex.Normal   = glm::vec3(x, y, z);
+                vertex.UV       = glm::vec2(u, v);
+
+
+                vertices.push_back(vertex);
+            }
+        }
+
+        for (unsigned int col = 0; col < n_cols; ++col) {
+            for (unsigned int row = 0; row < n_rows; ++row) {
+                auto index = col * (n_rows + 1);
+
+                // counter-clockwise winding order
+                indices.push_back(index + row + 1);//1
+                indices.push_back(index + row);// 0
+                indices.push_back(index + row + 1 + n_rows);//101
+
+                // counter-clockwise winding order
+                indices.push_back(index + row + 1 + n_rows + 1);//102
+                indices.push_back(index + row + 1);   //1
+                indices.push_back(index + row + 1 + n_rows);//101
+            }
+        }
+        BufferLayout layout=
+                {
+                        {ShaderDataType::Float3, "a_Position"},
+                        {ShaderDataType::Float4, "a_Color"},
+                        {ShaderDataType::Float3, "a_Normal"},
+                        {ShaderDataType::Float2, "a_UV"}
+                };
+        CreateBuffers(vertices,indices,layout);
+    }
+    namespace CubeSpec
+    {
+        static uint8_t CubeVertexSize=sizeof(Vertex);
+        static const uint32_t OneCubeVertices =  24 ;
+        static const uint32_t OneCubeIndices  =  36;
+
+    }
     void MeshComponent::CreatCube(float size)
     {
 
@@ -108,15 +187,7 @@ namespace CsasEngine
     void MeshComponent::CreateBuffers(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices,BufferLayout &layout)
     {
         m_VAO=VertexArray::Create();
-        //TODO shader should move to Material Component
-        switch (m_primitive)
-        {
-        case Primitive::Cube: case Primitive::Sphere:
-                m_Shader=Shader::Create("./assets/shaders/BasePrimitive.glsl");break;
-        case Primitive::Quad: m_Shader=Shader::Create("./assets/shaders/BaseQuad.glsl");
-        break;
-        case Primitive::None: CSAS_ASSERT(false,"error primitive!");
-        }
+
         m_VBO=VertexBuffer::Create(vertices.size()*sizeof(Vertex));
         m_VBO->SetLayout(layout);
         m_VAO->AddVertexBuffer(m_VBO);
@@ -176,6 +247,86 @@ namespace CsasEngine
                         {ShaderDataType::Float2, "a_UV"}
                 };
         CreateBuffers(vertices, indices,layout);
+    }
+
+
+    void MeshComponent::CreatTorus(float R, float r)
+    {
+
+        // default LOD = 60x60 faces, step size = 6 degrees
+        uint8_t  n_rings = 60;
+        uint8_t  n_sides = 60;
+        uint8_t  n_faces = n_sides * n_rings;  // quad face (2 triangles)
+        uint8_t  n_verts = n_sides * n_rings + n_sides;
+
+        float delta_phi   = glm::two_pi<float>() / n_rings;
+        float delta_theta = glm::two_pi<float>() / n_sides;
+
+        std::vector<Vertex> &vertices=m_vertices;
+        vertices.reserve(n_verts);
+
+        for (int ring = 0; ring <= n_rings; ring++) {
+            float phi = ring * delta_phi;
+            float cos_phi = cos(phi);
+            float sin_phi = sin(phi);
+
+            for (int side = 0; side < n_sides; side++) {
+                float theta = side * delta_theta;
+                float cos_theta = cos(theta);
+                float sin_theta = sin(theta);
+
+                float d = (R + r * cos_theta);  // distance from the vertex to the torus center
+
+                float x = d * cos_phi;
+                float y = d * sin_phi;
+                float z = r * sin_theta;
+
+                float a = d * cos_theta * cos_phi;
+                float b = d * cos_theta * sin_phi;
+                float c = d * sin_theta;
+
+                float u = glm::one_over_two_pi<float>() * phi;
+                float v = glm::one_over_two_pi<float>() * theta;
+
+                Vertex vertex {};
+                vertex.Position = glm::vec3(x, y, z);
+                vertex.Color    = glm::vec4(1);
+                vertex.Normal   = normalize(glm::vec3(a, b, c));
+                vertex.UV       = glm::vec2(u, v);
+
+                vertices.push_back(vertex);
+            }
+        }
+
+        std::vector<uint32_t> &indices=m_indices;
+        indices.reserve(n_faces * 6);
+
+        for (int ring = 0; ring < n_rings; ring++) {
+            int offset = n_sides * ring;
+
+            for (int side = 0; side < n_sides; side++) {
+                int next_side = (side + 1) % n_sides;
+
+                indices.push_back(offset + side);
+                indices.push_back(offset + n_sides + side);
+                indices.push_back(offset + n_sides + next_side);
+
+                indices.push_back(offset + side);
+                indices.push_back(offset + next_side + n_sides);
+                indices.push_back(offset + next_side);
+            }
+        }
+
+
+        BufferLayout layout=
+                {
+                        {ShaderDataType::Float3, "a_Position"},
+                        {ShaderDataType::Float4, "a_Color"},
+                        {ShaderDataType::Float3, "a_Normal"},
+                        {ShaderDataType::Float2, "a_UV"}
+                };
+        CreateBuffers(vertices,indices,layout);
+
     }
 
 

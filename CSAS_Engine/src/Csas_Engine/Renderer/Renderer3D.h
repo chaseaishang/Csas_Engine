@@ -19,10 +19,9 @@ namespace CsasEngine {
         static void BeginScene(const Camera &camera, const glm::mat4 &transform);
 
         static void EndScene();
-        static void DrawSphere(const glm::mat4 &transform,const glm::vec4 &tintColor = glm::vec4(1.0f));
-        static void
-        DrawCube(const glm::mat4 &transform,const glm::vec4 &tintColor = glm::vec4(1.0f));
-        static void DrawMesh(MeshComponent&mesh,const Camera &camera);
+
+
+
         static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePrimitive&material);
         static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePBR&material);
         static void DrawTestUniforBLock();

@@ -76,13 +76,8 @@ vec3 phongModel( vec3 position, vec3 norm )
 }
 void main()
 {
-    const float scale = 15.0;
-    bvec2 toDiscard = greaterThan( fract(v_UV * scale),
-    vec2(0.2,0.2) );
-    if(all(toDiscard))
-    {
-        discard;
-    }
+
+
     vec3 phone_re=phongModel(v_Position,v_Normal);
 
     color = vec4(phone_re,1.0)*v_Color;
