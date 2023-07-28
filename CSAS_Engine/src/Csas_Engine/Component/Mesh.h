@@ -20,7 +20,8 @@ namespace CsasEngine
         glm::vec3 Normal;
         glm::vec2 UV;
     };
-    enum class Primitive {None,Cube,Sphere,Quad,Torus};
+
+    enum class Primitive {None,Cube,Sphere,Quad,Torus,FromModel};
     struct MeshComponent
     {
     public:
@@ -28,10 +29,12 @@ namespace CsasEngine
         enum Primitive m_primitive{Primitive::None};
         TransformComponent transform{glm::vec3(0)};
         std::vector<Vertex> m_vertices;
+
         std::vector<uint32_t> m_indices;
         void Update();
         MeshComponent()=default;
         MeshComponent(Primitive primitive=Primitive::None);
+        MeshComponent(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices);
         ~MeshComponent()=default;
 
     private:
@@ -39,6 +42,7 @@ namespace CsasEngine
         Ref<VertexBuffer>m_VBO;
         Ref<IndexBuffer>m_IBO;
     private:
+
         void CreatTorus(float R = 0.5f, float r = 0.17f);
         void CreatCube(float size=1.0);
         void CreatSphere(float radius = 0.5f);

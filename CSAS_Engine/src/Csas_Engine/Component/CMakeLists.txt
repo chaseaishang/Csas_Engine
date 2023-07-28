@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 
 # 生成链接库
-
+find_package(assimp CONFIG REQUIRED)
 add_library (CSAS_Component)
 aux_source_directory(./ COMPONENT_DIR_LIB_SRCS)
 
@@ -27,7 +27,11 @@ target_sources(CSAS_Component
         PRIVATE
         ${COMPONENT_DIR_LIB_SRCS}
         )
+target_link_libraries(CSAS_Component
+        PRIVATE
+        assimp::assimp
 
-
+        )
+#Tiny_Obj_Loader
 
 

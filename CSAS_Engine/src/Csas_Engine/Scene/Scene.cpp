@@ -48,11 +48,21 @@ namespace CsasEngine {
     {
         {
             auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>);
-
+            //auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>,entt::get<ModelComponent>);
             for (auto entity: group)
             {
                 auto [material,mesh ] = group.get<Material_BasePBR, MeshComponent>(entity);
 
+                Renderer3D::DrawMesh(mesh, main_camera, material);
+            }
+        }
+        {
+            auto view = m_Registry.view<Material_BasePBR, ModelComponent>();
+            for(auto entity: view)
+            {
+                auto model = view.get<ModelComponent>(entity);
+                auto material=view.get<Material_BasePBR>(entity);
+                auto mesh=model.meshComponents[0];
                 Renderer3D::DrawMesh(mesh, main_camera, material);
             }
         }

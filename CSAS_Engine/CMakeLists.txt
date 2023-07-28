@@ -22,5 +22,6 @@ add_library (CSAS_Engine INTERFACE)
 add_subdirectory(vendor/ImGui/)
 add_subdirectory(vendor/stb_image)
 add_subdirectory(vendor/entt)
+#add_subdirectory(vendor/tinyobjloader)
 add_subdirectory(src/Csas_Engine/)
 

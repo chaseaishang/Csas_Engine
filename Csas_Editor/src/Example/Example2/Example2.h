@@ -35,7 +35,7 @@ namespace CsasEngine {
         Entity m_Quad;
         Entity m_Torus;
         Entity m_Sphere;
-
+        Entity m_teapot;
 
         Entity m_CameraEntity;
         bool m_PrimaryCamera = true;

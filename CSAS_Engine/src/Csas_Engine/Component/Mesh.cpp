@@ -6,6 +6,9 @@
 #include "Csas_Engine/Renderer/Buffer.h"
 #include "Csas_Engine/Renderer/Shader.h"
 #include "glm/glm.hpp"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 namespace CsasEngine
 {
 
@@ -327,6 +330,19 @@ namespace CsasEngine
                 };
         CreateBuffers(vertices,indices,layout);
 
+    }
+
+    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices)
+    {
+        m_primitive=Primitive::FromModel;
+        BufferLayout layout=
+                {
+                        {ShaderDataType::Float3, "a_Position"},
+                        {ShaderDataType::Float4, "a_Color"},
+                        {ShaderDataType::Float3, "a_Normal"},
+                        {ShaderDataType::Float2, "a_UV"}
+                };
+        CreateBuffers(vertices,indices,layout);
     }
 
 

@@ -31,6 +31,9 @@ namespace CsasEngine {
         m_Torus.AddComponent<MeshComponent>(Primitive::Torus);
         m_Torus.AddComponent<Material_BasePBR>();
 
+        m_teapot=m_ActiveScene->CreateEntity("teapot");
+        m_teapot.AddComponent<ModelComponent>("./assets/model/teapot.obj");
+        m_teapot.AddComponent<Material_BasePBR>();
 
         //Camera
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
