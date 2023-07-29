@@ -112,10 +112,12 @@ namespace CsasEngine {
         float &move_speed    =this->m_Camera3D->move_speed;
         switch (direction)
         {
-            case Direction::W: position += forward * (move_speed * deltatime); break;
-            case Direction::S: position -= forward * (move_speed * deltatime); break;
-            case Direction::A: position -= right * (move_speed * deltatime); break;
-            case Direction::D: position += right * (move_speed * deltatime); break;
+            case Direction::W:     position += forward * (move_speed * deltatime); break;
+            case Direction::S:     position -= forward * (move_speed * deltatime); break;
+            case Direction::A:     position -= right * (move_speed * deltatime); break;
+            case Direction::D:     position += right * (move_speed * deltatime); break;
+            case Direction::UP:    position +=up* (move_speed * deltatime); break;
+            case Direction::DOWN:  position -=up* (move_speed * deltatime); break;
             default:
                 CSAS_CORE_WARN("[WARNING] Invalid direction!"); break;
         }
@@ -138,8 +140,10 @@ namespace CsasEngine {
             Move(Direction::W,ts.GetSeconds(), false);
         if (Input::IsKeyPressed(Key::S))
             Move(Direction::S,ts.GetSeconds(), false);
-
-
+        if(Input::IsKeyPressed(Key::Up))
+            Move(Direction::UP,ts.GetSeconds(), false);
+        if(Input::IsKeyPressed(Key::Down))
+            Move(Direction::DOWN,ts.GetSeconds(), false);
     }
 
     void SceneCamera::OnEvent(Event &e)

@@ -251,6 +251,23 @@ namespace CsasEngine {
                 ImGui::TreePop();
             }
         }
+        if(entity.HasComponent<SpotLightComponent>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(SpotLightComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
+            {
+
+
+                auto& Spot=entity.GetComponent<SpotLightComponent>();
+                EditorUI::DrawSpotLight(Spot);
+
+                //float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+                //        ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+                //ImGui::ShowDemoWindow();
+
+                ImGui::TreePop();
+            }
+        }
+
 
     }
 

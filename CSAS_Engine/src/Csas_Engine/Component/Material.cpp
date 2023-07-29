@@ -39,11 +39,13 @@ namespace CsasEngine {
         materialInfo.Shininess=100.0f;
     }
 
-    void Material_BasePBR::Update(glm::mat4 &model)
+    void Material_BasePBR::Update(glm::mat4 &model,std::vector<SpotLightComponent>&spots)
     {
         m_Shader->Bind();
         m_Shader->SetMat4("model",model);
-        m_Shader->SetFloat3("Light.Position",light.Position);
+
+        auto&light=spots[0];// temp
+        m_Shader->SetFloat3("Light.Position",light.position);
         m_Shader->SetFloat3("Light.La",light.La);
         m_Shader->SetFloat3("Light.Ld",light.Ld);
         m_Shader->SetFloat3("Light.Ls",light.Ls);

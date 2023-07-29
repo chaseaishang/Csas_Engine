@@ -8,6 +8,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Model.h"
+#include "light.h"
 /*
  *
  * find_package(assimp CONFIG REQUIRED)

@@ -6,6 +6,7 @@
 
 
 #include "Transform.h"
+
 namespace CsasEngine
 {
     class VertexArray;

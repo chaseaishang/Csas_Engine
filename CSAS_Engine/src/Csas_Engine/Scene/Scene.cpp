@@ -18,7 +18,9 @@ namespace CsasEngine {
 
     }
 
-    Scene::~Scene() {
+    Scene::~Scene()
+    {
+
     }
 
     Entity Scene::CreateEntity(const std::string& name)
@@ -46,6 +48,20 @@ namespace CsasEngine {
 
     void Scene::On3DUpdate(Camera &main_camera, glm::mat4 &cameraTransform)
     {
+        std::vector<SpotLightComponent>Spotlights;
+        {//light
+
+            m_Registry.view<SpotLightComponent>().each(
+                    [&](auto entity, auto &spot)
+            {
+                Spotlights.push_back(spot);
+
+            }
+            );
+
+        }
+
+
         {
             auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>);
             //auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>,entt::get<ModelComponent>);
@@ -53,17 +69,18 @@ namespace CsasEngine {
             {
                 auto [material,mesh ] = group.get<Material_BasePBR, MeshComponent>(entity);
 
-                Renderer3D::DrawMesh(mesh, main_camera, material);
+                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
             }
         }
         {
             auto view = m_Registry.view<Material_BasePBR, ModelComponent>();
             for(auto entity: view)
             {
-                auto model = view.get<ModelComponent>(entity);
-                auto material=view.get<Material_BasePBR>(entity);
+                //auto [pos, vel] = view.get<position, velocity>(entity);
+                auto [material,model]=view.get<Material_BasePBR,ModelComponent>(entity);
+
                 auto mesh=model.meshComponents[0];
-                Renderer3D::DrawMesh(mesh, main_camera, material);
+                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
             }
         }
 

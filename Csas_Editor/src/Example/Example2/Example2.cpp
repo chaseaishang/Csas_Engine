@@ -13,7 +13,8 @@ namespace CsasEngine {
         m_ActiveScene = CreateRef<Scene>();
         m_Scene = m_ActiveScene;
         // Entity
-
+        SpotLights=m_ActiveScene->CreateEntity("lights");
+        SpotLights.AddComponent<SpotLightComponent>();
         auto Cube = m_ActiveScene->CreateEntity("Green Cube");
         Cube.AddComponent<MeshComponent>(Primitive::Cube);
         Cube.AddComponent<Material_BasePBR>();

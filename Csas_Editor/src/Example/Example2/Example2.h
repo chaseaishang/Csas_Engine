@@ -36,7 +36,7 @@ namespace CsasEngine {
         Entity m_Torus;
         Entity m_Sphere;
         Entity m_teapot;
-
+        Entity SpotLights;
         Entity m_CameraEntity;
         bool m_PrimaryCamera = true;
         Ref <Texture2D> m_CheckerboardTexture;

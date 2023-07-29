@@ -8,7 +8,9 @@
 #include "Csas_Engine/Component/Mesh.h"
 #include "UniformBuffer.h"
 #include "Csas_Engine/Component/Material.h"
+#include "Csas_Engine/Component/light.h"
 namespace CsasEngine {
+
     class Renderer3D {
 
     public:
@@ -23,7 +25,7 @@ namespace CsasEngine {
 
 
         static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePrimitive&material);
-        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePBR&material);
+        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePBR&material, std::vector<SpotLightComponent>&Spotlights);
         static void DrawTestUniforBLock();
         // Primitives
 

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "glm/glm.hpp"
+#include "light.h"
 namespace CsasEngine {
     class Shader;
 
@@ -28,6 +29,7 @@ namespace CsasEngine {
     struct Material_BasePrimitive:public Material
     {
     public:
+
         Material_BasePrimitive();
         void Update(glm::mat4 & model);
         ~Material_BasePrimitive() override =default ;
@@ -36,12 +38,14 @@ namespace CsasEngine {
     };
     struct Material_BasePBR:public Material
     {
-        struct LightInfo {
-            glm::vec3 Position;
-            glm::vec3 La;
-            glm::vec3 Ld;
-            glm::vec3 Ls;
+        struct SpotLightInfo
+        {
+            uint8_t nums;
+            glm::vec3 *Las;
+            glm::vec3 *Lds;
+            glm::vec3 *Lss;
         };
+
         struct MaterialInfo {
             glm::vec3 Ka;
             glm::vec3 Kd;
@@ -51,9 +55,8 @@ namespace CsasEngine {
 
     public:
         Material_BasePBR();
-        void Update(glm::mat4 & model);
+        void Update(glm::mat4 & model,std::vector<SpotLightComponent>&spots);
         ~Material_BasePBR() override =default ;
-        LightInfo light;
         MaterialInfo materialInfo;
 
     };
