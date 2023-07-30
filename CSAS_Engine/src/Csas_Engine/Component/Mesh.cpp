@@ -76,7 +76,6 @@ namespace CsasEngine
 
                 Vertex vertex {};
                 vertex.Position = glm::vec3(x, y, z) * radius;
-                vertex.Color    = glm::vec4(1.0f);
                 vertex.Normal   = glm::vec3(x, y, z);
                 vertex.UV       = glm::vec2(u, v);
 
@@ -103,7 +102,6 @@ namespace CsasEngine
         BufferLayout layout=
                 {
                         {ShaderDataType::Float3, "a_Position"},
-                        {ShaderDataType::Float4, "a_Color"},
                         {ShaderDataType::Float3, "a_Normal"},
                         {ShaderDataType::Float2, "a_UV"}
                 };
@@ -120,46 +118,45 @@ namespace CsasEngine
     {
 
         constexpr int n_vertices = CubeSpec::OneCubeVertices;  // we only need 24 vertices to triangulate the 6 faces
-        constexpr int stride = sizeof(Vertex)/4;  // 3 + 4+3 + 2
+        constexpr int stride = sizeof(Vertex)/4;  // 3 +3 + 2
         auto& vertices=m_vertices;
         vertices.reserve(n_vertices);
 
         static const float data[] =
                 {
-                        // ----position----                     ------color-----------                         -------normal------                ----uv----
-                        -0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, -1.0f, +0.0f,             0.0f, 0.0f,
-                        -0.5f, -0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, -1.0f, +0.0f,       0.0f, 1.0f,
-                        +0.5f, -0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, -1.0f, +0.0f,       1.0f, 1.0f,
-                        +0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, -1.0f, +0.0f,       1.0f, 0.0f,
-                        -0.5f, +0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +1.0f, +0.0f,       1.0f, 0.0f,
-                        -0.5f, +0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +1.0f, +0.0f,       1.0f, 1.0f,
-                        +0.5f, +0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +1.0f, +0.0f,       0.0f, 1.0f,
-                        +0.5f, +0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +1.0f, +0.0f,       0.0f, 0.0f,
-                        -0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, -1.0f,       0.0f, 0.0f,
-                        -0.5f, +0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, -1.0f,       0.0f, 1.0f,
-                        +0.5f, +0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, -1.0f,       1.0f, 1.0f,
-                        +0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, -1.0f,       1.0f, 0.0f,
-                        -0.5f, -0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, +1.0f,       0.0f, 0.0f,
-                        -0.5f, +0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, +1.0f,       0.0f, 1.0f,
-                        +0.5f, +0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, +1.0f,       1.0f, 1.0f,
-                        +0.5f, -0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +0.0f, +0.0f, +1.0f,       1.0f, 0.0f,
-                        -0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       -1.0f, +0.0f, +0.0f,       0.0f, 0.0f,
-                        -0.5f, -0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       -1.0f, +0.0f, +0.0f,       0.0f, 1.0f,
-                        -0.5f, +0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       -1.0f, +0.0f, +0.0f,       1.0f, 1.0f,
-                        -0.5f, +0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       -1.0f, +0.0f, +0.0f,       1.0f, 0.0f,
-                        +0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +1.0f, +0.0f, +0.0f,       0.0f, 0.0f,
-                        +0.5f, -0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +1.0f, +0.0f, +0.0f,       0.0f, 1.0f,
-                        +0.5f, +0.5f, +0.5f,   1.0f,1.0f,1.f,1.0f,       +1.0f, +0.0f, +0.0f,       1.0f, 1.0f,
-                        +0.5f, +0.5f, -0.5f,   1.0f,1.0f,1.f,1.0f,       +1.0f, +0.0f, +0.0f,       1.0f, 0.0f
+                        // ----position----                             -------normal------                ----uv----
+                        -0.5f, -0.5f, -0.5f,         +0.0f, -1.0f, +0.0f,             0.0f, 0.0f,
+                        -0.5f, -0.5f, +0.5f,         +0.0f, -1.0f, +0.0f,       0.0f, 1.0f,
+                        +0.5f, -0.5f, +0.5f,         +0.0f, -1.0f, +0.0f,       1.0f, 1.0f,
+                        +0.5f, -0.5f, -0.5f,         +0.0f, -1.0f, +0.0f,       1.0f, 0.0f,
+                        -0.5f, +0.5f, -0.5f,         +0.0f, +1.0f, +0.0f,       1.0f, 0.0f,
+                        -0.5f, +0.5f, +0.5f,         +0.0f, +1.0f, +0.0f,       1.0f, 1.0f,
+                        +0.5f, +0.5f, +0.5f,         +0.0f, +1.0f, +0.0f,       0.0f, 1.0f,
+                        +0.5f, +0.5f, -0.5f,         +0.0f, +1.0f, +0.0f,       0.0f, 0.0f,
+                        -0.5f, -0.5f, -0.5f,         +0.0f, +0.0f, -1.0f,       0.0f, 0.0f,
+                        -0.5f, +0.5f, -0.5f,         +0.0f, +0.0f, -1.0f,       0.0f, 1.0f,
+                        +0.5f, +0.5f, -0.5f,         +0.0f, +0.0f, -1.0f,       1.0f, 1.0f,
+                        +0.5f, -0.5f, -0.5f,         +0.0f, +0.0f, -1.0f,       1.0f, 0.0f,
+                        -0.5f, -0.5f, +0.5f,         +0.0f, +0.0f, +1.0f,       0.0f, 0.0f,
+                        -0.5f, +0.5f, +0.5f,         +0.0f, +0.0f, +1.0f,       0.0f, 1.0f,
+                        +0.5f, +0.5f, +0.5f,         +0.0f, +0.0f, +1.0f,       1.0f, 1.0f,
+                        +0.5f, -0.5f, +0.5f,         +0.0f, +0.0f, +1.0f,       1.0f, 0.0f,
+                        -0.5f, -0.5f, -0.5f,         -1.0f, +0.0f, +0.0f,       0.0f, 0.0f,
+                        -0.5f, -0.5f, +0.5f,         -1.0f, +0.0f, +0.0f,       0.0f, 1.0f,
+                        -0.5f, +0.5f, +0.5f,         -1.0f, +0.0f, +0.0f,       1.0f, 1.0f,
+                        -0.5f, +0.5f, -0.5f,         -1.0f, +0.0f, +0.0f,       1.0f, 0.0f,
+                        +0.5f, -0.5f, -0.5f,         +1.0f, +0.0f, +0.0f,       0.0f, 0.0f,
+                        +0.5f, -0.5f, +0.5f,         +1.0f, +0.0f, +0.0f,       0.0f, 1.0f,
+                        +0.5f, +0.5f, +0.5f,         +1.0f, +0.0f, +0.0f,       1.0f, 1.0f,
+                        +0.5f, +0.5f, -0.5f,         +1.0f, +0.0f, +0.0f,       1.0f, 0.0f
                 };
         for (unsigned int i = 0; i < n_vertices; i++) {
             unsigned int offset = i * stride;
 
             Vertex vertex {};
             vertex.Position = glm::vec3(data[offset + 0], data[offset + 1], data[offset + 2]) * size;
-            vertex.Color     =glm::vec4(data[offset + 3], data[offset + 4], data[offset + 5],data[offset + 6]);
-            vertex.Normal    =glm::vec3(data[offset + 7], data[offset + 8], data[offset + 9]);
-            vertex.UV        =glm::vec2(data[offset + 10],data[offset + 11]);
+            vertex.Normal    =glm::vec3(data[offset + 3], data[offset + 4], data[offset + 5]);
+            vertex.UV        =glm::vec2(data[offset + 6],data[offset + 7]);
             vertices.push_back(vertex);
         }
 
@@ -179,7 +176,6 @@ namespace CsasEngine
         BufferLayout layout=
                 {
                         {ShaderDataType::Float3, "a_Position"},
-                        {ShaderDataType::Float4, "a_Color"},
                         {ShaderDataType::Float3, "a_Normal"},
                         {ShaderDataType::Float2, "a_UV"}
                 };
@@ -232,7 +228,6 @@ namespace CsasEngine
             unsigned int offset = i * stride;
             Vertex vertex {};
             vertex.Position = glm::vec3(data[offset + 0], data[offset + 1], 0.0f) * size;
-            vertex.Color =glm::vec4(1);
             vertex.Normal =glm::vec3(0,0,1);
             vertex.UV       = glm::vec2(data[offset + 2], data[offset + 3]);
             vertices.push_back(vertex);
@@ -245,7 +240,6 @@ namespace CsasEngine
         BufferLayout layout=
                 {
                         {ShaderDataType::Float3, "a_Position"},
-                        {ShaderDataType::Float4, "a_Color"},
                         {ShaderDataType::Float3, "a_Normal"},
                         {ShaderDataType::Float2, "a_UV"}
                 };
@@ -293,7 +287,6 @@ namespace CsasEngine
 
                 Vertex vertex {};
                 vertex.Position = glm::vec3(x, y, z);
-                vertex.Color    = glm::vec4(1);
                 vertex.Normal   = normalize(glm::vec3(a, b, c));
                 vertex.UV       = glm::vec2(u, v);
 
@@ -324,7 +317,6 @@ namespace CsasEngine
         BufferLayout layout=
                 {
                         {ShaderDataType::Float3, "a_Position"},
-                        {ShaderDataType::Float4, "a_Color"},
                         {ShaderDataType::Float3, "a_Normal"},
                         {ShaderDataType::Float2, "a_UV"}
                 };
@@ -338,7 +330,6 @@ namespace CsasEngine
         BufferLayout layout=
                 {
                         {ShaderDataType::Float3, "a_Position"},
-                        {ShaderDataType::Float4, "a_Color"},
                         {ShaderDataType::Float3, "a_Normal"},
                         {ShaderDataType::Float2, "a_UV"}
                 };

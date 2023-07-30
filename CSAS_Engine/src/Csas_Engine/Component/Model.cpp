@@ -84,7 +84,6 @@ namespace CsasEngine {
             vector.y = mesh->mVertices[i].y;
             vector.z = mesh->mVertices[i].z;
             vertex.Position = vector;
-            vertex.Color=glm::vec4(1);
             // normals
             if (mesh->HasNormals())
             {

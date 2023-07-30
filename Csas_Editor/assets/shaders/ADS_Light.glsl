@@ -5,9 +5,8 @@
 
 
 layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec4 a_Color;
-layout(location = 2) in vec3 a_Normal;
-layout(location = 3) in vec2 a_UV;
+layout(location = 1) in vec3 a_Normal;
+layout(location = 2) in vec2 a_UV;
 layout (std140, binding = 0) uniform Matrices
 {
     mat4 View;
@@ -16,9 +15,8 @@ layout (std140, binding = 0) uniform Matrices
 
 layout(location = 0) uniform  mat4 model;
 layout(location = 0)  out vec3 v_Position;
-layout(location = 1)  out vec4 v_Color;
-layout(location = 2)  out vec3 v_Normal;
-layout(location = 3)  out vec2 v_UV;
+layout(location = 1)  out vec3 v_Normal;
+layout(location = 2)  out vec2 v_UV;
 void getEyeSpace( out vec3 norm, out vec3 position )
 {
     norm = normalize(mat3(transpose(inverse(model*Camera.View))) * a_Normal);
@@ -27,7 +25,6 @@ void getEyeSpace( out vec3 norm, out vec3 position )
 void main()
 {
     getEyeSpace(v_Normal,v_Position);
-    v_Color  = a_Color;
     v_UV     = a_UV;
 
 
@@ -40,9 +37,8 @@ void main()
 #version 450 core
 layout(location = 0)  out vec4 color;
 layout(location = 0)  in vec3 v_Position;
-layout(location = 1)  in vec4 v_Color;
-layout(location = 2)  in vec3 v_Normal;
-layout(location = 3)  in vec2 v_UV;
+layout(location = 1)  in vec3 v_Normal;
+layout(location = 2)  in vec2 v_UV;
 struct LightInfo {
     vec3 Position;
     vec3 La;
@@ -80,7 +76,7 @@ void main()
 
     vec3 phone_re=phongModel(v_Position,v_Normal);
 
-    color = vec4(phone_re,1.0)*v_Color;
+    color = vec4(phone_re,1.0);
 
 
     //

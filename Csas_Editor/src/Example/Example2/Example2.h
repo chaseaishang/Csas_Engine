@@ -32,7 +32,7 @@ namespace CsasEngine {
 
         Ref<Scene> m_ActiveScene;
         Entity m_Cube;
-        Entity m_Quad;
+
         Entity m_Torus;
         Entity m_Sphere;
         Entity m_teapot;

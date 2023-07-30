@@ -20,9 +20,7 @@ namespace CsasEngine {
         Cube.AddComponent<Material_BasePBR>();
         m_Cube = Cube;
 
-        m_Quad = m_ActiveScene->CreateEntity("Quad");
-        m_Quad.AddComponent<MeshComponent>(Primitive::Quad);
-        m_Quad.AddComponent<Material_BasePrimitive>();
+
 
         m_Sphere=m_ActiveScene->CreateEntity("Sphere");
         m_Sphere.AddComponent<MeshComponent>(Primitive::Sphere);

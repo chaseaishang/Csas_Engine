@@ -158,6 +158,24 @@ namespace CsasEngine {
                 ImGui::TreePop();
             }
         }
+        if(entity.HasComponent<ModelComponent>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(ModelComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+            {
+                auto& model = entity.GetComponent<ModelComponent>();
+                auto&tc=model.meshComponents[0].transform;
+                DrawVec3Control("Translation", tc.Translation);
+                glm::vec3 rotation = glm::degrees(tc.Rotation);
+                DrawVec3Control("Rotation", rotation);
+                tc.Rotation = glm::radians(rotation);
+                DrawVec3Control("Scale", tc.Scale, 1.0f);
+
+
+
+
+                ImGui::TreePop();
+            }
+        }
         if(entity.HasComponent<MeshComponent>())
         {
             if (ImGui::TreeNodeEx((void*)typeid(MeshComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
