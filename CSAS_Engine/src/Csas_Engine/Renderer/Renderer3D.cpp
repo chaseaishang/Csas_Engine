@@ -111,7 +111,10 @@ namespace CsasEngine {
         RenderCommand::DrawIndexed(vao);
     }
 
-    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BasePBR &material,std::vector<SpotLightComponent>&Spotlights)
+    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera,
+                              Material_BasePBR &material,
+                              std::vector<SpotLightComponent>&Spotlights,
+                              std::vector<DirectionLightComponent>&Direction_lights)
     {
         auto &vao=mesh.m_VAO;
         CameraSpec::ViewProjMatrix[0]=camera.GetView();
@@ -127,7 +130,7 @@ namespace CsasEngine {
 
 
         //material Update
-        material.Update(transform,Spotlights);
+        material.Update(CameraSpec::ViewProjMatrix[0],transform,Spotlights,Direction_lights);
 
         vao->Bind();
         RenderCommand::DrawIndexed(vao);

@@ -6,6 +6,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <Csas_Engine/Renderer/Buffer.h>
 #include "Csas_Engine/Renderer/Texture.h"
 
 namespace CsasEngine {
@@ -45,7 +46,8 @@ namespace CsasEngine {
             meshes.push_back(processMesh(mesh, scene));
         }
         // 接下来对它的子节点重复这一过程
-        for (unsigned int i = 0; i < node->mNumChildren; i++) {
+        for (unsigned int i = 0; i < node->mNumChildren; i++)
+        {
             processNode(node->mChildren[i], scene);
         }
     }
@@ -54,7 +56,26 @@ namespace CsasEngine {
     {
         for(auto&mesh:meshes)
         {
-            meshComponents.push_back(MeshComponent(mesh.m_vertices,mesh.m_indices));
+            BufferLayout layout;
+            switch (mesh.materialType)
+            {
+                case MaterialType::BasePBR:
+                {
+                    layout={
+                            {ShaderDataType::Float3, "a_Position"},
+                            {ShaderDataType::Float3, "a_Normal"},
+                            {ShaderDataType::Float2, "a_UV"}
+                            };
+                    break;
+                };
+                default:
+                {
+                    CSAS_CORE_ERROR("Unknown Material Type");
+                }
+
+
+            }
+            meshComponents.push_back(MeshComponent(mesh.m_vertices,mesh.m_indices,layout));
 
         }
 
@@ -126,11 +147,30 @@ namespace CsasEngine {
                 indices.push_back(face.mIndices[j]);
         }
         // process materials
+        MaterialType type;
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        if(material->GetTextureCount(aiTextureType_DIFFUSE)>0)
+        {
+
+            aiString str;
+            material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+
+            CSAS_CORE_ERROR("Now we don't have other material");
+
+        }
+        else
+        {
+            type=MaterialType::BasePBR;
+
+        }
+
+
+
+
 
 
 
         // return a mesh object created from the extracted mesh data
-        return MeshData{vertices, indices};
+        return MeshData{vertices, indices,type};
     }
 }

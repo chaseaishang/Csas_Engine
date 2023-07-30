@@ -55,7 +55,7 @@ namespace CsasEngine {
 
     public:
         Material_BasePBR();
-        void Update(glm::mat4 & model,std::vector<SpotLightComponent>&spots);
+        void Update(glm::mat4 & CameraView,glm::mat4 & model,std::vector<SpotLightComponent>&spots,std::vector<DirectionLightComponent>&Direction_lights);
         ~Material_BasePBR() override =default ;
         MaterialInfo materialInfo;
 

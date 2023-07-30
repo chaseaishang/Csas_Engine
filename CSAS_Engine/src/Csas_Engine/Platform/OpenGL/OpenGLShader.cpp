@@ -443,7 +443,10 @@ namespace CsasEngine
     {
         UploadUniformIntArray(name, values, count);
     }
-
+    void OpenGLShader::SetBoolean(const std::string& name, bool value)
+    {
+        UploadUniformBoolean(name,value);
+    }
     void OpenGLShader::SetFloat(const std::string& name, float value)
     {
         CSAS_PROFILE_FUNCTION();
@@ -490,7 +493,11 @@ namespace CsasEngine
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());
         glUniform1iv(location, count, values);
     }
-
+    void OpenGLShader::UploadUniformBoolean(const std::string& name, float value)
+    {
+        GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        glUniform1i(location,value);
+    }
     void OpenGLShader::UploadUniformFloat(const std::string& name, float value)
     {
         GLint location = glGetUniformLocation(m_RendererID, name.c_str());

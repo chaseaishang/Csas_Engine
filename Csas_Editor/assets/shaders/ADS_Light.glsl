@@ -45,19 +45,50 @@ struct LightInfo {
     vec3 Ld;
     vec3 Ls;
 };
+struct DirLight
+{
+    vec3 direction;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
 struct MaterialInfo {
     vec3 Ka;
     vec3 Kd;
     vec3 Ks;
     float Shininess;
 };
+uniform bool     DirLightsEnable=false;
 uniform LightInfo Light;
+uniform DirLight  DirLights;
 uniform MaterialInfo Material;
-
-vec3 phongModel( vec3 position, vec3 norm )
+vec3 CalcDirLight(DirLight light, vec3 position, vec3 normal)
 {
-    vec3 s = normalize(vec3(Light.Position - position));
-    vec3 v = normalize(-position.xyz);
+    vec3 s = normalize(light.direction);
+    vec3 v = normalize(-position);
+    vec3 r = reflect( -s, normal );
+    vec3 ambient = light.ambient * Material.Ka;
+    float sDotN = max( dot(s,normal), 0.0 );
+    vec3 diffuse = light.direction * Material.Kd * sDotN;
+    vec3 spec = vec3(0.0);
+    if( sDotN > 0.0 )
+    {
+        spec = light.specular * Material.Ks *
+        pow( max( dot(r,v), 0.0 ), Material.Shininess );
+    }
+    return ambient + diffuse + spec;
+}
+layout (std140, binding = 0) uniform Matrices
+{
+    mat4 View;
+    mat4 Projection;
+}Camera;
+vec3 ads( int lightIndex, vec3 position, vec3 norm )
+{
+
+    vec3 s = normalize(Light.Position - position);
+
+    vec3 v = normalize(vec3(-position));
     vec3 r = reflect( -s, norm );
     vec3 ambient = Light.La * Material.Ka;
     float sDotN = max( dot(s,norm), 0.0 );
@@ -69,6 +100,18 @@ vec3 phongModel( vec3 position, vec3 norm )
         pow( max( dot(r,v), 0.0 ), Material.Shininess );
     }
     return ambient + diffuse + spec;
+
+}
+vec3 phongModel( vec3 position, vec3 norm )
+{
+    vec3 re_light=vec3(0);
+    re_light +=ads(0,position,norm);
+    if(DirLightsEnable)
+    {
+        re_light +=CalcDirLight(DirLights,position,norm);
+    }
+
+    return re_light;
 }
 void main()
 {

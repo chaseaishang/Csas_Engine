@@ -31,5 +31,21 @@ namespace CsasEngine {
         ~SpotLightComponent()=default;
     };
 
+    //Position use as direction
+    struct DirectionLightComponent:public LightComponent
+    {
+    public:
+        glm::vec4 color={1,1,1,1};// @TODO temp
+    public:
+
+        glm::vec3 La={ 0.4f, 0.4f, 0.4f};
+        glm::vec3 Ld{1.0f, 1.0f, 1.0f};
+        glm::vec3 Ls{1.0f, 1.0f, 1.0f};
+    public:
+        DirectionLightComponent( glm::vec3 position={5.0f,5.0f,2.0f})
+                :LightComponent(position){};
+        ~DirectionLightComponent()=default;
+    };
+
 
 }

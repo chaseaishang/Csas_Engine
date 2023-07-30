@@ -7,12 +7,14 @@
 class aiNode;
 class aiScene;
 #include "Mesh.h"
+#include "Material.h"
 namespace CsasEngine
 {
     struct MeshData
     {
         std::vector<Vertex> m_vertices;
         std::vector<uint32_t> m_indices;
+        MaterialType materialType;
     };
 
 

@@ -39,21 +39,52 @@ namespace CsasEngine {
         materialInfo.Shininess=100.0f;
     }
 
-    void Material_BasePBR::Update(glm::mat4 &model,std::vector<SpotLightComponent>&spots)
+    void Material_BasePBR::Update(glm::mat4 & CameraView,glm::mat4 &model,
+        std::vector<SpotLightComponent>&spots,std::vector<DirectionLightComponent>&Direction_lights)
     {
         m_Shader->Bind();
         m_Shader->SetMat4("model",model);
 
-        auto&light=spots[0];// temp
-        m_Shader->SetFloat3("Light.Position",light.position);
-        m_Shader->SetFloat3("Light.La",light.La);
-        m_Shader->SetFloat3("Light.Ld",light.Ld);
-        m_Shader->SetFloat3("Light.Ls",light.Ls);
+        {
+            m_Shader->SetFloat3("Material.Ka", materialInfo.Ka);
+            m_Shader->SetFloat3("Material.Kd", materialInfo.Kd);
+            m_Shader->SetFloat3("Material.Ks", materialInfo.Ks);
+            m_Shader->SetFloat("Material.Shininess", materialInfo.Shininess);
+        }
+        {
+            auto &light = spots[0];// temp
+            light.position = glm::vec3(CameraView * glm::vec4(light.position, 0));
+            m_Shader->SetFloat3("Light.Position", light.position);
+            m_Shader->SetFloat3("Light.La", light.La);
+            m_Shader->SetFloat3("Light.Ld", light.Ld);
+            m_Shader->SetFloat3("Light.Ls", light.Ls);
 
-        m_Shader->SetFloat3("Material.Ka",materialInfo.Ka);
-        m_Shader->SetFloat3("Material.Kd",materialInfo.Kd);
-        m_Shader->SetFloat3("Material.Ks",materialInfo.Ks);
-        m_Shader->SetFloat("Material.Shininess",materialInfo.Shininess);
+
+        }
+        {
+            if(int size=Direction_lights.size();size>0)
+            {
+                m_Shader->SetBoolean("DirLightsEnable", true);
+                auto direct_light=Direction_lights[0];
+                direct_light.position = glm::vec3(CameraView * glm::vec4(direct_light.position, 0));
+                m_Shader->SetFloat3("DirLights.direction", direct_light.position);
+                m_Shader->SetFloat3("DirLights.ambient", direct_light.La);
+                m_Shader->SetFloat3("DirLights.diffuse", direct_light.Ld);
+                m_Shader->SetFloat3("DirLights.specular", direct_light.Ls);
+            }
+            else
+            {
+                m_Shader->SetBoolean("DirLightsEnable",false);
+            }
+
+
+
+
+        }
+
+
+
+
 
     }
 

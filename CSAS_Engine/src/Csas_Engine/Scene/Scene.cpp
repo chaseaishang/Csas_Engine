@@ -49,6 +49,7 @@ namespace CsasEngine {
     void Scene::On3DUpdate(Camera &main_camera, glm::mat4 &cameraTransform)
     {
         std::vector<SpotLightComponent>Spotlights;
+        std::vector<DirectionLightComponent>Direction_lights;
         {//light
 
             m_Registry.view<SpotLightComponent>().each(
@@ -57,6 +58,13 @@ namespace CsasEngine {
                 Spotlights.push_back(spot);
 
             }
+            );
+            m_Registry.view<DirectionLightComponent>().each(
+                    [&](auto entity, auto &direct)
+                    {
+                        Direction_lights.push_back(direct);
+
+                    }
             );
 
         }
@@ -69,7 +77,7 @@ namespace CsasEngine {
             {
                 auto [material,mesh ] = group.get<Material_BasePBR, MeshComponent>(entity);
 
-                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
+                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights,Direction_lights);
             }
         }
         {
@@ -80,7 +88,7 @@ namespace CsasEngine {
                 auto [material,model]=view.get<Material_BasePBR,ModelComponent>(entity);
 
                 auto mesh=model.meshComponents[0];
-                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
+                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights,Direction_lights);
             }
         }
 

@@ -67,6 +67,8 @@ namespace CsasEngine {
     void EditorUI::DrawSpotLight(SpotLightComponent &spot)
     {
         SpotLightComponent temp=spot;
+        if(ImGui::DragFloat3("Position",glm::value_ptr(temp.position)))
+            spot.position=temp.position;
         if(ImGui::DragFloat3("Ka",glm::value_ptr(temp.La),0.2,0,1))
             spot.La=temp.La;
         if(ImGui::DragFloat3("Kd",glm::value_ptr(temp.Ld),0.2,0,1))
@@ -74,6 +76,19 @@ namespace CsasEngine {
         if(ImGui::DragFloat3("Ks",glm::value_ptr(temp.Ls),0.2,0,1))
             spot.Ls=temp.Ls;
 
+    }
+
+    void EditorUI::DrawDirect_Light(DirectionLightComponent &direct_light)
+    {
+        DirectionLightComponent temp=direct_light;
+        if(ImGui::DragFloat3("Direction",glm::value_ptr(temp.position)))
+            direct_light.position=temp.position;
+        if(ImGui::DragFloat3("Ka",glm::value_ptr(temp.La),0.2,0,1))
+            direct_light.La=temp.La;
+        if(ImGui::DragFloat3("Kd",glm::value_ptr(temp.Ld),0.2,0,1))
+            direct_light.Ld=temp.Ld;
+        if(ImGui::DragFloat3("Ks",glm::value_ptr(temp.Ls),0.2,0,1))
+            direct_light.Ls=temp.Ls;
     }
 
 

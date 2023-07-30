@@ -13,6 +13,7 @@ namespace CsasEngine {
         static void MenuSetting();
         static void DrawMaterial_PBR(Material_BasePBR&material);
         static void DrawSpotLight(SpotLightComponent&spot);
+        static void DrawDirect_Light(DirectionLightComponent&direct_light);
     };
 }
 

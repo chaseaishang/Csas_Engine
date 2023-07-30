@@ -20,6 +20,7 @@ namespace CsasEngine {
         virtual void UseSubroutines(const std::string& name, Shader_Type type)override;
         virtual void SetInt(const std::string& name, int value) override;
         virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
+        virtual void SetBoolean(const std::string& name, bool value) override;
         virtual void SetFloat(const std::string& name, float value) override;
         virtual void SetFloat2(const std::string& name, const glm::vec2& value) override;
         virtual void SetFloat3(const std::string& name, const glm::vec3& value) override;
@@ -31,6 +32,7 @@ namespace CsasEngine {
         void UploadUniformInt(const std::string& name, int value);
         void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);
 
+        void UploadUniformBoolean(const std::string& name, float value);
         void UploadUniformFloat(const std::string& name, float value);
         void UploadUniformFloat2(const std::string& name, const glm::vec2& value);
         void UploadUniformFloat3(const std::string& name, const glm::vec3& value);

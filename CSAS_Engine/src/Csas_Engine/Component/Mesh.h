@@ -34,7 +34,7 @@ namespace CsasEngine
         void Update();
         MeshComponent()=default;
         MeshComponent(Primitive primitive=Primitive::None);
-        MeshComponent(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices);
+        MeshComponent(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices,BufferLayout&layout);
         ~MeshComponent()=default;
 
     private:

@@ -324,15 +324,9 @@ namespace CsasEngine
 
     }
 
-    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices)
+    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,BufferLayout&layout)
     {
         m_primitive=Primitive::FromModel;
-        BufferLayout layout=
-                {
-                        {ShaderDataType::Float3, "a_Position"},
-                        {ShaderDataType::Float3, "a_Normal"},
-                        {ShaderDataType::Float2, "a_UV"}
-                };
         CreateBuffers(vertices,indices,layout);
     }
 
