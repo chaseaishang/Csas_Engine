@@ -101,6 +101,17 @@ namespace CsasEngine {
                 Renderer3D::DrawMesh(mesh, main_camera, material);
             }
         }
+        {
+            auto view = m_Registry.view<Material_Cartoon, MeshComponent>();
+            for(auto entity: view)
+            {
+                //auto [pos, vel] = view.get<position, velocity>(entity);
+                auto [material,mesh]=view.get<Material_Cartoon,MeshComponent>(entity);
+
+
+                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
+            }
+        }
 
 
 

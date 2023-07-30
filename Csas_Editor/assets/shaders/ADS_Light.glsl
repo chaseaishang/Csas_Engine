@@ -89,7 +89,8 @@ vec3 ads( int lightIndex, vec3 position, vec3 norm )
     vec3 s = normalize(Light.Position - position);
 
     vec3 v = normalize(vec3(-position));
-    vec3 r = reflect( -s, norm );
+    vec3 h = normalize( v + s );
+//    vec3 r = reflect( -s, norm );
     vec3 ambient = Light.La * Material.Ka;
     float sDotN = max( dot(s,norm), 0.0 );
     vec3 diffuse = Light.Ld * Material.Kd * sDotN;
@@ -97,7 +98,7 @@ vec3 ads( int lightIndex, vec3 position, vec3 norm )
     if( sDotN > 0.0 )
     {
         spec = Light.Ls * Material.Ks *
-        pow( max( dot(r,v), 0.0 ), Material.Shininess );
+        pow( max( dot(h,norm), 0.0 ), Material.Shininess );
     }
     return ambient + diffuse + spec;
 

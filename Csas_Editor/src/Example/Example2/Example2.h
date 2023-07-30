@@ -39,6 +39,9 @@ namespace CsasEngine {
         Entity SpotLights;
         Entity DirectionLights;
         Entity m_CameraEntity;
+        Entity Cartoon_torus;
+        Entity Cartoon__Sphere;
+
         bool m_PrimaryCamera = true;
         Ref <Texture2D> m_CheckerboardTexture;
         glm::vec2 m_ViewportSize = { 0.0f, 0.0f };

@@ -119,21 +119,31 @@ namespace CsasEngine {
         auto &vao=mesh.m_VAO;
         CameraSpec::ViewProjMatrix[0]=camera.GetView();
         CameraSpec::ViewProjMatrix[1]=camera.GetProjection();
-
         s_Data->CameraUBO->SetData(glm::value_ptr(CameraSpec::ViewProjMatrix[0]),sizeof(CameraSpec::ViewProjMatrix));
         auto transform=mesh.transform.GetTransform();
-
-
         mesh.Update();
-
-
-
-
         //material Update
         material.Update(CameraSpec::ViewProjMatrix[0],transform,Spotlights,Direction_lights);
 
         vao->Bind();
         RenderCommand::DrawIndexed(vao);
+    }
+
+    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_Cartoon &material,
+                              std::vector<SpotLightComponent> &Spotlights)
+    {
+
+        auto &vao=mesh.m_VAO;
+        CameraSpec::ViewProjMatrix[0]=camera.GetView();
+        CameraSpec::ViewProjMatrix[1]=camera.GetProjection();
+        s_Data->CameraUBO->SetData(glm::value_ptr(CameraSpec::ViewProjMatrix[0]),sizeof(CameraSpec::ViewProjMatrix));
+        auto transform=mesh.transform.GetTransform();
+        mesh.Update();
+        //material Update
+        material.Update(CameraSpec::ViewProjMatrix[0],transform,Spotlights);
+        vao->Bind();
+        RenderCommand::DrawIndexed(vao);
+
     }
 
 

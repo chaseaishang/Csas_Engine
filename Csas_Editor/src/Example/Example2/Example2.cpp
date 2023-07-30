@@ -38,6 +38,15 @@ namespace CsasEngine {
         m_teapot=m_ActiveScene->CreateEntity("teapot");
         m_teapot.AddComponent<ModelComponent>("./assets/model/teapot.obj");
         m_teapot.AddComponent<Material_BasePBR>();
+        //Cartoon
+        Cartoon_torus=m_ActiveScene->CreateEntity("Cartoon_torus");
+        Cartoon_torus.AddComponent<MeshComponent>(Primitive::Torus);
+        Cartoon_torus.AddComponent<Material_Cartoon>();
+
+        Cartoon__Sphere=m_ActiveScene->CreateEntity("Cartoon__Sphere");
+        Cartoon__Sphere.AddComponent<MeshComponent>(Primitive::Sphere);
+        Cartoon__Sphere.AddComponent<Material_Cartoon>();
+
 
         //Camera
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");

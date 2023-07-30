@@ -11,7 +11,8 @@ namespace CsasEngine {
     enum class MaterialType
     {
         BasePrimitive,
-        BasePBR
+        BasePBR,
+        Cartoon
     };
     struct Material
     {
@@ -38,13 +39,6 @@ namespace CsasEngine {
     };
     struct Material_BasePBR:public Material
     {
-        struct SpotLightInfo
-        {
-            uint8_t nums;
-            glm::vec3 *Las;
-            glm::vec3 *Lds;
-            glm::vec3 *Lss;
-        };
 
         struct MaterialInfo {
             glm::vec3 Ka;
@@ -60,6 +54,24 @@ namespace CsasEngine {
         MaterialInfo materialInfo;
 
     };
+    struct Material_Cartoon:public Material
+    {
+
+        struct MaterialInfo {
+            glm::vec3 Ka;
+            glm::vec3 Kd;
+            int size;
+            float scaleFactor;
+        };
+
+    public:
+        Material_Cartoon();
+        void Update(glm::mat4 & CameraView,glm::mat4 & model,std::vector<SpotLightComponent>&spots);
+        ~Material_Cartoon() override =default ;
+        MaterialInfo materialInfo;
+
+    };
+
 }
 
 

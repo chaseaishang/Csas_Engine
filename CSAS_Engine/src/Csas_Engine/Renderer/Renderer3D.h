@@ -29,6 +29,9 @@ namespace CsasEngine {
                              std::vector<SpotLightComponent>&Spotlights,
                              std::vector<DirectionLightComponent>&Direction_lights
                              );
+        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_Cartoon&material,
+                             std::vector<SpotLightComponent>&Spotlights
+        );
         static void DrawTestUniforBLock();
         // Primitives
 

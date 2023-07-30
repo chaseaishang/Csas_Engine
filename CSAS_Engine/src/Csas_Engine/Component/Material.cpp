@@ -25,13 +25,14 @@ namespace CsasEngine {
         m_Shader->Bind();
         m_Shader->SetMat4("model",model);
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////Material_BasePBR//////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
 
     Material_BasePBR::Material_BasePBR()
     {
         type = MaterialType::BasePBR;
-        //ADS_Light_two_side
-        //ADS_Light
         m_Shader = Shader::Create("./assets/shaders/ADS_Light.glsl");
         materialInfo.Ka={0.9f, 0.5f, 0.3f};
         materialInfo.Kd={0.9f, 0.5f, 0.3f};
@@ -78,16 +79,36 @@ namespace CsasEngine {
             }
 
 
-
-
         }
 
-
-
-
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////Material_Cartoon//////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    Material_Cartoon::Material_Cartoon()
+    {
+        type = MaterialType::Cartoon;
+        m_Shader = Shader::Create("./assets/shaders/Cartoon.glsl");
+        materialInfo.Ka={0.9f, 0.5f, 0.3f};
+        materialInfo.Kd={0.9f, 0.5f, 0.3f};
 
     }
+    void Material_Cartoon::Update(glm::mat4 &CameraView, glm::mat4 &model, std::vector<SpotLightComponent> &spots)
+    {
+        m_Shader->Bind();
+        m_Shader->SetMat4("model",model);
+        {
+            m_Shader->SetFloat3("Material.Ka", materialInfo.Ka);
+            m_Shader->SetFloat3("Material.Kd", materialInfo.Kd);
+        }
+        {
+            auto &light = spots[0];// temp
+            light.position = glm::vec3(CameraView * glm::vec4(light.position, 0));
+            m_Shader->SetFloat3("Light.position", light.position);
+            m_Shader->SetFloat3("Light.intensity", light.La);
+        }
 
+    }
 
 
 }
