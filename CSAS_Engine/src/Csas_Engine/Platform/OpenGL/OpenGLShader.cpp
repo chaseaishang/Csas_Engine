@@ -71,7 +71,11 @@ namespace CsasEngine
             // TODO: make sure the assets directory is valid
             return "assets/cache/shader/opengl";
         }
-
+        static const char* GetShaderSourceCacheDirectory()
+        {
+            // TODO: make sure the assets directory is valid
+            return "assets/cache/shaderSource/opengl";
+        }
         static void CreateCacheDirectoryIfNeeded()
         {
             std::string cacheDirectory = GetCacheDirectory();
@@ -92,7 +96,24 @@ namespace CsasEngine
 
         Utils::CreateCacheDirectoryIfNeeded();
 
-        std::string source = ReadFile(filepath);
+        std::string source = Shadinclude::load(filepath);
+        #ifdef ShaderDebug
+
+        std::filesystem::path cacheDirectory = Utils::GetShaderSourceCacheDirectory();
+
+        std::filesystem::path shaderFilePath = filepath;
+        std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() +m_Name);
+            std::ofstream out(cachedPath,std::ios::out | std::ios::binary);
+            if(out.is_open()&&m_write)
+            {
+
+                out.write(source.c_str(),source.size());
+
+
+            }
+        out.close();
+
+        #endif
         auto shaderSources = PreProcess(source);
 
         {

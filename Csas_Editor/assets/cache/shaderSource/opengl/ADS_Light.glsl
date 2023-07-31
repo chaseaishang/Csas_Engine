@@ -7,7 +7,21 @@
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_UV;
-#include Camera.glsl
+layout (std140, binding = 0) uniform Matrices
+{
+    mat4 View;
+    mat4 Projection;
+}Camera;
+#ifndef TOOLS_H
+#define TOOLS_H
+
+const int temp=1;
+
+
+
+
+
+#endif
 
 layout(location = 0) uniform  mat4 model;
 layout(location = 0)  out vec3 v_Position;
@@ -35,7 +49,21 @@ layout(location = 0)  out vec4 color;
 layout(location = 0)  in vec3 v_Position;
 layout(location = 1)  in vec3 v_Normal;
 layout(location = 2)  in vec2 v_UV;
-#include Camera.glsl
+layout (std140, binding = 0) uniform Matrices
+{
+    mat4 View;
+    mat4 Projection;
+}Camera;
+#ifndef TOOLS_H
+#define TOOLS_H
+
+const int temp=1;
+
+
+
+
+
+#endif
 struct LightInfo {
     vec3 Position;
     vec3 La;

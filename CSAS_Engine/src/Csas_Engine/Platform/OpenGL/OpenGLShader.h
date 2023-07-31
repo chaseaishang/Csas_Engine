@@ -59,6 +59,7 @@ namespace CsasEngine {
 
         std::unordered_map<std::string,ShaderDataType> m_Uniform;
         bool ForRender=true;
+        bool m_write= false;
     };
 
 
