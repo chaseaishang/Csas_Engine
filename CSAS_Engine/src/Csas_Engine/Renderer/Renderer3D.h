@@ -32,6 +32,7 @@ namespace CsasEngine {
         static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_Cartoon&material,
                              std::vector<SpotLightComponent>&Spotlights
         );
+        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BaseBRDF&material);
         static void DrawTestUniforBLock();
         // Primitives
 

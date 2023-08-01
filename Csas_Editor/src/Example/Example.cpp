@@ -5,6 +5,7 @@
 #include "Example.h"
 #include "Example1/Example1.h"
 #include "Example2/Example2.h"
+#include "Example3/Example3.h"
 #include "ImGui/include/imgui.h"
 namespace CsasEngine
 {
@@ -17,7 +18,8 @@ namespace CsasEngine
     {
         RegisterExample<Example1>("Example1");
         RegisterExample<Example2>("Example2");
-        m_Instance=new Example2;
+        RegisterExample<Example3>("Example3");
+        m_Instance=new Example3;
     }
 
     void ExampleMenu::UnRegisterAllExample()

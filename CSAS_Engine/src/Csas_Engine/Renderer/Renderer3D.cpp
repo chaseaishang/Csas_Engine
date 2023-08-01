@@ -146,5 +146,19 @@ namespace CsasEngine {
 
     }
 
+    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BaseBRDF &material)
+    {
+        auto &vao=mesh.m_VAO;
+        CameraSpec::ViewProjMatrix[0]=camera.GetView();
+        CameraSpec::ViewProjMatrix[1]=camera.GetProjection();
+        s_Data->CameraUBO->SetData(glm::value_ptr(CameraSpec::ViewProjMatrix[0]),sizeof(CameraSpec::ViewProjMatrix));
+        auto transform=mesh.transform.GetTransform();
+        mesh.Update();
+        //material Update
+        material.Update(transform,CameraSpec::ViewProjMatrix[0]);
+        vao->Bind();
+        RenderCommand::DrawIndexed(vao);
+    }
+
 
 }

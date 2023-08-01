@@ -91,5 +91,10 @@ namespace CsasEngine {
             direct_light.Ls=temp.Ls;
     }
 
+    void EditorUI::DrawMaterial_PBR(Material_BaseBRDF &material)
+    {
+
+    }
+
 
 }

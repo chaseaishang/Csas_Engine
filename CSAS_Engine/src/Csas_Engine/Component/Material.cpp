@@ -111,4 +111,47 @@ namespace CsasEngine {
     }
 
 
+    Material_BaseBRDF::Material_BaseBRDF()
+    {
+        type=MaterialType::BaseBRDF;
+        m_Shader = Shader::Create("./assets/shaders/environment_BRDF.glsl");
+        m_Shader->Bind();
+        m_Shader->SetFloat("ao",ao);
+        m_Shader->SetFloat3("albedo",albedo);
+
+//        uniform float metallic;
+//        uniform float roughness;
+
+
+        lightPositions[0]={-10.0f,  10.0f, 10.0f};
+        lightPositions[1]={ 10.0f,  10.0f, 10.0f};
+        lightPositions[2]={-10.0f, -10.0f, 10.0f};
+        lightPositions[3]={10.0f, -10.0f, 10.0f};
+        lightColors[0]={300.0f, 300.0f, 300.0f};
+        lightColors[1]={300.0f, 300.0f, 300.0f};
+        lightColors[2]={300.0f, 300.0f, 300.0f};
+        lightColors[3]={300.0f, 300.0f, 300.0f};
+    }
+
+    void Material_BaseBRDF::Update(glm::mat4 &model,glm::mat4 &CameraView)
+    {
+        m_Shader->Bind();
+        m_Shader->SetMat4("model",model);
+//        uniform float metallic;
+//        uniform float roughness;
+        m_Shader->SetFloat("metallic",metallic);
+        m_Shader->SetFloat("roughness",roughness);
+
+        for(int i=0;i<4;i++)
+        {
+            std::string light_position="lightPositions[" + std::to_string(i)+']';
+            std::string light_color   ="lightColors["    + std::to_string(i)+']';
+            glm::vec3 position=glm::vec3(CameraView*glm::vec4(lightPositions[i],0.0));
+            m_Shader->SetFloat3(light_position,position);
+            m_Shader->SetFloat3(light_color,lightColors[i]);
+        }
+
+
+
+    }
 }

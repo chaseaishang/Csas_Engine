@@ -12,7 +12,8 @@ namespace CsasEngine {
     {
         BasePrimitive,
         BasePBR,
-        Cartoon
+        Cartoon,
+        BaseBRDF
     };
     struct Material
     {
@@ -71,7 +72,21 @@ namespace CsasEngine {
         MaterialInfo materialInfo;
 
     };
+    struct Material_BaseBRDF:public Material
+    {
+    public:
 
+        Material_BaseBRDF();
+        void Update(glm::mat4 & model,glm::mat4 &CameraView);
+        ~Material_BaseBRDF() override =default ;
+        glm::vec3 lightPositions[4];
+        glm::vec3 lightColors[4];
+        glm::vec3 albedo=glm::vec3(0.5f, 0.0f, 0.0f);
+        float ao=1.0f;
+        float metallic=0.5f;
+        float roughness=0.5f;
+
+    };
 }
 
 
