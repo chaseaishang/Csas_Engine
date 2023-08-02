@@ -69,6 +69,8 @@ namespace CsasEngine {
         SpotLightComponent temp=spot;
         if(ImGui::DragFloat3("Position",glm::value_ptr(temp.position)))
             spot.position=temp.position;
+        if(ImGui::DragFloat3("Color",glm::value_ptr(temp.color),10,0,1000))
+            spot.color=temp.color;
         if(ImGui::DragFloat3("Ka",glm::value_ptr(temp.La),0.2,0,1))
             spot.La=temp.La;
         if(ImGui::DragFloat3("Kd",glm::value_ptr(temp.Ld),0.2,0,1))

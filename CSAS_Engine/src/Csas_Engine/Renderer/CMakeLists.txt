@@ -22,6 +22,7 @@ target_include_directories(CSAS_Renderer
         ${VCPKGHEAD_PATH}
         )
 target_precompile_headers(CSAS_Renderer PRIVATE ${CSAS_ENGINE_SRC_PATH}/Csas_Engine/Csaspch.h)
+add_subdirectory(./RenderPipeline)
 target_sources(CSAS_Renderer
         PRIVATE
         ${RENDERER_DIR_LIB_SRCS}

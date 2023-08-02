@@ -41,7 +41,7 @@ uniform float ao;
 //      ao", 1.0
 //
 // lights
-
+uniform int  light_nums;
 uniform vec3 lightPositions[4];
 uniform vec3 lightColors[4];
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -61,7 +61,7 @@ void main()
     F0 = mix(F0, albedo, metallic);
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 4; ++i)
+    for(int i = 0; i < light_nums; ++i)
     {
         // calculate per-light radiance
         vec3 L = normalize(lightPositions[i] - v_Position);

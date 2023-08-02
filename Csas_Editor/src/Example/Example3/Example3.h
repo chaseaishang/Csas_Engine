@@ -36,7 +36,7 @@ namespace CsasEngine {
         Entity m_Cube;
         Entity m_Sphere;
 
-        Entity SpotLights;
+        Entity SpotLights[4];
 
         Entity m_CameraEntity;
 

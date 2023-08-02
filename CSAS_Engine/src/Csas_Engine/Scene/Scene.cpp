@@ -109,7 +109,7 @@ namespace CsasEngine {
                 auto [material,mesh]=view.get<Material_BaseBRDF,MeshComponent>(entity);
 
 
-                Renderer3D::DrawMesh(mesh, main_camera, material);
+                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
             }
         }
         {

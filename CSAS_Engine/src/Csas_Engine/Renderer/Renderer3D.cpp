@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "RenderCommand.h"
+#include "RenderPipeline/RenderPass.h"
 //Temp TODO remove
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -146,16 +147,18 @@ namespace CsasEngine {
 
     }
 
-    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BaseBRDF &material)
+    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BaseBRDF &material,
+                              std::vector<SpotLightComponent>&Spotlights)
     {
         auto &vao=mesh.m_VAO;
         CameraSpec::ViewProjMatrix[0]=camera.GetView();
         CameraSpec::ViewProjMatrix[1]=camera.GetProjection();
         s_Data->CameraUBO->SetData(glm::value_ptr(CameraSpec::ViewProjMatrix[0]),sizeof(CameraSpec::ViewProjMatrix));
+
         auto transform=mesh.transform.GetTransform();
         mesh.Update();
         //material Update
-        material.Update(transform,CameraSpec::ViewProjMatrix[0]);
+        material.Update(transform,CameraSpec::ViewProjMatrix[0],Spotlights);
         vao->Bind();
         RenderCommand::DrawIndexed(vao);
     }

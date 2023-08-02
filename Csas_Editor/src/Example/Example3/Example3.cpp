@@ -14,8 +14,19 @@ namespace CsasEngine {
         m_ActiveScene = CreateRef<Scene>();
         m_Scene = m_ActiveScene;
         // Entity
-        SpotLights=m_ActiveScene->CreateEntity("lights");
-        SpotLights.AddComponent<SpotLightComponent>();
+        glm::vec3 lightPositions[4];
+        lightPositions[0]={-10.0f,  10.0f, 10.0f};
+        lightPositions[1]={ 10.0f,  10.0f, 10.0f};
+        lightPositions[2]={-10.0f, -10.0f, 10.0f};
+        lightPositions[3]={10.0f, -10.0f, 10.0f};
+        for(int i=0;i<4;i++)
+        {
+            std::string name="Spotlight_"+std::to_string(i+1);
+            SpotLights[i]=m_ActiveScene->CreateEntity(name);
+            auto&spot=SpotLights[i].AddComponent<SpotLightComponent>(lightPositions[i]);
+            spot.color={300,300,300,1};
+        }
+
 
 //        DirectionLights=m_ActiveScene->CreateEntity("DirectionLights");
 //        DirectionLights.AddComponent<DirectionLightComponent>();
@@ -49,6 +60,8 @@ namespace CsasEngine {
                 metalness=(float)i / (float)3;
                 auto &roughness=material.roughness;
                 roughness=glm::clamp((float)j / (float)3, 0.05f, 1.0f);
+                auto &position =m_BRDF_Sphere[index].GetComponent<MeshComponent>().transform.Translation;
+                position={i,j,0};
 
 
             }
