@@ -37,7 +37,7 @@ namespace CsasEngine
         MeshComponent(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices,BufferLayout&layout);
         ~MeshComponent()=default;
 
-    private:
+    public:
         Ref<VertexArray> m_VAO;
         Ref<VertexBuffer>m_VBO;
         Ref<IndexBuffer>m_IBO;

@@ -7,6 +7,7 @@
 #include "CsasEngine.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Example/Example.h"
+#include "RenderPipeline/RenderPipeline.h"
 namespace CsasEngine {
 
 
@@ -27,6 +28,7 @@ namespace CsasEngine {
         Ref<Scene> m_ActiveScene= nullptr;
         static  bool switch_Scene;
         SceneCamera m_EditCamera;
+
         bool m_PrimaryCamera = true;
 
         bool m_ViewportFocused = false, m_ViewportHovered = false;
@@ -36,6 +38,7 @@ namespace CsasEngine {
         Example*m_example= nullptr;
         // Panels
         SceneHierarchyPanel m_SceneHierarchyPanel;
+
     };
 }
 

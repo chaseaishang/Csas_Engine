@@ -4,14 +4,18 @@
 
 #pragma once
 
+#include <Csas_Engine/Renderer/RenderPipeline/RenderData/RenderData.h>
 #include "PassNode.h"
-
+#include "Csas_Engine/Renderer/Framebuffer.h"
 namespace CsasEngine
 {
 
     struct Material_BaseBRDF;
     struct MeshComponent;
-
+    enum class RenderPassType
+    {
+        ForwardPass
+    };
     class RenderPass
     {
     public:
@@ -23,15 +27,17 @@ namespace CsasEngine
 //        virtual void FinishRenderer()=0;
     };
    //dispatch
+   //all need resource
     class ForwardPass : public RenderPass
     {
     public:
-        using MeshVector=std::vector<MeshComponent>;
-        using MaterialVector=std::vector<Material_BaseBRDF>;
-        using brdfNodeVector=std::vector<BRDFPassNode>;
-        using brdfNodeDataVector=std::vector<BRDFPassNode::BRDFPassData>;
+        using MeshVector=std::vector<MeshComponent*>;
+        using MaterialVector=std::vector<Material_BaseBRDF*>;
         using DataStruct=BRDFPassNode::BRDFPassData;
-        ForwardPass(MeshVector&meshs,MaterialVector&material);
+        ForwardPass(MeshVector&meshs,MaterialVector&material,Ref<Framebuffer> render_Target,
+        CameraPtr m_camera,
+        SpotLightPtrVec m_spots
+        );
         ~ForwardPass()override;
         void PrepareRenderer()override;
         void ExecuteRenderer()override;
@@ -39,10 +45,13 @@ namespace CsasEngine
 
 
     private:
-        brdfNodeVector brdfNodes;
+        BRDFPassNode brdfNode;
         MeshVector&meshs;
         MaterialVector&material;
-        brdfNodeDataVector datas;
+        Ref<Framebuffer> render_Target;
+        CameraPtr m_camera;
+        SpotLightPtrVec m_spots;
+        DataStruct m_data;
         //
         //mesh data vector
         //material

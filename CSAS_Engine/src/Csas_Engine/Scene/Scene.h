@@ -8,12 +8,14 @@
 #include "entt/include/entt.hpp"
 #include "Csas_Engine/Core/Timestep.h"
 #include "glm/glm.hpp"
+
 namespace CsasEngine
 {
 
-
+    class RenderPipeline;
     class Camera;
     class Entity;
+
     class Scene
     {
     friend class Entity;
@@ -26,6 +28,8 @@ namespace CsasEngine
         void OnViewportResize(uint32_t width, uint32_t height);
         void OnUpdate(Timestep ts);
         void SetSceneType(bool TwoDScene=true){m_2DScene=TwoDScene;};
+
+
     private:
         void On3DUpdate(Camera &main_camera,glm::mat4 &cameraTransform);
         void On2DUpdate(Camera &main_camera,glm::mat4 &cameraTransform);

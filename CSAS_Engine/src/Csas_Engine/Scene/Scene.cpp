@@ -8,6 +8,7 @@
 #include "Csas_Engine/Component/AllComponent.h"
 #include "Csas_Engine/Renderer/Renderer2D.h"
 #include "Csas_Engine/Renderer/Renderer3D.h"
+#include "Csas_Engine/Renderer/RenderPipeline/RenderPipeline.h"
 #include "SceneCamera.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
@@ -49,6 +50,7 @@ namespace CsasEngine {
     void Scene::On3DUpdate(Camera &main_camera, glm::mat4 &cameraTransform)
     {
         std::vector<SpotLightComponent>Spotlights;
+        std::vector<SpotLightComponent*>SpotlightsPtr;
         std::vector<DirectionLightComponent>Direction_lights;
         {//light
 
@@ -56,7 +58,7 @@ namespace CsasEngine {
                     [&](auto entity, auto &spot)
             {
                 Spotlights.push_back(spot);
-
+                SpotlightsPtr.push_back(&spot);
             }
             );
             m_Registry.view<DirectionLightComponent>().each(
@@ -68,7 +70,8 @@ namespace CsasEngine {
             );
 
         }
-
+        auto m_pipeline=RenderPipeline::getInstance();
+        m_pipeline->BeginPipeline(&main_camera,SpotlightsPtr);
 
         {
             auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>);
@@ -103,14 +106,24 @@ namespace CsasEngine {
         }
         {
             auto view = m_Registry.view<Material_BaseBRDF, MeshComponent>();
+
+            MeshPtrVec meshPtrVec;
+            MaterialPtrVec materialPtrVec;
+
             for(auto entity: view)
             {
                 //auto [pos, vel] = view.get<position, velocity>(entity);
                 auto [material,mesh]=view.get<Material_BaseBRDF,MeshComponent>(entity);
 
 
-                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
+                //Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
+                meshPtrVec.push_back(&mesh);
+                materialPtrVec.push_back(&material);
             }
+
+            struct RenderData data{meshPtrVec,materialPtrVec};
+
+            m_pipeline->Submit(data,0);
         }
         {
             auto view = m_Registry.view<Material_Cartoon, MeshComponent>();
@@ -120,33 +133,15 @@ namespace CsasEngine {
                 auto [material,mesh]=view.get<Material_Cartoon,MeshComponent>(entity);
 
 
-                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
+                //Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
             }
         }
+        m_pipeline->EndPipeline();
 
 
 
 
 
-
-//        Renderer3D::BeginScene(main_camera, cameraTransform);
-//        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-//        for (auto entity : group)
-//        {
-//            auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-//            auto style=sprite.style;
-//            if(style==0)
-//            {
-//                Renderer3D::DrawCube(transform.GetTransform(), sprite.Color);
-//            }
-//            else
-//            {
-//                Renderer3D::DrawSphere(transform.GetTransform(),sprite.Color);
-//            }
-//
-//        }
-//
-//        Renderer3D::EndScene();
     }
 
     void Scene::OnUpdate(Timestep ts) {
@@ -222,6 +217,7 @@ namespace CsasEngine {
         }
 
     }
+
 
 
 

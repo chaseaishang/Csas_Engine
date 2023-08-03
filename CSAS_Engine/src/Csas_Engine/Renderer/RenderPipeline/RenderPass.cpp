@@ -5,40 +5,47 @@
 #include "RenderPass.h"
 #include "PassNode.h"
 #include "Csas_Engine/Component/AllComponent.h"
+#include "Csas_Engine/Renderer/RenderCommand.h"
 namespace CsasEngine {
 
     void ForwardPass::PrepareRenderer()
     {
-        //gl clear color
-        for(int i=0;i<meshs.size();i++)
-        {
-            brdfNodes[i].OnPrepare(&datas[i]);
-        }
 
-        //brdfNode->OnPrepare(&data);
+
+
+        brdfNode.OnPrepare(&m_data);
     }
 
     void ForwardPass::ExecuteRenderer()
     {
 
-        //brdfNode->OnExecute();
+        brdfNode.OnExecute(&m_data);
     }
 
 
-    ForwardPass::ForwardPass(ForwardPass::MeshVector &meshs, ForwardPass::MaterialVector &material)
+    ForwardPass::ForwardPass(ForwardPass::MeshVector &meshs, ForwardPass::MaterialVector &material,
+                             Ref<Framebuffer> render_Target,
+                             CameraPtr m_camera,
+                             SpotLightPtrVec m_spots
+    )
     :meshs(meshs),material(material)
     {
-        for(int i=0;i<meshs.size();i++)
-        {
-            brdfNodes.push_back(BRDFPassNode());
-            datas.push_back(
-                    DataStruct
-                    {
-                        .material=&material[i],
-                        .ptr_spot_vec=nullptr
-                    }
-                    );
-        }
+        //std::vector<Material_BaseBRDF*> material;
+        //            std::vector<MeshComponent*>meshs;
+        //            std::vector<SpotLightComponent*>spots;
+        //            Ref<Framebuffer>fbo;
+        //            CameraPtr camera;
+        m_data={
+                        .material=material,
+                        .meshs=meshs,
+                        .spots=m_spots,
+                        .fbo=render_Target,
+                        .camera=m_camera,
+
+                    };
+
+        brdfNode=BRDFPassNode(m_data);
+
     }
 
 

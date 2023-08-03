@@ -6,7 +6,8 @@
 
 #include "ImGui/include/imgui.h"
 namespace CsasEngine {
-    void Example3::OnAttach() {
+    void Example3::OnAttach()
+    {
         CSAS_INFO("Switch to Example3");
         CSAS_PROFILE_FUNCTION();
         m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
@@ -14,6 +15,10 @@ namespace CsasEngine {
         m_ActiveScene = CreateRef<Scene>();
         m_Scene = m_ActiveScene;
         // Entity
+
+        auto renderPipeline=RenderPipeline::getInstance();
+        RenderIndex renderIndex=renderPipeline->BeginPass();
+        renderPipeline->SubmitPass(RenderPassType::ForwardPass);
         glm::vec3 lightPositions[4];
         lightPositions[0]={-10.0f,  10.0f, 10.0f};
         lightPositions[1]={ 10.0f,  10.0f, 10.0f};
@@ -32,16 +37,14 @@ namespace CsasEngine {
 //        DirectionLights.AddComponent<DirectionLightComponent>();
 
 
-        auto Cube = m_ActiveScene->CreateEntity("Green Cube");
-        Cube.AddComponent<MeshComponent>(Primitive::Cube);
-        Cube.AddComponent<Material_BasePBR>();
-        m_Cube = Cube;
+//        auto Cube = m_ActiveScene->CreateEntity("Green Cube");
+//        Cube.AddComponent<MeshComponent>(Primitive::Cube);
+//        Cube.AddComponent<Material_BasePBR>();
+//        m_Cube = Cube;
 
 
 
-        m_Sphere=m_ActiveScene->CreateEntity("Sphere");
-        m_Sphere.AddComponent<MeshComponent>(Primitive::Sphere);
-        m_Sphere.AddComponent<Material_BasePBR>();
+
         // BRDF
         for(int i=0;i<9;i++)
         {

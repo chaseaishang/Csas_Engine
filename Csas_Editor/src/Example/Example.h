@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CsasEngine.h"
+#include "Csas_Engine/Renderer/RenderPipeline/RenderPipeline.h"
 namespace CsasEngine {
     class Example {
     public:
@@ -22,9 +23,11 @@ namespace CsasEngine {
         virtual void OnEvent(Event &e) = 0;
         static Example*getInstance(){return m_Instance;};
         Ref<Scene>get_Scene(){return m_Scene;};
+
     protected:
         static Example*m_Instance;
         Ref<Scene> m_Scene;
+
 
     };
     class ExampleMenu: public Example

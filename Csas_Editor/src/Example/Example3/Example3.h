@@ -33,8 +33,7 @@ namespace CsasEngine {
 
         Entity m_BRDF_Sphere[9];
 
-        Entity m_Cube;
-        Entity m_Sphere;
+
 
         Entity SpotLights[4];
 

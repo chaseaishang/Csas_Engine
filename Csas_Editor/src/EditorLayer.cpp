@@ -34,6 +34,7 @@ namespace CsasEngine {
 
     void EditorLayer::OnDetach()
     {
+
         m_Framebuffer= nullptr;
         m_ActiveScene=nullptr;
         m_example= nullptr;
@@ -66,14 +67,23 @@ namespace CsasEngine {
 
         // Render
         Renderer3D::ResetStats();
+        //RenderPipeline  OnPrepare
+        //Submit/Update
+        //OnExecute
+        //OnDestroy
+        auto m_pipeline=RenderPipeline::getInstance();
+        m_pipeline->SetRenderTarget(m_Framebuffer);
+        m_pipeline->OnPrepare();
         m_Framebuffer->Bind();
 
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         RenderCommand::Clear();
-
+        //logic
         m_example->Update(ts);
         // Update scene
+        //Render
         m_ActiveScene->OnUpdate(ts);
+        m_pipeline->OnExecute();
 
         m_Framebuffer->Unbind();
 
