@@ -15,11 +15,12 @@ namespace CsasEngine
         using RenderPassVec    =std::vector<RenderPass*>;
         using RenderMap=std::unordered_map<RenderIndex,RenderPassTypeVec>;
         using RenderPassMap=std::unordered_map<RenderIndex,RenderPassVec>;
+
     public:
          void BeginPipeline(CameraPtr camera,SpotLightPtrVec spots );//camera
         //mesh light material
 
-         void Submit(RenderData data,RenderIndex nowIndex);
+         void Submit(RenderDataVec data,RenderIndex nowIndex);
          void EndPipeline();
          static RenderPipeline* getInstance(){return m_Instance;}
     public:

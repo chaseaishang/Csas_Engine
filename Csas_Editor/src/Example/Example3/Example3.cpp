@@ -17,8 +17,13 @@ namespace CsasEngine {
         // Entity
 
         auto renderPipeline=RenderPipeline::getInstance();
-        RenderIndex renderIndex=renderPipeline->BeginPass();
+        RenderIndex FirstIndex=renderPipeline->BeginPass();
         renderPipeline->SubmitPass(RenderPassType::ForwardPass);
+        renderPipeline->EndPass();
+
+        RenderIndex SecondIndex=renderPipeline->BeginPass();
+        renderPipeline->SubmitPass(RenderPassType::ForwardPass);
+        renderPipeline->EndPass();
         glm::vec3 lightPositions[4];
         lightPositions[0]={-10.0f,  10.0f, 10.0f};
         lightPositions[1]={ 10.0f,  10.0f, 10.0f};
@@ -33,24 +38,13 @@ namespace CsasEngine {
         }
 
 
-//        DirectionLights=m_ActiveScene->CreateEntity("DirectionLights");
-//        DirectionLights.AddComponent<DirectionLightComponent>();
-
-
-//        auto Cube = m_ActiveScene->CreateEntity("Green Cube");
-//        Cube.AddComponent<MeshComponent>(Primitive::Cube);
-//        Cube.AddComponent<Material_BasePBR>();
-//        m_Cube = Cube;
-
-
-
-
         // BRDF
         for(int i=0;i<9;i++)
         {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
             m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(name);
-            m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Sphere);
+            RenderIndex index=FirstIndex;
+            m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Sphere,index);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();
         }
         for(int i=0;i<3;i++)

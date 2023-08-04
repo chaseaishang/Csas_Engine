@@ -34,7 +34,8 @@ namespace CsasEngine
         using MeshVector=std::vector<MeshComponent*>;
         using MaterialVector=std::vector<Material_BaseBRDF*>;
         using DataStruct=BRDFPassNode::BRDFPassData;
-        ForwardPass(MeshVector&meshs,MaterialVector&material,Ref<Framebuffer> render_Target,
+
+        ForwardPass(RenderDataVec data,Ref<Framebuffer> render_Target,
         CameraPtr m_camera,
         SpotLightPtrVec m_spots
         );
@@ -46,11 +47,6 @@ namespace CsasEngine
 
     private:
         BRDFPassNode brdfNode;
-        MeshVector&meshs;
-        MaterialVector&material;
-        Ref<Framebuffer> render_Target;
-        CameraPtr m_camera;
-        SpotLightPtrVec m_spots;
         DataStruct m_data;
         //
         //mesh data vector

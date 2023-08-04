@@ -75,15 +75,16 @@ namespace CsasEngine {
 
 
             }
-            meshComponents.push_back(MeshComponent(mesh.m_vertices,mesh.m_indices,layout));
+            meshComponents.push_back(MeshComponent(mesh.m_vertices,mesh.m_indices,layout,this->RenderIndex));
 
         }
 
 
     }
 
-    ModelComponent::ModelComponent(std::string path)
+    ModelComponent::ModelComponent(std::string path,uint8_t RenderIndex)
     {
+        this->RenderIndex=RenderIndex;
         loadModel(path);
 
     }

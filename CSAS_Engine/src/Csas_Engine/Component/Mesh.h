@@ -27,14 +27,15 @@ namespace CsasEngine
     public:
         friend class Renderer3D;
         enum Primitive m_primitive{Primitive::None};
+        uint8_t RenderIndex=0;
         TransformComponent transform{glm::vec3(0)};
         std::vector<Vertex> m_vertices;
 
         std::vector<uint32_t> m_indices;
         void Update();
         MeshComponent()=default;
-        MeshComponent(Primitive primitive=Primitive::None);
-        MeshComponent(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices,BufferLayout&layout);
+        MeshComponent(Primitive primitive=Primitive::None,uint8_t RenderIndex=0);
+        MeshComponent(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices,BufferLayout&layout,uint8_t RenderIndex);
         ~MeshComponent()=default;
 
     public:

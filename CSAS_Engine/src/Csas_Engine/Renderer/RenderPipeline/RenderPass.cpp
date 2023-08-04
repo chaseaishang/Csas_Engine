@@ -23,27 +23,25 @@ namespace CsasEngine {
     }
 
 
-    ForwardPass::ForwardPass(ForwardPass::MeshVector &meshs, ForwardPass::MaterialVector &material,
-                             Ref<Framebuffer> render_Target,
+    ForwardPass::ForwardPass(RenderDataVec data,Ref<Framebuffer> render_Target,
                              CameraPtr m_camera,
                              SpotLightPtrVec m_spots
     )
-    :meshs(meshs),material(material)
     {
-        //std::vector<Material_BaseBRDF*> material;
-        //            std::vector<MeshComponent*>meshs;
-        //            std::vector<SpotLightComponent*>spots;
-        //            Ref<Framebuffer>fbo;
-        //            CameraPtr camera;
         m_data={
-                        .material=material,
-                        .meshs=meshs,
-                        .spots=m_spots,
-                        .fbo=render_Target,
-                        .camera=m_camera,
-
-                    };
-
+                .material=std::vector<Material_BaseBRDF*>(),
+                .meshs=std::vector<MeshComponent*>(),
+                .spots=m_spots,
+                .fbo=render_Target,
+                .camera=m_camera,
+        };
+        auto&meshvec=m_data.meshs;
+        auto&material=m_data.material;
+        for(auto&single:data)
+        {
+            meshvec.push_back(single.meshPtr);
+            material.push_back(static_cast<Material_BaseBRDF*>(single.materialPtr));
+        }
         brdfNode=BRDFPassNode(m_data);
 
     }

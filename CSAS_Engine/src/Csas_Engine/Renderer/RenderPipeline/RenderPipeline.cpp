@@ -4,6 +4,7 @@
 
 #include "RenderPipeline.h"
 #include "Csas_Engine/Renderer/Framebuffer.h"
+#include "RenderData/RenderData.h"
 namespace CsasEngine
 {
 
@@ -21,8 +22,15 @@ namespace CsasEngine
     {
 
     }
+    //using RenderSingleData=struct
+    //    {
+    //        MeshComponent*meshPtr;
+    //        Material*materialPtr;
+    //    };
+    //    using RenderDataVec=std::vector<RenderSingleData>;
     //creat pass node
-    void RenderPipeline::Submit(RenderData data,RenderIndex nowIndex)
+    //void Submit(RenderDataVec data,RenderIndex nowIndex);
+    void RenderPipeline::Submit(RenderDataVec data,RenderIndex nowIndex)
     {
         g_nowIndex=nowIndex;
         auto& vec=map[g_nowIndex];
@@ -36,14 +44,8 @@ namespace CsasEngine
                     // using MeshVector=std::vector<MeshComponent>;
                     //        using MaterialVector=std::vector<Material_BaseBRDF>;
 
-                    std::vector<Material_BaseBRDF*> vec;
-                    for(auto&ptr:data.materialPtrVec)
-                    {
-                        vec.push_back((Material_BaseBRDF*)ptr);
-                    }
-
-                    auto ptr=new ForwardPass(data.meshPtrVec,
-                                             vec,render_Target,m_camera,m_spots
+                    auto ptr=new ForwardPass(data
+                                             ,render_Target,m_camera,m_spots
                                              );
                     ptr->PrepareRenderer();
                     passvec.push_back(ptr);
@@ -67,13 +69,16 @@ namespace CsasEngine
     void RenderPipeline::EndPipeline()
     {
         //map begin
-        auto& passvec=renderPassMap[0];
-        for(auto &pass:passvec)
+        for(auto&[index,vec]:renderPassMap)
         {
-            pass->ExecuteRenderer();
-            delete pass;
+            for(auto&pass:vec)
+            {
+                pass->ExecuteRenderer();
+                delete pass;
+            }
         }
-        renderPassMap=RenderPassMap();
+
+        renderPassMap.clear();
     }
 
 
@@ -90,7 +95,7 @@ namespace CsasEngine
         auto& vec=map[renderIndex];
         vec.push_back(renderPass_type);
     }
-
+    // add PassNode
     void RenderPipeline::EndPass()
     {
         renderIndex++;

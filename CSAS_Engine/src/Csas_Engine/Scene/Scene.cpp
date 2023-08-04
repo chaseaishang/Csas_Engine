@@ -70,8 +70,7 @@ namespace CsasEngine {
             );
 
         }
-        auto m_pipeline=RenderPipeline::getInstance();
-        m_pipeline->BeginPipeline(&main_camera,SpotlightsPtr);
+        Renderer3D::BeginScene(main_camera,SpotlightsPtr);
 
         {
             auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>);
@@ -106,24 +105,11 @@ namespace CsasEngine {
         }
         {
             auto view = m_Registry.view<Material_BaseBRDF, MeshComponent>();
-
-            MeshPtrVec meshPtrVec;
-            MaterialPtrVec materialPtrVec;
-
             for(auto entity: view)
             {
-                //auto [pos, vel] = view.get<position, velocity>(entity);
                 auto [material,mesh]=view.get<Material_BaseBRDF,MeshComponent>(entity);
-
-
-                //Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
-                meshPtrVec.push_back(&mesh);
-                materialPtrVec.push_back(&material);
+                Renderer3D::Submit(mesh,material);
             }
-
-            struct RenderData data{meshPtrVec,materialPtrVec};
-
-            m_pipeline->Submit(data,0);
         }
         {
             auto view = m_Registry.view<Material_Cartoon, MeshComponent>();
@@ -136,7 +122,7 @@ namespace CsasEngine {
                 //Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
             }
         }
-        m_pipeline->EndPipeline();
+        Renderer3D::EndScene();
 
 
 

@@ -24,7 +24,8 @@ namespace CsasEngine
     public:
         ModelComponent()=default;
         ~ModelComponent()=default;
-        ModelComponent(std::string path);
+        uint8_t RenderIndex=0;
+        ModelComponent(std::string path,uint8_t RenderIndex=0);
 
         void loadModel(std::string path);
         void processNode(aiNode *node, const aiScene *scene);

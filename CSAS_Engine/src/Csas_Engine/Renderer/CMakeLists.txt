@@ -14,6 +14,9 @@ add_library (CSAS_Renderer)
 aux_source_directory(. RENDERER_DIR_LIB_SRCS)
 
 target_include_directories(CSAS_Renderer
+        PUBLIC
+        RenderPipeline
+        RenderPipeline/RenderData/
         INTERFACE
         .
         PRIVATE

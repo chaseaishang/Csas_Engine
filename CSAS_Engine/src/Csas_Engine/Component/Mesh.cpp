@@ -26,9 +26,10 @@ namespace CsasEngine
         static const uint32_t OneSphereVertices =  n_verts ;
         static const uint32_t OneSphereIndices  =  n_tris * 3;
     }
-    MeshComponent::MeshComponent(Primitive primitive)
+    MeshComponent::MeshComponent(Primitive primitive,uint8_t RenderIndex)
     {
         m_primitive=primitive;
+        this->RenderIndex=RenderIndex;
         switch (primitive)
         {
             case Primitive::Cube:CreatCube(1);break;
@@ -38,7 +39,12 @@ namespace CsasEngine
             case Primitive::None: CSAS_ASSERT(false,"error primitive!");
         }
     }
-
+    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,BufferLayout&layout,uint8_t RenderIndex)
+    {
+        m_primitive=Primitive::FromModel;
+        this->RenderIndex=RenderIndex;
+        CreateBuffers(vertices,indices,layout);
+    }
     void MeshComponent::CreatSphere(float radius)
     {
 
@@ -324,11 +330,7 @@ namespace CsasEngine
 
     }
 
-    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,BufferLayout&layout)
-    {
-        m_primitive=Primitive::FromModel;
-        CreateBuffers(vertices,indices,layout);
-    }
+
 
 
 }

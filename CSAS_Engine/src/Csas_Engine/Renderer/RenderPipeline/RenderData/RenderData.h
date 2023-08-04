@@ -14,11 +14,8 @@ namespace CsasEngine
     using SpotLightPtrVec=std::vector<SpotLightComponent*>;
     struct RenderData
     {
-        MeshPtrVec      meshPtrVec;
-        MaterialPtrVec  materialPtrVec;
-        //camera data
-        //mesh data
-        //light
-
+        MeshComponent*meshPtr;
+        Material*materialPtr;
     };
+    using RenderDataVec=std::vector<RenderData>;
 }
