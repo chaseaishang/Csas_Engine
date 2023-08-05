@@ -18,12 +18,10 @@ namespace CsasEngine {
 
         auto renderPipeline=RenderPipeline::getInstance();
         RenderIndex FirstIndex=renderPipeline->BeginPass();
-        renderPipeline->SubmitPass(RenderPassType::ForwardPass);
+        renderPipeline->SubmitPass(PassNodeType::BrdfPass);
         renderPipeline->EndPass();
 
-        RenderIndex SecondIndex=renderPipeline->BeginPass();
-        renderPipeline->SubmitPass(RenderPassType::ForwardPass);
-        renderPipeline->EndPass();
+
         glm::vec3 lightPositions[4];
         lightPositions[0]={-10.0f,  10.0f, 10.0f};
         lightPositions[1]={ 10.0f,  10.0f, 10.0f};

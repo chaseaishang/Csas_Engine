@@ -6,6 +6,7 @@
 #include "Csas_Engine/Component/AllComponent.h"
 namespace CsasEngine
 {
+    typedef  uint8_t RenderIndex;
     //All is pointer
     //Because we never creat OR destroy anything
     using MeshPtrVec    =std::vector<MeshComponent*>;
@@ -14,8 +15,15 @@ namespace CsasEngine
     using SpotLightPtrVec=std::vector<SpotLightComponent*>;
     struct RenderData
     {
+        //noexcept
+        RenderData(MeshComponent* &&mesh,Material*&&material)noexcept
+            :meshPtr(mesh),materialPtr(material)
+        {
+
+        }
         MeshComponent*meshPtr;
         Material*materialPtr;
     };
     using RenderDataVec=std::vector<RenderData>;
+
 }

@@ -15,45 +15,18 @@ namespace CsasEngine
 
     void RenderPipeline::OnPrepare()
     {
-
+        forwardPass.PrepareRenderer();
     }
 
     void RenderPipeline::OnExecute()
     {
-
+        forwardPass.ExecuteRenderer();
     }
-    //using RenderSingleData=struct
-    //    {
-    //        MeshComponent*meshPtr;
-    //        Material*materialPtr;
-    //    };
-    //    using RenderDataVec=std::vector<RenderSingleData>;
-    //creat pass node
-    //void Submit(RenderDataVec data,RenderIndex nowIndex);
+
     void RenderPipeline::Submit(RenderDataVec data,RenderIndex nowIndex)
     {
-        g_nowIndex=nowIndex;
-        auto& vec=map[g_nowIndex];
-        auto& passvec=renderPassMap[g_nowIndex];
-        for(auto type:vec)
-        {
-            switch (type)
-            {
-                case RenderPassType::ForwardPass:
-                {
-                    // using MeshVector=std::vector<MeshComponent>;
-                    //        using MaterialVector=std::vector<Material_BaseBRDF>;
+        forwardPass.SubmitRenderer(data,nowIndex);
 
-                    auto ptr=new ForwardPass(data
-                                             ,render_Target,m_camera,m_spots
-                                             );
-                    ptr->PrepareRenderer();
-                    passvec.push_back(ptr);
-                    break;
-                }
-
-            }
-        }
 
     }
     //camera
@@ -61,6 +34,7 @@ namespace CsasEngine
     {
         m_camera=camera;
         m_spots=spots;
+        forwardPass.SetConstData(this->render_Target,camera,spots);
 
     }
 
@@ -68,17 +42,7 @@ namespace CsasEngine
     // del pass node
     void RenderPipeline::EndPipeline()
     {
-        //map begin
-        for(auto&[index,vec]:renderPassMap)
-        {
-            for(auto&pass:vec)
-            {
-                pass->ExecuteRenderer();
-                delete pass;
-            }
-        }
-
-        renderPassMap.clear();
+        OnExecute();
     }
 
 
@@ -90,10 +54,10 @@ namespace CsasEngine
         return renderIndex;
     }
 
-    void RenderPipeline::SubmitPass(RenderPassType renderPass_type)
+    void RenderPipeline::SubmitPass(PassNodeType renderPass_type)
     {
-        auto& vec=map[renderIndex];
-        vec.push_back(renderPass_type);
+        forwardPass.AddPass(renderIndex,renderPass_type);
+
     }
     // add PassNode
     void RenderPipeline::EndPass()

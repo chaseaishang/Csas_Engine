@@ -40,6 +40,7 @@ namespace CsasEngine {
         {
             m_pipeline->Submit(vec,index);//void Submit(){};
         }
+        m_pipeline->OnPrepare();
         m_pipeline->EndPipeline();
         Render_map.clear();
     }

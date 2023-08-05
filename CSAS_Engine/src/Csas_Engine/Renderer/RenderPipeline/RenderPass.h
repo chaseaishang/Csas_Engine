@@ -12,9 +12,9 @@ namespace CsasEngine
 
     struct Material_BaseBRDF;
     struct MeshComponent;
-    enum class RenderPassType
+    enum class PassNodeType
     {
-        ForwardPass
+        BrdfPass
     };
     class RenderPass
     {
@@ -23,7 +23,7 @@ namespace CsasEngine
         virtual ~RenderPass()=default;
         virtual void PrepareRenderer()=0;
         virtual void ExecuteRenderer()=0;
-//        virtual void SubmitRenderer()=0;
+        virtual void SubmitRenderer(const RenderDataVec&data,RenderIndex index)=0;
 //        virtual void FinishRenderer()=0;
     };
    //dispatch
@@ -31,26 +31,45 @@ namespace CsasEngine
     class ForwardPass : public RenderPass
     {
     public:
+        typedef  uint8_t RenderIndex;
+
+        using PassNodeVec    =std::vector<PassNode*>;
+        using DataVec=BRDFPassNode::BRDFPassData;
+
+        struct RenderWrap
+        {
+            PassNodeVec passNodeVec;
+            BRDFPassNode::BRDFPassData dataVec;
+        };
+        using RenderPassMap=std::unordered_map<RenderIndex,RenderWrap>;
+
         using MeshVector=std::vector<MeshComponent*>;
         using MaterialVector=std::vector<Material_BaseBRDF*>;
-        using DataStruct=BRDFPassNode::BRDFPassData;
 
-        ForwardPass(RenderDataVec data,Ref<Framebuffer> render_Target,
-        CameraPtr m_camera,
-        SpotLightPtrVec m_spots
-        );
+
+        ForwardPass()=default;
+        void SetConstData(const Ref<Framebuffer>& render_Target,
+                          const CameraPtr& m_camera,
+                          const SpotLightPtrVec& m_spots);
+
         ~ForwardPass()override;
+        void AddPass(RenderIndex index,PassNodeType);
         void PrepareRenderer()override;
         void ExecuteRenderer()override;
+        void SubmitRenderer (const RenderDataVec&data,RenderIndex index)override;
         //light info? ok
 
-
+        static glm::mat4 &get_CameraView();
     private:
         BRDFPassNode brdfNode;
-        DataStruct m_data;
-        //
-        //mesh data vector
-        //material
+
+        //const
+        Ref<UniformBuffer> CameraUBO;
+        CameraPtr m_camera;
+        SpotLightPtrVec m_spots;
+        Ref<Framebuffer> render_Target;
+        RenderPassMap renderMap;
+
     };
 
 }

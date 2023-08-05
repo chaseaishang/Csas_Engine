@@ -8,12 +8,11 @@
 namespace CsasEngine
 {
     class Framebuffer;
-    typedef  uint8_t RenderIndex;
+
     class RenderPipeline
     {
-        using RenderPassTypeVec=std::vector<RenderPassType>;
+
         using RenderPassVec    =std::vector<RenderPass*>;
-        using RenderMap=std::unordered_map<RenderIndex,RenderPassTypeVec>;
         using RenderPassMap=std::unordered_map<RenderIndex,RenderPassVec>;
 
     public:
@@ -28,12 +27,11 @@ namespace CsasEngine
         ~RenderPipeline()=default;
         //@TODO move to pipelineManager
         RenderIndex BeginPass();
-        void SubmitPass(RenderPassType);
+        void SubmitPass(PassNodeType);
         void EndPass();
         RenderIndex renderIndex=0;
 
-        RenderMap map;
-        RenderPassMap renderPassMap;
+        ForwardPass forwardPass;
         //end
         void SetRenderTarget(Ref<Framebuffer>&target){render_Target=target;}
         Ref<Framebuffer>&GetRenderTarget(){return render_Target;}

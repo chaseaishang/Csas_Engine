@@ -9,6 +9,7 @@
 
 namespace CsasEngine
 {
+
 //  data camera
     class Framebuffer;
     class UniformBuffer;
@@ -32,16 +33,10 @@ namespace CsasEngine
 
         struct BRDFPassData:public PassData
         {
-            std::vector<Material_BaseBRDF*> material;
-            std::vector<MeshComponent*>meshs;
+            RenderDataVec data_vec;
             std::vector<SpotLightComponent*>spots;
-            Ref<Framebuffer>fbo;
-            CameraPtr camera;
 
-            //light color
-            //position
         };
-        using DataStruct=BRDFPassData;
 
         BRDFPassNode()=default;
         BRDFPassNode(BRDFPassData&data);
@@ -50,7 +45,7 @@ namespace CsasEngine
 
         void OnExecute(PassData*data) override;
     private:
-        Ref<UniformBuffer> CameraUBO;
+
 
     };
 
