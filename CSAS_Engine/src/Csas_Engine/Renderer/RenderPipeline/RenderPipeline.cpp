@@ -32,9 +32,11 @@ namespace CsasEngine
     //camera
     void RenderPipeline::BeginPipeline(CameraPtr camera,SpotLightPtrVec spots)
     {
+
         m_camera=camera;
         m_spots=spots;
         forwardPass.SetConstData(this->render_Target,camera,spots);
+
 
     }
 
@@ -43,6 +45,7 @@ namespace CsasEngine
     void RenderPipeline::EndPipeline()
     {
         OnExecute();
+
     }
 
 

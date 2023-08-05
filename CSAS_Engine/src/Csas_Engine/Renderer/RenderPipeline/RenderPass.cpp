@@ -51,12 +51,19 @@ namespace CsasEngine {
 
 
         }
+        this->render_Target->Unbind();
     }
 
 
     ForwardPass::~ForwardPass()
     {
-
+        for(auto &[render,vec]:renderMap)
+        {
+            for(auto&pass:vec.passNodeVec)
+            {
+                delete pass;
+            }
+        }
     }
 
     void ForwardPass::SubmitRenderer(const RenderDataVec&data,RenderIndex index)

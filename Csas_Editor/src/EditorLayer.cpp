@@ -74,10 +74,8 @@ namespace CsasEngine {
         auto m_pipeline=RenderPipeline::getInstance();
         m_pipeline->SetRenderTarget(m_Framebuffer);
         m_pipeline->OnPrepare();
-        m_Framebuffer->Bind();
+        //m_Framebuffer->Bind();
 
-        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-        RenderCommand::Clear();
         //logic
         m_example->Update(ts);
         // Update scene
@@ -85,7 +83,7 @@ namespace CsasEngine {
         m_ActiveScene->OnUpdate(ts);
         m_pipeline->OnExecute();
 
-        m_Framebuffer->Unbind();
+
 
     }
 
