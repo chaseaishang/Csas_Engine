@@ -10,18 +10,21 @@ namespace CsasEngine {
     {
         CSAS_INFO("Switch to Example3");
         CSAS_PROFILE_FUNCTION();
-        m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
         m_ActiveScene = CreateRef<Scene>();
         m_Scene = m_ActiveScene;
         // Entity
 
         auto renderPipeline=RenderPipeline::getInstance();
-        RenderIndex FirstIndex=renderPipeline->BeginPass();
-        renderPipeline->SubmitPass(PassNodeType::BrdfPass);
+        renderPipeline->BeginPass();
+        RenderIndex FirstIndex=renderPipeline->SubmitPass(PassNodeType::Skybox);
+        RenderIndex secondIndex=renderPipeline->SubmitPass(PassNodeType::BrdfPass);
+
         renderPipeline->EndPass();
 
-
+        skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky
+        skybox.AddComponent<Material_Skybox>("assets/textures/cubemap");
+        skybox.AddComponent<MeshComponent>(Primitive::Cube,FirstIndex);
         glm::vec3 lightPositions[4];
         lightPositions[0]={-10.0f,  10.0f, 10.0f};
         lightPositions[1]={ 10.0f,  10.0f, 10.0f};
@@ -41,7 +44,7 @@ namespace CsasEngine {
         {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
             m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(name);
-            RenderIndex index=FirstIndex;
+            RenderIndex index=secondIndex;
             m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Sphere,index);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();
         }

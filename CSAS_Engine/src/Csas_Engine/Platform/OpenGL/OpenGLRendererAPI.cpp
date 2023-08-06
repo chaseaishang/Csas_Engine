@@ -72,6 +72,12 @@ namespace CsasEngine {
 
     }
 
+    void OpenGLRendererAPI::DepthMask(bool Enable)
+    {
+        glDepthMask(Enable);
+
+    }
+
 
 }
 

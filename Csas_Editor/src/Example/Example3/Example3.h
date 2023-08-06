@@ -30,7 +30,7 @@ namespace CsasEngine {
 
 
         Ref<Scene> m_ActiveScene;
-
+        Entity skybox;
         Entity m_BRDF_Sphere[9];
 
 

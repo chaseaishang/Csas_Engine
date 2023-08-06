@@ -12,10 +12,7 @@ namespace CsasEngine
 
     struct Material_BaseBRDF;
     struct MeshComponent;
-    enum class PassNodeType
-    {
-        BrdfPass
-    };
+
     class RenderPass
     {
     public:
@@ -38,8 +35,13 @@ namespace CsasEngine
 
         struct RenderWrap
         {
-            PassNodeVec passNodeVec;
+        public:
+            RenderWrap()=default;
+
+
+            PassNode* passNode_ptr;
             BRDFPassNode::BRDFPassData dataVec;
+            SkyboxPassNode::SkyboxPassData skyboxdata;
         };
         using RenderPassMap=std::unordered_map<RenderIndex,RenderWrap>;
 
@@ -62,7 +64,7 @@ namespace CsasEngine
         static glm::mat4 &get_CameraView();
     private:
         BRDFPassNode brdfNode;
-
+        bool has_skybox=false;
         //const
         Ref<UniformBuffer> CameraUBO;
         CameraPtr m_camera;

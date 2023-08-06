@@ -15,6 +15,7 @@ namespace CsasEngine
     using SpotLightPtrVec=std::vector<SpotLightComponent*>;
     struct RenderData
     {
+        RenderData()=default;
         //noexcept
         RenderData(MeshComponent* &&mesh,Material*&&material)noexcept
             :meshPtr(mesh),materialPtr(material)

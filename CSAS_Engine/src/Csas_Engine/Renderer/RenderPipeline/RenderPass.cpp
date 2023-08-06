@@ -18,14 +18,11 @@ namespace CsasEngine {
         CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
 
         //for loop
-        for(auto &[index,renderWrap]:renderMap)
-        {
-            auto &data=renderWrap.dataVec;
-            for(const auto&node:renderWrap.passNodeVec)
-            {
-                node->OnPrepare(&data);
-            }
-        }
+//        for(auto &[index,renderWrap]:renderMap)
+//        {
+//            auto &data=renderWrap.dataVec;
+//
+//        }
 
     }
 
@@ -33,24 +30,25 @@ namespace CsasEngine {
     {
         CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix,sizeof(GlobalCameraSpec::ViewProjMatrix));
         this->render_Target->Bind();
-
         RenderCommand::Clear();
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-        for(auto &[index,renderWrap]:renderMap)
+        RenderCommand::DepthMask(false);
+        int index=0;
+        if(has_skybox)//@TODO temp need to remove
         {
-
-            if(auto &data=renderWrap.dataVec;
-                !data.spots.empty())
-            {
-                for(const auto&node:renderWrap.passNodeVec)
-                {
-                    node->OnExecute(&data);
-                }
-            }
-
-
-
+            auto &renderWrap=renderMap[0];
+            static_cast<SkyboxPassNode*>(renderWrap.passNode_ptr)->OnExecute(&renderWrap.skyboxdata);
+            index++;
         }
+        RenderCommand::DepthMask(true);
+
+        auto&renderWrap=renderMap[index];
+        renderWrap.passNode_ptr->OnExecute(&renderWrap.dataVec);
+
+
+
+
+
         this->render_Target->Unbind();
     }
 
@@ -59,21 +57,41 @@ namespace CsasEngine {
     {
         for(auto &[render,vec]:renderMap)
         {
-            for(auto&pass:vec.passNodeVec)
-            {
-                delete pass;
-            }
+            auto&pass=vec.passNode_ptr;
+
+            delete pass;
+
         }
     }
 
     void ForwardPass::SubmitRenderer(const RenderDataVec&data,RenderIndex index)
     {
-        auto&datavec=renderMap[index].dataVec;
+        auto&wrap=renderMap[index];
+        auto&type=wrap.passNode_ptr->type;
+        switch (type)
+        {
+            case PassNodeType::Skybox:
+            {
+                has_skybox= true;
+                auto&Sky_box_data=wrap.skyboxdata;
+                RenderData data1;
+                data1.meshPtr=data[0].meshPtr;
+                data1.materialPtr=data[0].materialPtr;
+                Sky_box_data.data=std::move(data1);
+                break;
+            }
+            case PassNodeType::BrdfPass:
+            {
+                auto&datavec=wrap.dataVec;
+                datavec={
+                        .data_vec=std::move(data),
+                        .spots=m_spots
+                };
+                break;
+            }
 
-        datavec={
-                .data_vec=std::move(data),
-                .spots=m_spots
-        };
+        }
+
 
 
         //datavec=std::move(data);
@@ -95,15 +113,22 @@ namespace CsasEngine {
 
     void ForwardPass::AddPass(ForwardPass::RenderIndex index, PassNodeType type)
     {
-        auto&vec=renderMap[index].passNodeVec;
+        auto&vec=renderMap[index].passNode_ptr;
         switch (type)
         {
             case PassNodeType::BrdfPass:
             {
 
-                vec.push_back(new BRDFPassNode());
+                vec=new BRDFPassNode();
                 break;
             }
+            case PassNodeType::Skybox:
+            {
+
+                vec=new SkyboxPassNode();
+                break;
+            }
+
 
         }
     }

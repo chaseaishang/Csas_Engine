@@ -21,7 +21,7 @@ namespace CsasEngine {
 
     Scene::~Scene()
     {
-
+        m_Registry.clear();
     }
 
     Entity Scene::CreateEntity(const std::string& name)
@@ -101,6 +101,14 @@ namespace CsasEngine {
                 auto [material,mesh ] = group.get<Material_BasePrimitive, MeshComponent>(entity);
 
                 Renderer3D::DrawMesh(mesh, main_camera, material);
+            }
+        }
+        {
+            auto view = m_Registry.view<Material_Skybox, MeshComponent>();
+            for(auto entity: view)
+            {
+                auto [material,mesh]=view.get<Material_Skybox,MeshComponent>(entity);
+                Renderer3D::Submit(mesh,material);
             }
         }
         {

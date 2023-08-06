@@ -33,6 +33,12 @@ namespace CsasEngine {
         //
         //
     }
+    void Renderer3D::Submit(MeshComponent &mesh, Material_Skybox &material)
+    {
+        uint8_t index=mesh.RenderIndex;
+        auto&vec=Render_map[index];
+        vec.push_back({&mesh,&material});
+    }
     void Renderer3D::EndScene()
     {
         auto m_pipeline=RenderPipeline::getInstance();

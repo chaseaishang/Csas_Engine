@@ -29,6 +29,11 @@ namespace CsasEngine {
         static Ref<Texture2D> Create(uint32_t width, uint32_t height);
         static Ref<Texture2D> Create(const std::string& path);
     };
+    class CubeTexture:public Texture
+    {
+    public:
+        static Ref<CubeTexture> Create(const std::string& path);
+    };
 
 
 

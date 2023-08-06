@@ -51,20 +51,20 @@ namespace CsasEngine
 
 
 
-    RenderIndex RenderPipeline::BeginPass()
+    void RenderPipeline::BeginPass()
     {
 
-        return renderIndex;
+         renderIndex=0;
     }
 
-    void RenderPipeline::SubmitPass(PassNodeType renderPass_type)
+    RenderIndex RenderPipeline::SubmitPass(PassNodeType renderPass_type)
     {
         forwardPass.AddPass(renderIndex,renderPass_type);
-
+        return renderIndex++;
     }
     // add PassNode
     void RenderPipeline::EndPass()
     {
-        renderIndex++;
+        renderIndex;
     }
 }

@@ -3,6 +3,8 @@
 //
 
 #pragma once
+
+
 #include "glm/glm.hpp"
 #include "light.h"
 namespace CsasEngine {
@@ -13,7 +15,8 @@ namespace CsasEngine {
         BasePrimitive,
         BasePBR,
         Cartoon,
-        BaseBRDF
+        BaseBRDF,
+        Skybox
     };
     struct Material
     {
@@ -25,6 +28,7 @@ namespace CsasEngine {
         std::string GetShader_name();
     protected:
         MaterialType type;
+        //use shader library
         Ref<Shader>m_Shader;
         std::string Shader_name;
     };
@@ -71,6 +75,14 @@ namespace CsasEngine {
         ~Material_Cartoon() override =default ;
         MaterialInfo materialInfo;
 
+    };
+    class CubeTexture;
+    struct Material_Skybox:public Material
+    {
+    public:
+        Material_Skybox(const std::string filename);
+        Ref<CubeTexture>cube_map;
+        void Update(glm::mat4 & model);
     };
     struct Material_BaseBRDF:public Material
     {

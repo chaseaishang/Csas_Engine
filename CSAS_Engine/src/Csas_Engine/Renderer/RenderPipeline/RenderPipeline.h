@@ -26,8 +26,8 @@ namespace CsasEngine
         RenderPipeline()=default;
         ~RenderPipeline()=default;
         //@TODO move to pipelineManager
-        RenderIndex BeginPass();
-        void SubmitPass(PassNodeType);
+        void BeginPass();
+        RenderIndex SubmitPass(PassNodeType);
         void EndPass();
         RenderIndex renderIndex=0;
 

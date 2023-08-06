@@ -59,4 +59,26 @@ namespace CsasEngine
     BRDFPassNode::~BRDFPassNode() {
 
     }
+
+    SkyboxPassNode::~SkyboxPassNode() {
+
+    }
+
+    void SkyboxPassNode::OnPrepare(PassData *data) {
+
+    }
+
+    void SkyboxPassNode::OnExecute(PassData *data)
+    {
+        auto ptr=static_cast<SkyboxPassData*>(data);
+        auto&mesh=ptr->data.meshPtr;
+        auto*material=static_cast<Material_Skybox*>( ptr->data.materialPtr);
+
+        auto &vao=mesh->m_VAO;
+        auto transform=mesh->transform.GetTransform();
+        mesh->Update();
+        vao->Bind();
+        material->Update(transform);
+        RenderCommand::DrawIndexed(vao);
+    }
 }

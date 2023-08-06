@@ -29,6 +29,8 @@ namespace CsasEngine {
                                std::vector<SpotLightComponent*>SpotlightsPtr
                                );
         static void Submit(MeshComponent&mesh,Material_BaseBRDF&material);
+        static void Submit(MeshComponent&mesh,Material_Skybox&material);
+        //Material_Skybox
         static void EndScene();
 
         static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePrimitive&material);

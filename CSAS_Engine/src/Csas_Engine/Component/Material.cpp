@@ -3,10 +3,12 @@
 //
 //#include "Csas_Engine/Csaspch.h"
 #include "Csas_Engine/Renderer/Shader.h"
+#include "Csas_Engine/Renderer/Texture.h"
 #include "Material.h"
 #include "Mesh.h"
 
 namespace CsasEngine {
+    static ShaderLibrary shaderLibrary;
     std::string Material::GetShader_name()
     {
         return m_Shader->GetName();
@@ -114,6 +116,10 @@ namespace CsasEngine {
     Material_BaseBRDF::Material_BaseBRDF()
     {
         type=MaterialType::BaseBRDF;
+//        if(!shaderLibrary.Exists("BaseBRDF"))
+//        {
+//            shaderLibrary.Load("BaseBRDF","./assets/shaders/environment_BRDF.glsl");
+//        }
         m_Shader = Shader::Create("./assets/shaders/environment_BRDF.glsl");
         m_Shader->Bind();
         m_Shader->SetFloat("ao",ao);
@@ -149,10 +155,23 @@ namespace CsasEngine {
                 m_Shader->SetFloat3(light_color,light_col);
             }
         }
+    }
 
+    Material_Skybox::Material_Skybox(const std::string filename)
+    {
+        type=MaterialType::Skybox;
+        this->cube_map=CubeTexture::Create(filename);
+        m_Shader=Shader::Create("./assets/shaders/skybox.glsl");
+        
+    }
 
-
+    void Material_Skybox::Update(glm::mat4 &model)
+    {
+        m_Shader->Bind();
+        m_Shader->SetMat4("model",model);
+        cube_map->Bind(0);
 
 
     }
+
 }
