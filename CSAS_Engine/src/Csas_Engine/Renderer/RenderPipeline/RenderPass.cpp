@@ -15,6 +15,26 @@ namespace CsasEngine {
     void ForwardPass::PrepareRenderer()
     {
 
+        auto Spec=render_Target->GetSpecification();
+//        Spec.ColorAttachmentSize=1;
+//        Spec.Has_Depth=false;
+        if(post_processing==nullptr)
+        {
+            post_processing=Framebuffer::Create(Spec);
+        }
+        else
+        {
+            auto Width  =post_processing->GetSpecification().Height;
+            auto Height =post_processing->GetSpecification().Width;
+            auto NowWidth=Spec.Width;auto NowHeight=Spec.Height;
+            if(NowWidth!=Width
+            &&NowHeight!=Height)
+            {
+                post_processing->Resize(NowWidth,NowHeight);
+            }
+
+        }
+
         CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
 
         //for loop
@@ -29,7 +49,8 @@ namespace CsasEngine {
     void ForwardPass::ExecuteRenderer()
     {
         CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix,sizeof(GlobalCameraSpec::ViewProjMatrix));
-        this->render_Target->Bind();
+        post_processing->Bind();
+       // this->render_Target->Bind();
         RenderCommand::Clear();
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         RenderCommand::DepthMask(false);
@@ -48,8 +69,10 @@ namespace CsasEngine {
 
 
 
+        post_processing->Unbind();
+        Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
+        //this->render_Target->Unbind();
 
-        this->render_Target->Unbind();
     }
 
 

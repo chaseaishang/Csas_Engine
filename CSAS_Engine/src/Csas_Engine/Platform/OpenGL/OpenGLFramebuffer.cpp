@@ -17,8 +17,16 @@ namespace CsasEngine {
     OpenGLFramebuffer::~OpenGLFramebuffer()
     {
         glDeleteFramebuffers(1, &m_RendererID);
-        glDeleteTextures(1, &m_ColorAttachment);
-        glDeleteTextures(1, &m_DepthAttachment);
+        if(m_Specification.Has_Depth)
+        {
+            glDeleteTextures(1, &m_DepthAttachment);
+        }
+        for(auto&id:color_textures)
+        {
+            glDeleteTextures(1, &id);
+        }
+
+
     }
 
     void OpenGLFramebuffer::Invalidate()
@@ -26,28 +34,24 @@ namespace CsasEngine {
         if (m_RendererID)
         {
             glDeleteFramebuffers(1, &m_RendererID);
-            glDeleteTextures(1, &m_ColorAttachment);
-            glDeleteTextures(1, &m_DepthAttachment);
+            if(m_Specification.Has_Depth)
+            {
+                glDeleteTextures(1, &m_DepthAttachment);
+            }
+            for(auto&id:color_textures)
+            {
+                glDeleteTextures(1, &id);
+            }
+            color_textures.clear();
+            m_ColorAttachment=0;
         }
         glCreateFramebuffers(1, &m_RendererID);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+        if(size_t size=m_Specification.ColorAttachmentSize;m_Specification.Has_Depth)
+        {
+            AddColorTexture(size);
+            AddDepStTexture();
+        }
 
-        glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
-        glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Specification.Width, m_Specification.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
-
-        glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
-        glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
-        // glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height, 0,
-        // 	GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
-
-        CSAS_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -134,5 +138,64 @@ namespace CsasEngine {
         CSAS_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
     }
+
+    void OpenGLFramebuffer::Clear(uint8_t index) const
+    {
+        static GLfloat clear_color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        static GLfloat clear_depth = 1.0f;
+        static GLint clear_stencil = 0;
+        // a framebuffer always has a depth buffer, a stencil buffer and all color buffers,
+        // an empty one just doesn't have any textures attached to it, but all buffers are
+        // still there. It's ok to clear a buffer even if there's no textures attached, we
+        // don't need to check `index < color_textures.size()` or `depst_texture != nullptr`
+
+
+
+        // clear one of the color attachments
+        if (index >= 0 ) {
+            glClearNamedFramebufferfv(m_RendererID, GL_COLOR, index, clear_color);
+        }
+            // clear the depth buffer
+        else if (index == -1) {
+            glClearNamedFramebufferfv(m_RendererID, GL_DEPTH, 0, &clear_depth);
+        }
+            // clear the stencil buffer
+        else if (index == -2) {
+            glClearNamedFramebufferiv(m_RendererID, GL_STENCIL, 0, &clear_stencil);
+        }
+        else
+        {
+            CSAS_CORE_ERROR("Buffer index {0} is not valid in the framebuffer!", index);
+
+        }
+
+
+    }
+
+    void OpenGLFramebuffer::ClearAll() {
+        for (int i = 0; i < color_textures.size(); i++)
+        {
+            Clear(i);
+        }
+        m_ColorAttachment=0;
+        Clear(-1);
+        Clear(-2);
+
+    }
+    void Framebuffer::TransferColor(const Framebuffer& fr, uint fr_idx, const Framebuffer& to, uint to_idx)
+    {
+        auto&FrSpec=fr.GetSpecification();
+        auto&ToSpec=to.GetSpecification();
+        GLuint fw = FrSpec.Width, fh = FrSpec.Height;
+        GLuint tw = ToSpec.Width, th = ToSpec.Height;
+        glNamedFramebufferReadBuffer(fr.GetRendererID(), GL_COLOR_ATTACHMENT0 + fr_idx);
+        glNamedFramebufferDrawBuffer(to.GetRendererID(), GL_COLOR_ATTACHMENT0 + to_idx);
+        glBlitNamedFramebuffer(fr.GetRendererID(), to.GetRendererID(),
+                               0, 0, fw, fh,
+                               0, 0, tw, th,
+                               GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    }
+
 
 }

@@ -73,7 +73,7 @@ namespace CsasEngine {
         //OnDestroy
         auto m_pipeline=RenderPipeline::getInstance();
         m_pipeline->SetRenderTarget(m_Framebuffer);
-        m_pipeline->OnPrepare();
+
         //m_Framebuffer->Bind();
 
         //logic
@@ -81,7 +81,7 @@ namespace CsasEngine {
         // Update scene
         //Render
         m_ActiveScene->OnUpdate(ts);
-        m_pipeline->OnExecute();
+
 
 
 

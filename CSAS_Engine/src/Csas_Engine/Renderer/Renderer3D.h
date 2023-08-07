@@ -32,7 +32,7 @@ namespace CsasEngine {
         static void Submit(MeshComponent&mesh,Material_Skybox&material);
         //Material_Skybox
         static void EndScene();
-
+        static void DrawQuad();
         static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePrimitive&material);
         static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePBR&material,
                              std::vector<SpotLightComponent>&Spotlights,
@@ -62,7 +62,7 @@ namespace CsasEngine {
 
         static Statistics GetStats();
     private:
-
+         static Ref<VertexArray> dummy_vao;
     };
 
 

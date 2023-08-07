@@ -126,8 +126,22 @@ namespace CsasEngine {
     {
 
     }
+    Ref<VertexArray> Renderer3D::dummy_vao= nullptr;
+    void Renderer3D::DrawQuad()
+    {
+        if(dummy_vao== nullptr)
+        {
+            dummy_vao=VertexArray::Create();
+        }
+        // bufferless rendering in OpenGL:
+        // https://trass3r.github.io/coding/2019/09/11/bufferless-rendering.html
+        // https://stackoverflow.com/a/59739538/10677643
+        dummy_vao->Bind();
+
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
+    }
 
 
 }

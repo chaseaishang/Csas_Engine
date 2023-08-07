@@ -77,6 +77,11 @@ namespace CsasEngine {
         glDepthMask(Enable);
 
     }
+   //just for debug
+    void OpenGLRendererAPI::DrawArrays(const Ref <VertexArray> &vertexArray)
+    {
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
 
 
 }
