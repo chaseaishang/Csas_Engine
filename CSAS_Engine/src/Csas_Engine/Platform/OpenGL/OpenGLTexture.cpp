@@ -172,10 +172,11 @@ namespace CsasEngine {
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_REPEAT);
         GlCheckError();
+        glTextureStorage2D(m_RendererID,1,m_InternalFormat,m_Width,m_Height);
         for(int i=0;i<6;i++)
         {
 
-            glTextureStorage2D(m_RendererID,1,m_InternalFormat,m_Width,m_Height);
+
             GlCheckError();
 
 

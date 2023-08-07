@@ -54,6 +54,7 @@ namespace CsasEngine {
 
     void OpenGLFramebuffer::Bind()
     {
+
         glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
         glViewport(0, 0, m_Specification.Width, m_Specification.Height);
     }
@@ -75,6 +76,63 @@ namespace CsasEngine {
         m_Specification.Height = height;
 
         Invalidate();
+    }
+
+    void OpenGLFramebuffer::AddColorTexture(size_t count)
+    {
+        size_t n_color_buffs = color_textures.size();
+        static const float border[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        for (GLuint i = 0; i < count; i++)
+        {
+            GLenum target = GL_TEXTURE_2D;
+            uint32_t renderID;
+            glCreateTextures(GL_TEXTURE_2D, 1, &renderID);
+            glTextureStorage2D(renderID, 1, GL_RGBA8,  m_Specification.Width, m_Specification.Height);
+
+            glTextureParameteri(renderID ,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTextureParameteri(renderID ,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTextureParameteri(renderID ,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTextureParameteri(renderID ,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            glTextureParameterfv(renderID, GL_TEXTURE_BORDER_COLOR, border);
+
+
+            glNamedFramebufferTexture(m_RendererID, GL_COLOR_ATTACHMENT0 + n_color_buffs + i, renderID, 0);
+            color_textures.push_back(renderID);
+        }
+        // enable multiple render targets
+        if (size_t n = color_textures.size(); n > 0) {
+            GLenum* attachments = new GLenum[n];
+
+            for (GLenum i = 0; i < n; i++) {
+                *(attachments + i) = GL_COLOR_ATTACHMENT0 + i;
+            }
+
+            glNamedFramebufferDrawBuffers(m_RendererID, n, attachments);
+            delete[] attachments;
+        }
+        CSAS_CORE_ASSERT(glCheckNamedFramebufferStatus(m_RendererID,GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
+
+        m_ColorAttachment=color_textures[0];
+
+    }
+
+    void OpenGLFramebuffer::AddDepStTexture()
+    {
+
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
+        glTextureStorage2D(m_DepthAttachment, 1, GL_DEPTH24_STENCIL8,  m_Specification.Width, m_Specification.Height);
+        glTextureParameteri(m_DepthAttachment, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+        GLint immutable_format;
+        glGetTextureParameteriv(m_DepthAttachment, GL_TEXTURE_IMMUTABLE_FORMAT, &immutable_format);
+
+        if (immutable_format != GL_TRUE)
+        {
+           CSAS_CORE_ERROR("Unable to attach an immutable depth stencil texture...");
+            return;
+        }
+        glNamedFramebufferTexture(m_RendererID, GL_DEPTH_STENCIL_ATTACHMENT, m_DepthAttachment, 0);
+        CSAS_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
+
     }
 
 }
