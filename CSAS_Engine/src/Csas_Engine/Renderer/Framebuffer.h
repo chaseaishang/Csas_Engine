@@ -18,7 +18,7 @@ namespace CsasEngine {
 
         bool SwapChainTarget = false;
     };
-
+    class Texture2D;
     class Framebuffer
     {
     public:
@@ -28,6 +28,7 @@ namespace CsasEngine {
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
         virtual void Resize(uint32_t width, uint32_t height) = 0;
+        virtual Ref<Texture2D> GetColorAttachment(uint32_t index) const =0;
         virtual uint32_t GetColorAttachmentRendererID() const = 0;
         virtual uint32_t GetRendererID()const=0;
         virtual void AddColorTexture(size_t count)=0;

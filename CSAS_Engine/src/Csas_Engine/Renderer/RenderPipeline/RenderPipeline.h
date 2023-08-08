@@ -37,7 +37,7 @@ namespace CsasEngine
         Ref<Framebuffer>&GetRenderTarget(){return render_Target;}
         void OnPrepare();
         void OnExecute();
-
+        bool Enable_blur= false;
         Ref<Framebuffer> render_Target;
         static CameraPtr m_camera;
         static SpotLightPtrVec m_spots;

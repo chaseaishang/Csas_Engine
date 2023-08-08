@@ -19,7 +19,7 @@ namespace CsasEngine {
         renderPipeline->BeginPass();
         RenderIndex FirstIndex=renderPipeline->SubmitPass(PassNodeType::Skybox);
         RenderIndex secondIndex=renderPipeline->SubmitPass(PassNodeType::BrdfPass);
-
+       // renderPipeline->SubmitPass(PassNodeType::BlurPass);
         renderPipeline->EndPass();
 
         skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky

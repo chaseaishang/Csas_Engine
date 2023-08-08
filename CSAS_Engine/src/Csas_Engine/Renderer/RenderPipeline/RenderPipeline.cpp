@@ -15,6 +15,10 @@ namespace CsasEngine
 
     void RenderPipeline::OnPrepare()
     {
+        if(Enable_blur)
+        {
+
+        }
         forwardPass.PrepareRenderer();
     }
 
@@ -60,11 +64,17 @@ namespace CsasEngine
     RenderIndex RenderPipeline::SubmitPass(PassNodeType renderPass_type)
     {
         forwardPass.AddPass(renderIndex,renderPass_type);
+
         return renderIndex++;
     }
     // add PassNode
     void RenderPipeline::EndPass()
     {
-        renderIndex;
+        RenderIndex nowIndex=renderIndex;
+
+
+
+
+
     }
 }

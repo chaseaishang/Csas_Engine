@@ -3,7 +3,7 @@
 //
 #include "Csas_Engine/Csaspch.h"
 #include "OpenGLFramebuffer.h"
-
+#include "Csas_Engine/Renderer/Texture.h"
 #include <glad/glad.h>
 
 namespace CsasEngine {
@@ -27,6 +27,7 @@ namespace CsasEngine {
         }
 
 
+
     }
 
     void OpenGLFramebuffer::Invalidate()
@@ -43,6 +44,10 @@ namespace CsasEngine {
                 glDeleteTextures(1, &id);
             }
             color_textures.clear();
+
+            Color_textures.clear();
+            DepthAttachment.reset();
+
             m_ColorAttachment=0;
         }
         glCreateFramebuffers(1, &m_RendererID);
@@ -89,6 +94,7 @@ namespace CsasEngine {
         for (GLuint i = 0; i < count; i++)
         {
             GLenum target = GL_TEXTURE_2D;
+            Ref<Texture2D>texture=Texture2D::Create(GL_RGBA8,1, m_Specification.Width, m_Specification.Height);
             uint32_t renderID;
             glCreateTextures(GL_TEXTURE_2D, 1, &renderID);
             glTextureStorage2D(renderID, 1, GL_RGBA8,  m_Specification.Width, m_Specification.Height);
@@ -101,6 +107,7 @@ namespace CsasEngine {
 
 
             glNamedFramebufferTexture(m_RendererID, GL_COLOR_ATTACHMENT0 + n_color_buffs + i, renderID, 0);
+            Color_textures.push_back(texture);
             color_textures.push_back(renderID);
         }
         // enable multiple render targets
@@ -126,6 +133,7 @@ namespace CsasEngine {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
         glTextureStorage2D(m_DepthAttachment, 1, GL_DEPTH24_STENCIL8,  m_Specification.Width, m_Specification.Height);
         glTextureParameteri(m_DepthAttachment, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+        DepthAttachment=Texture2D::Create(GL_DEPTH24_STENCIL8,1, m_Specification.Width, m_Specification.Height);
         GLint immutable_format;
         glGetTextureParameteriv(m_DepthAttachment, GL_TEXTURE_IMMUTABLE_FORMAT, &immutable_format);
 
@@ -182,6 +190,15 @@ namespace CsasEngine {
         Clear(-2);
 
     }
+
+    Ref <Texture2D> OpenGLFramebuffer::GetColorAttachment(uint32_t index) const
+    {
+        CSAS_CORE_ASSERT(index<Color_textures.size(),"error");
+
+        return Color_textures[index];
+
+    }
+
     void Framebuffer::TransferColor(const Framebuffer& fr, uint fr_idx, const Framebuffer& to, uint to_idx)
     {
         auto&FrSpec=fr.GetSpecification();

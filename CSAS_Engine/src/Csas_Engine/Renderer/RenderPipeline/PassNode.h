@@ -9,7 +9,7 @@
 
 namespace CsasEngine
 {
-
+    class Shader;
 //  data camera
     class Framebuffer;
     class UniformBuffer;
@@ -19,7 +19,8 @@ namespace CsasEngine
     enum class PassNodeType
     {
         BrdfPass,
-        Skybox
+        Skybox,
+        BlurPass
     };
     class PassNode
     {
@@ -40,11 +41,34 @@ namespace CsasEngine
         {
 
             SkyboxPassData()=default;
+            ~SkyboxPassData()=default;
             RenderData data;
         };
 
         SkyboxPassNode(){type=PassNodeType::Skybox;}
         ~SkyboxPassNode()override;
+        void OnPrepare(PassData*data)override;
+
+        void OnExecute(PassData*data) override;
+    private:
+
+
+    };
+    class BlurPassNode:public PassNode
+    {
+    public:
+
+        struct BlurPassData:public PassData
+        {
+
+            BlurPassData()=default;
+            ~BlurPassData()=default;
+            Ref<Material_Blur>blur_material= nullptr;
+
+        };
+
+        BlurPassNode(){type=PassNodeType::BlurPass;}
+        ~BlurPassNode()override=default;
         void OnPrepare(PassData*data)override;
 
         void OnExecute(PassData*data) override;
@@ -60,6 +84,7 @@ namespace CsasEngine
         {
         public:
             BRDFPassData()=default;
+            ~BRDFPassData()=default;
             RenderDataVec data_vec;
             std::vector<SpotLightComponent*>spots;
 

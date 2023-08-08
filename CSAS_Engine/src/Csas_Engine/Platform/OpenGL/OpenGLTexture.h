@@ -14,6 +14,8 @@ namespace CsasEngine {
     public:
         OpenGLTexture2D(uint32_t width, uint32_t height);
         OpenGLTexture2D(const std::string& path);
+        OpenGLTexture2D(uint32_t target, uint32_t size, uint32_t width, uint32_t height);
+        //
         virtual ~OpenGLTexture2D();
 
         uint32_t GetWidth() const override { return m_Width;  }

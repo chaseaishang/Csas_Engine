@@ -33,6 +33,18 @@ namespace CsasEngine {
         return nullptr;
     }
 
+    Ref <Texture2D> Texture2D::Create(uint32_t target, uint32_t size, uint32_t width, uint32_t height)
+    {
+        switch (Renderer::GetAPI())
+        {
+            case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(target,size,width,height);
+        }
+
+        CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
+        return nullptr;
+    }
+
 
     Ref <CubeTexture> CubeTexture::Create(const std::string &path)
     {

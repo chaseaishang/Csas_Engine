@@ -4,6 +4,7 @@
 #include "Csas_Engine/Csaspch.h"
 #include "PassNode.h"
 #include "Csas_Engine/Component/AllComponent.h"
+#include "Csas_Engine/Renderer/Renderer3D.h"
 #include "Csas_Engine/Renderer/RenderCommand.h"
 #include "Csas_Engine/Renderer/Framebuffer.h"
 #include "Csas_Engine/Renderer/UniformBuffer.h"
@@ -14,7 +15,9 @@
 #include "RenderPass.h"
 namespace CsasEngine
 {
-
+/////////////////////////////////
+////////////////////////////////BRDFPassNode
+///////////////////////////////
     void BRDFPassNode::OnPrepare(PassData*data)
     {
 
@@ -59,7 +62,9 @@ namespace CsasEngine
     BRDFPassNode::~BRDFPassNode() {
 
     }
-
+/////////////////////////////////
+////////////////////////////////SkyboxPassNode
+///////////////////////////////
     SkyboxPassNode::~SkyboxPassNode() {
 
     }
@@ -80,5 +85,21 @@ namespace CsasEngine
         vao->Bind();
         material->Update(transform);
         RenderCommand::DrawIndexed(vao);
+    }
+
+    /////////////////////////////////
+    ////////////////////////////////BlurPassNode
+    ///////////////////////////////
+    void BlurPassNode::OnPrepare(PassData *data)
+    {
+
+    }
+
+    void BlurPassNode::OnExecute(PassData *data)
+    {
+        auto ptr=static_cast<BlurPassData*>(data);
+        auto&material=ptr->blur_material;
+        material->Update();
+        Renderer3D::DrawQuad();
     }
 }

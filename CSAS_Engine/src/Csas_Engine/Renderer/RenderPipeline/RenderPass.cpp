@@ -7,6 +7,7 @@
 #include "Csas_Engine/Component/AllComponent.h"
 #include "Csas_Engine/Renderer/RenderCommand.h"
 #include "Csas_Engine/Renderer/UniformBuffer.h"
+#include "Csas_Engine/Renderer/Shader.h"
 namespace CsasEngine {
     namespace GlobalCameraSpec
     {
@@ -37,20 +38,15 @@ namespace CsasEngine {
 
         CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
 
-        //for loop
-//        for(auto &[index,renderWrap]:renderMap)
-//        {
-//            auto &data=renderWrap.dataVec;
-//
-//        }
+
 
     }
 
     void ForwardPass::ExecuteRenderer()
     {
         CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix,sizeof(GlobalCameraSpec::ViewProjMatrix));
-        post_processing->Bind();
-       // this->render_Target->Bind();
+
+        this->render_Target->Bind();
         RenderCommand::Clear();
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         RenderCommand::DepthMask(false);
@@ -65,13 +61,22 @@ namespace CsasEngine {
 
         auto&renderWrap=renderMap[index];
         renderWrap.passNode_ptr->OnExecute(&renderWrap.dataVec);
+        index++;
+        if(has_blur)
+        {
+            Framebuffer::TransferColor(*render_Target,0,*post_processing,0);
+            post_processing->Bind();
+            auto&renderWrap=renderMap[index];
+            renderWrap.passNode_ptr->OnExecute(&renderWrap.blurPassData);
+            post_processing->Unbind();
+            Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
+        }
 
 
 
 
-        post_processing->Unbind();
-        Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
-        //this->render_Target->Unbind();
+
+        this->render_Target->Unbind();
 
     }
 
@@ -112,7 +117,13 @@ namespace CsasEngine {
                 };
                 break;
             }
-
+            case PassNodeType::BlurPass:
+            {
+                has_blur= true;
+                auto&blurdata=wrap.blurPassData;
+                blurdata.blur_material= CreateRef<Material_Blur>();
+                break;
+            }
         }
 
 
@@ -136,19 +147,28 @@ namespace CsasEngine {
 
     void ForwardPass::AddPass(ForwardPass::RenderIndex index, PassNodeType type)
     {
-        auto&vec=renderMap[index].passNode_ptr;
+        auto&passnode=renderMap[index].passNode_ptr;
         switch (type)
         {
             case PassNodeType::BrdfPass:
             {
 
-                vec=new BRDFPassNode();
+                passnode=new BRDFPassNode();
                 break;
             }
             case PassNodeType::Skybox:
             {
 
-                vec=new SkyboxPassNode();
+                passnode=new SkyboxPassNode();
+                break;
+            }
+            case PassNodeType::BlurPass:
+            {
+                passnode=new BlurPassNode();
+                RenderDataVec vec;
+                SubmitRenderer(vec,index);
+
+
                 break;
             }
 

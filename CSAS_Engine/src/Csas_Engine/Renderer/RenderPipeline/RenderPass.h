@@ -37,11 +37,15 @@ namespace CsasEngine
         {
         public:
             RenderWrap()=default;
-
+            ~RenderWrap()=default;
 
             PassNode* passNode_ptr;
+
             BRDFPassNode::BRDFPassData dataVec;
             SkyboxPassNode::SkyboxPassData skyboxdata;
+            BlurPassNode::BlurPassData     blurPassData;
+
+
         };
         using RenderPassMap=std::unordered_map<RenderIndex,RenderWrap>;
 
@@ -65,6 +69,7 @@ namespace CsasEngine
     private:
         BRDFPassNode brdfNode;
         bool has_skybox=false;
+        bool has_blur= false;
         //const
         Ref<UniformBuffer> CameraUBO;
         CameraPtr m_camera;

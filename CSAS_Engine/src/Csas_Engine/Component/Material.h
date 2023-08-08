@@ -16,7 +16,8 @@ namespace CsasEngine {
         BasePBR,
         Cartoon,
         BaseBRDF,
-        Skybox
+        Skybox,
+        Blur
     };
     struct Material
     {
@@ -83,6 +84,13 @@ namespace CsasEngine {
         Material_Skybox(const std::string filename);
         Ref<CubeTexture>cube_map;
         void Update(glm::mat4 & model);
+    };
+    struct Material_Blur:public Material
+    {
+    public:
+        Material_Blur();
+
+        void Update();
     };
     struct Material_BaseBRDF:public Material
     {

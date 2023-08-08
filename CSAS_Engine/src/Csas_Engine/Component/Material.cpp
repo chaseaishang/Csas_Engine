@@ -174,4 +174,14 @@ namespace CsasEngine {
 
     }
 
+    Material_Blur::Material_Blur()
+    {
+        type=MaterialType::Blur;
+        m_Shader=Shader::Create("./assets/shaders/blur.glsl");
+
+    }
+
+    void Material_Blur::Update() {
+
+    }
 }

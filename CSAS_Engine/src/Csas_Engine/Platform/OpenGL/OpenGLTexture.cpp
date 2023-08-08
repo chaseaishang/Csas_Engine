@@ -74,7 +74,12 @@ namespace CsasEngine {
 
         stbi_image_free(data);
     }
+    OpenGLTexture2D::OpenGLTexture2D(uint32_t target, uint32_t size, uint32_t width, uint32_t height)
+    {
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+        glTextureStorage2D(m_RendererID, size, target,  width, height);
 
+    }
     OpenGLTexture2D::~OpenGLTexture2D()
     {
         CSAS_PROFILE_FUNCTION();
@@ -97,6 +102,8 @@ namespace CsasEngine {
 
         glBindTextureUnit(slot, m_RendererID);
     }
+
+
 
 
     void OpenGLCubeTexture::SetData(void *data, uint32_t size)
