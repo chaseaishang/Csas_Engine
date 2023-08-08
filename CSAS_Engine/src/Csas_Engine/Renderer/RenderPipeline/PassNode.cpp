@@ -98,8 +98,11 @@ namespace CsasEngine
     void BlurPassNode::OnExecute(PassData *data)
     {
         auto ptr=static_cast<BlurPassData*>(data);
+        auto*texture=ptr->source_tex;
+
         auto&material=ptr->blur_material;
-        material->Update();
+        material->Update(texture);
         Renderer3D::DrawQuad();
+
     }
 }

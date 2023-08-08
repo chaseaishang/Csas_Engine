@@ -5,6 +5,7 @@
 #include "Renderer3D.h"
 #include "Shader.h"
 #include "VertexArray.h"
+#include "RenderCommand.h"
 #include "./RenderPipeline/RenderPipeline.h"
 #include "RenderPipeline/RenderData/RenderData.h"
 //Temp TODO remove
@@ -85,6 +86,7 @@ namespace CsasEngine {
 
     void Renderer3D::Shutdown()
     {
+        dummy_vao= nullptr;
         if(!Debug)
         {
 
@@ -138,8 +140,8 @@ namespace CsasEngine {
         // https://trass3r.github.io/coding/2019/09/11/bufferless-rendering.html
         // https://stackoverflow.com/a/59739538/10677643
         dummy_vao->Bind();
+        RenderCommand::DrawArrays(dummy_vao);
 
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
     }

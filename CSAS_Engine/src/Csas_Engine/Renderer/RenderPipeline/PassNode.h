@@ -9,6 +9,7 @@
 
 namespace CsasEngine
 {
+    class Texture2D;
     class Shader;
 //  data camera
     class Framebuffer;
@@ -64,7 +65,7 @@ namespace CsasEngine
             BlurPassData()=default;
             ~BlurPassData()=default;
             Ref<Material_Blur>blur_material= nullptr;
-
+            Texture2D*source_tex;
         };
 
         BlurPassNode(){type=PassNodeType::BlurPass;}

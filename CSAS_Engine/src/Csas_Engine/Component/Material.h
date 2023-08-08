@@ -9,7 +9,7 @@
 #include "light.h"
 namespace CsasEngine {
     class Shader;
-
+    class Texture2D;
     enum class MaterialType
     {
         BasePrimitive,
@@ -90,7 +90,7 @@ namespace CsasEngine {
     public:
         Material_Blur();
 
-        void Update();
+        void Update(Texture2D*texture);
     };
     struct Material_BaseBRDF:public Material
     {

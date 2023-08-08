@@ -49,6 +49,8 @@ namespace CsasEngine {
             return m_RendererID == ((OpenGLCubeTexture&)other).m_RendererID;
         }
     private:
+        void LoadCacheORSource(const std::string& path);
+    private:
         std::string m_Path;
         uint32_t m_Width, m_Height;
         uint32_t m_RendererID;

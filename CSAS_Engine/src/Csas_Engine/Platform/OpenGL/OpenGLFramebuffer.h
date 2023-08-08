@@ -20,7 +20,7 @@ namespace CsasEngine {
         virtual void Unbind() override;
 
         virtual void Resize(uint32_t width, uint32_t height) override;
-        Ref<Texture2D> GetColorAttachment(uint32_t index) const override;
+        Texture2D* GetColorAttachment(uint32_t index) const override;
         virtual uint32_t GetColorAttachmentRendererID() const override { return m_ColorAttachment; }
         virtual uint32_t GetRendererID()const{return m_RendererID;};
         void AddColorTexture(size_t count)override;
@@ -30,8 +30,8 @@ namespace CsasEngine {
         virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification; }
     private:
         uint32_t m_RendererID = 0;
-        uint32_t m_ColorAttachment = 0, m_DepthAttachment = 0;
-        std::vector<uint32_t>     color_textures;
+        uint32_t m_ColorAttachment = 0;
+        //std::vector<uint32_t>     color_textures;
         std::vector<Ref<Texture2D>>     Color_textures;
         Ref<Texture2D>                  DepthAttachment= nullptr;
         FramebufferSpecification m_Specification;

@@ -33,6 +33,7 @@ namespace CsasEngine {
             {
                 post_processing->Resize(NowWidth,NowHeight);
             }
+            // change sourceTexture
 
         }
 
@@ -64,10 +65,11 @@ namespace CsasEngine {
         index++;
         if(has_blur)
         {
-            Framebuffer::TransferColor(*render_Target,0,*post_processing,0);
+
             post_processing->Bind();
-            auto&renderWrap=renderMap[index];
-            renderWrap.passNode_ptr->OnExecute(&renderWrap.blurPassData);
+            auto&Wrap=renderMap[index];
+            Wrap.blurPassData.source_tex=render_Target->GetColorAttachment(0);
+            Wrap.passNode_ptr->OnExecute(&Wrap.blurPassData);
             post_processing->Unbind();
             Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
         }

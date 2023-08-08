@@ -17,14 +17,8 @@ namespace CsasEngine {
     OpenGLFramebuffer::~OpenGLFramebuffer()
     {
         glDeleteFramebuffers(1, &m_RendererID);
-        if(m_Specification.Has_Depth)
-        {
-            glDeleteTextures(1, &m_DepthAttachment);
-        }
-        for(auto&id:color_textures)
-        {
-            glDeleteTextures(1, &id);
-        }
+
+
 
 
 
@@ -35,18 +29,10 @@ namespace CsasEngine {
         if (m_RendererID)
         {
             glDeleteFramebuffers(1, &m_RendererID);
-            if(m_Specification.Has_Depth)
-            {
-                glDeleteTextures(1, &m_DepthAttachment);
-            }
-            for(auto&id:color_textures)
-            {
-                glDeleteTextures(1, &id);
-            }
-            color_textures.clear();
 
+            DepthAttachment= nullptr;
             Color_textures.clear();
-            DepthAttachment.reset();
+
 
             m_ColorAttachment=0;
         }
@@ -58,7 +44,7 @@ namespace CsasEngine {
         }
 
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     }
 
     void OpenGLFramebuffer::Bind()
@@ -89,15 +75,15 @@ namespace CsasEngine {
 
     void OpenGLFramebuffer::AddColorTexture(size_t count)
     {
-        size_t n_color_buffs = color_textures.size();
+        size_t n_color_buffs = Color_textures.size();
         static const float border[] = { 0.0f, 0.0f, 0.0f, 1.0f };
         for (GLuint i = 0; i < count; i++)
         {
             GLenum target = GL_TEXTURE_2D;
             Ref<Texture2D>texture=Texture2D::Create(GL_RGBA8,1, m_Specification.Width, m_Specification.Height);
-            uint32_t renderID;
-            glCreateTextures(GL_TEXTURE_2D, 1, &renderID);
-            glTextureStorage2D(renderID, 1, GL_RGBA8,  m_Specification.Width, m_Specification.Height);
+
+            const auto&renderID=texture->GetRendererID();
+
 
             glTextureParameteri(renderID ,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTextureParameteri(renderID ,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -108,10 +94,10 @@ namespace CsasEngine {
 
             glNamedFramebufferTexture(m_RendererID, GL_COLOR_ATTACHMENT0 + n_color_buffs + i, renderID, 0);
             Color_textures.push_back(texture);
-            color_textures.push_back(renderID);
+
         }
         // enable multiple render targets
-        if (size_t n = color_textures.size(); n > 0) {
+        if (size_t n = Color_textures.size(); n > 0) {
             GLenum* attachments = new GLenum[n];
 
             for (GLenum i = 0; i < n; i++) {
@@ -123,26 +109,27 @@ namespace CsasEngine {
         }
         CSAS_CORE_ASSERT(glCheckNamedFramebufferStatus(m_RendererID,GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
-        m_ColorAttachment=color_textures[0];
+        m_ColorAttachment=Color_textures[0]->GetRendererID();
 
     }
 
     void OpenGLFramebuffer::AddDepStTexture()
     {
 
-        glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
-        glTextureStorage2D(m_DepthAttachment, 1, GL_DEPTH24_STENCIL8,  m_Specification.Width, m_Specification.Height);
-        glTextureParameteri(m_DepthAttachment, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+
+
+
         DepthAttachment=Texture2D::Create(GL_DEPTH24_STENCIL8,1, m_Specification.Width, m_Specification.Height);
+        glTextureParameteri(DepthAttachment->GetRendererID(), GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
         GLint immutable_format;
-        glGetTextureParameteriv(m_DepthAttachment, GL_TEXTURE_IMMUTABLE_FORMAT, &immutable_format);
+        glGetTextureParameteriv(DepthAttachment->GetRendererID(), GL_TEXTURE_IMMUTABLE_FORMAT, &immutable_format);
 
         if (immutable_format != GL_TRUE)
         {
            CSAS_CORE_ERROR("Unable to attach an immutable depth stencil texture...");
             return;
         }
-        glNamedFramebufferTexture(m_RendererID, GL_DEPTH_STENCIL_ATTACHMENT, m_DepthAttachment, 0);
+        glNamedFramebufferTexture(m_RendererID, GL_DEPTH_STENCIL_ATTACHMENT, DepthAttachment->GetRendererID(), 0);
         CSAS_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
     }
@@ -181,7 +168,7 @@ namespace CsasEngine {
     }
 
     void OpenGLFramebuffer::ClearAll() {
-        for (int i = 0; i < color_textures.size(); i++)
+        for (int i = 0; i < Color_textures.size(); i++)
         {
             Clear(i);
         }
@@ -191,11 +178,11 @@ namespace CsasEngine {
 
     }
 
-    Ref <Texture2D> OpenGLFramebuffer::GetColorAttachment(uint32_t index) const
+    Texture2D* OpenGLFramebuffer::GetColorAttachment(uint32_t index) const
     {
         CSAS_CORE_ASSERT(index<Color_textures.size(),"error");
 
-        return Color_textures[index];
+        return Color_textures[index].get();
 
     }
 

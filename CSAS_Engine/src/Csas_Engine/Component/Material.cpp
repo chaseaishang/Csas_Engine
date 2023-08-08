@@ -181,7 +181,9 @@ namespace CsasEngine {
 
     }
 
-    void Material_Blur::Update() {
-
+    void Material_Blur::Update(Texture2D*texture)
+    {
+        m_Shader->Bind();
+        texture->Bind(0);
     }
 }

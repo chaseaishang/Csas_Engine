@@ -7,6 +7,7 @@
 
 #include "stb_image/stb_image.h"
 #include <glad/glad.h>
+#include <Csas_Engine/Core/Timer.h>
 
 namespace CsasEngine {
 
@@ -131,12 +132,24 @@ namespace CsasEngine {
     OpenGLCubeTexture::OpenGLCubeTexture(const std::string &path)
             : m_Path(path)
     {
+        {
+            Timer timer;
+
+            LoadCacheORSource(path);
+
+            CSAS_CORE_WARN("CubeMapTexture took {0} s", timer.Elapsed());
+        }
+
+    }
+
+    void OpenGLCubeTexture::LoadCacheORSource(const std::string &path)
+    {
         GLClearError();
         CSAS_PROFILE_FUNCTION();
 
         std::vector<std::string>skybox
-            {"posx","negx","posy","negy","posz","negz"
-            };
+                {"posx","negx","posy","negy","posz","negz"
+                };
         //{"right","left","top","bottom","front","back"
         //            };
         stbi_uc* datas[6];for(auto & data : datas){data= nullptr;}
