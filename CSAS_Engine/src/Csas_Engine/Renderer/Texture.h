@@ -21,20 +21,35 @@ namespace CsasEngine {
 
         virtual bool operator==(const Texture& other) const = 0;
         virtual void Bind(uint32_t slot = 0) const = 0;
+        virtual void BindILS(uint32_t level, uint32_t index, uint32_t access)const = 0;
+    };
+    struct TextureSpecification
+    {
+
+        bool RGB=true;
+        uint target=0;
+        uint size=1;
+        uint32_t width;
+        uint32_t height;
     };
 
     class Texture2D : public Texture
     {
     public:
-        static Ref<Texture2D> Create(uint32_t width, uint32_t height);
-        static Ref<Texture2D> Create(const std::string& path);
+        static Ref<Texture2D> Create(uint32_t width, uint32_t height,TextureSpecification Spec=TextureSpecification());
+        static Ref<Texture2D> Create(const std::string& path,TextureSpecification Spec=TextureSpecification());
+
+
+
         //for frameBuffer
-        static Ref<Texture2D> Create(uint32_t target,uint32_t size,uint32_t width, uint32_t height);
+        static Ref<Texture2D> Create(TextureSpecification Spec=TextureSpecification());
     };
     class CubeTexture:public Texture
     {
     public:
-        static Ref<CubeTexture> Create(const std::string& path);
+        static Ref<CubeTexture> Create(const std::string& path,TextureSpecification Spec=TextureSpecification());
+        static Ref<CubeTexture> Create( TextureSpecification Spec=TextureSpecification());
+        // OpenGLCubeTexture(TextureSpecification Spec);
     };
 
 

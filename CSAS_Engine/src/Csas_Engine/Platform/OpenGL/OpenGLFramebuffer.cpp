@@ -11,6 +11,7 @@ namespace CsasEngine {
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
             : m_Specification(spec)
     {
+        glDisable(GL_FRAMEBUFFER_SRGB);  // important! turn off colorspace correction globally
         Invalidate();
     }
 
@@ -77,10 +78,25 @@ namespace CsasEngine {
     {
         size_t n_color_buffs = Color_textures.size();
         static const float border[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        TextureSpecification spec;
+        if(m_Specification.Hdr)
+        {
+            spec.target=GL_RGBA16F;
+
+        }
+        else
+        {
+            spec.target=GL_RGBA8;
+            spec.RGB= true;
+        }
+        spec.size=1;
+        spec.height=m_Specification.Height;
+        spec.width=m_Specification.Width;
+
         for (GLuint i = 0; i < count; i++)
         {
             GLenum target = GL_TEXTURE_2D;
-            Ref<Texture2D>texture=Texture2D::Create(GL_RGBA8,1, m_Specification.Width, m_Specification.Height);
+            Ref<Texture2D>texture=Texture2D::Create(spec);
 
             const auto&renderID=texture->GetRendererID();
 
@@ -117,9 +133,13 @@ namespace CsasEngine {
     {
 
 
-
-
-        DepthAttachment=Texture2D::Create(GL_DEPTH24_STENCIL8,1, m_Specification.Width, m_Specification.Height);
+        TextureSpecification spec;
+        spec.target=GL_DEPTH24_STENCIL8;
+        spec.size=1;
+        spec.height=m_Specification.Height;
+        spec.width=m_Specification.Width;
+        spec.RGB=true;
+        DepthAttachment=Texture2D::Create(spec);
         glTextureParameteri(DepthAttachment->GetRendererID(), GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
         GLint immutable_format;
         glGetTextureParameteriv(DepthAttachment->GetRendererID(), GL_TEXTURE_IMMUTABLE_FORMAT, &immutable_format);

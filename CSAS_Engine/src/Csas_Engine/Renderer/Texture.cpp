@@ -9,36 +9,36 @@
 
 namespace CsasEngine {
 
-    Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
+    Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height,TextureSpecification Spec)
     {
         switch (Renderer::GetAPI())
         {
             case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(width, height);
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(width, height,Spec);
         }
 
         CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
         return nullptr;
     }
 
-    Ref<Texture2D> Texture2D::Create(const std::string& path)
+    Ref<Texture2D> Texture2D::Create(const std::string& path,TextureSpecification Spec)
     {
         switch (Renderer::GetAPI())
         {
             case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(path);
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(path,Spec);
         }
 
         CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
         return nullptr;
     }
 
-    Ref <Texture2D> Texture2D::Create(uint32_t target, uint32_t size, uint32_t width, uint32_t height)
+    Ref <Texture2D> Texture2D::Create(TextureSpecification Spec)
     {
         switch (Renderer::GetAPI())
         {
             case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(target,size,width,height);
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(Spec);
         }
 
         CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -46,12 +46,26 @@ namespace CsasEngine {
     }
 
 
-    Ref <CubeTexture> CubeTexture::Create(const std::string &path)
+
+
+    Ref <CubeTexture> CubeTexture::Create(const std::string &path,TextureSpecification Spec)
     {
         switch (Renderer::GetAPI())
         {
             case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLCubeTexture>(path);
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLCubeTexture>(path,Spec);
+        }
+
+        CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
+        return nullptr;
+    }
+
+    Ref <CubeTexture> CubeTexture::Create(TextureSpecification Spec)
+    {
+        switch (Renderer::GetAPI())
+        {
+            case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLCubeTexture>(Spec);
         }
 
         CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");

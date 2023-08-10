@@ -12,6 +12,7 @@ namespace CsasEngine {
     {
         uint32_t Width = 0, Height = 0;
         // FramebufferFormat Format =
+        bool Hdr=false;
         bool Has_Depth=true;
         uint32_t ColorAttachmentSize=1;
         uint32_t Samples = 1;

@@ -77,6 +77,9 @@ namespace CsasEngine
         Ref<Framebuffer> render_Target;
         RenderPassMap renderMap;
         Ref<Framebuffer> post_processing= nullptr;
+
+    private:
+
     };
 
 }

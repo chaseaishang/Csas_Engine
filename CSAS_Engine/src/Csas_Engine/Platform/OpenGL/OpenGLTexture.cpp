@@ -3,7 +3,7 @@
 //
 #include "Csas_Engine/Csaspch.h"
 #include "OpenGLTexture.h"
-
+#include "OpenGLShader.h"
 
 #include "stb_image/stb_image.h"
 #include <glad/glad.h>
@@ -11,8 +11,8 @@
 
 namespace CsasEngine {
 
-    OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-            : m_Width(width), m_Height(height)
+    OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height,TextureSpecification Spec)
+            : m_Width(width), m_Height(height),m_textureSpecification(Spec)
     {
         CSAS_PROFILE_FUNCTION();
 
@@ -28,12 +28,8 @@ namespace CsasEngine {
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
-
-    OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
-            : m_Path(path)
+    void OpenGLTexture2D::LoadCacheORSource(const std::string &path)
     {
-        CSAS_PROFILE_FUNCTION();
-
         int width, height, channels;
         stbi_set_flip_vertically_on_load(1);
         stbi_uc* data = nullptr;
@@ -74,11 +70,79 @@ namespace CsasEngine {
         glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);
+
     }
-    OpenGLTexture2D::OpenGLTexture2D(uint32_t target, uint32_t size, uint32_t width, uint32_t height)
+
+    void OpenGLTexture2D::LoadHDRCacheORSource(const std::string &path)
+    {
+        int width, height, channels;
+        stbi_set_flip_vertically_on_load(1);
+        bool flag=stbi_is_hdr(path.c_str());
+        float* data = nullptr;
+        {
+            CSAS_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std:string&)");
+            data = stbi_loadf(path.c_str(), &width, &height, &channels, 0);
+
+        }
+        CSAS_CORE_ASSERT(data,"STBI failure reason: {0}", stbi_failure_reason());
+        m_Width = width;
+        m_Height = height;
+
+        GLenum internalFormat = 0, dataFormat = 0;
+        if (channels == 4)
+        {
+            internalFormat = GL_RGBA16F;
+            dataFormat = GL_RGBA;
+        }
+        else
+        {
+            internalFormat = GL_RGB16F;
+            dataFormat = GL_RGB;
+        }
+
+        m_InternalFormat = internalFormat;
+        m_DataFormat = dataFormat;
+
+        CSAS_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+        glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
+
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_FLOAT, data);
+
+        stbi_image_free(data);
+
+    }
+
+    OpenGLTexture2D::OpenGLTexture2D(const std::string& path,TextureSpecification Spec)
+            : m_Path(path),m_textureSpecification(Spec)
+    {
+        CSAS_PROFILE_FUNCTION();
+        if(Spec.RGB)
+        {
+            LoadCacheORSource(path);
+        }
+        else
+        {//hdr
+            LoadHDRCacheORSource(path);
+        }
+
+
+    }
+    OpenGLTexture2D::OpenGLTexture2D(TextureSpecification Spec)
+    :m_textureSpecification(Spec)
     {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-        glTextureStorage2D(m_RendererID, size, target,  width, height);
+        glTextureStorage2D(m_RendererID,
+                           Spec.size,
+                           Spec.target,
+                           Spec.width, Spec.height);
 
     }
     OpenGLTexture2D::~OpenGLTexture2D()
@@ -104,7 +168,11 @@ namespace CsasEngine {
         glBindTextureUnit(slot, m_RendererID);
     }
 
+    void OpenGLTexture2D::BindILS(uint32_t level, uint32_t index, uint32_t access) const
+    {
 
+        glBindImageTexture(index, m_RendererID, level, GL_TRUE, 0, access, m_InternalFormat);
+    }
 
 
     void OpenGLCubeTexture::SetData(void *data, uint32_t size)
@@ -129,13 +197,19 @@ namespace CsasEngine {
             CSAS_CORE_ERROR("{0}",re);
         }
     }
-    OpenGLCubeTexture::OpenGLCubeTexture(const std::string &path)
-            : m_Path(path)
+    OpenGLCubeTexture::OpenGLCubeTexture(const std::string &path,TextureSpecification Spec)
+            : m_Path(path),m_textureSpecification(Spec)
     {
         {
             Timer timer;
-
-            LoadCacheORSource(path);
+            if(Spec.RGB)
+            {
+                LoadCacheORSource(path);
+            }
+            else
+            {//hdr
+                LoadHDRCacheORSource(path);
+            }
 
             CSAS_CORE_WARN("CubeMapTexture took {0} s", timer.Elapsed());
         }
@@ -215,4 +289,65 @@ namespace CsasEngine {
         }
 
     }
+
+    void OpenGLCubeTexture::LoadHDRCacheORSource(const std::string &path)
+    {
+        GLClearError();
+        OpenGLTexture2D texture(path,m_textureSpecification);
+        GlCheckError();
+        OpenGLShader shader("./assets/shaders/utils/equirect2cube.glsl");
+        GlCheckError();
+
+        texture.Bind(0);
+        GlCheckError();
+        m_textureSpecification.height=512;
+        m_textureSpecification.width=512;
+        m_textureSpecification.RGB= false;
+        OpenGLCubeTexture cubeTexture(m_textureSpecification);
+        GlCheckError();
+        cubeTexture.BindILS(0,0,GL_WRITE_ONLY);
+        GlCheckError();
+        shader.Bind();
+        GlCheckError();
+        shader.Dispatch(32,32);
+        GlCheckError();
+        shader.SyncWait(GL_SHADER_STORAGE_BARRIER_BIT);
+        GlCheckError();
+        m_RendererID=cubeTexture.m_RendererID;
+        cubeTexture.m_RendererID=0;
+
+        shader.Unbind();
+    }
+
+    void OpenGLCubeTexture::BindILS(uint32_t level, uint32_t index, uint32_t access) const
+    {
+        glBindImageTexture(index, m_RendererID, level, GL_TRUE, 0, access, m_InternalFormat);
+    }
+
+    OpenGLCubeTexture::OpenGLCubeTexture(TextureSpecification Spec)
+    {
+        uint target=0;
+        if(Spec.RGB)
+        {
+            target=GL_RGBA;
+        }
+        else
+        {
+            target=GL_RGBA16F;
+        }
+        m_InternalFormat=target;
+        glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
+        glTextureStorage2D(m_RendererID,
+                           Spec.size,
+                           target,
+                           Spec.width, Spec.height);
+    }
+
+    OpenGLCubeTexture::~OpenGLCubeTexture()
+    {
+        glDeleteTextures(1,&m_RendererID);
+
+    }
+
+
 }

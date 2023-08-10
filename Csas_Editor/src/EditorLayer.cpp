@@ -23,6 +23,7 @@ namespace CsasEngine {
         m_example->OnAttach();
 
         FramebufferSpecification fbSpec;
+        fbSpec.Hdr=true;
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
         m_Framebuffer = Framebuffer::Create(fbSpec);

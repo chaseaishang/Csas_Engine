@@ -48,7 +48,8 @@ namespace CsasEngine
                 return GL_VERTEX_SHADER;
             if (type == "fragment" || type == "pixel")
                 return GL_FRAGMENT_SHADER;
-
+            if(type=="compute")
+                return GL_COMPUTE_SHADER;
             CSAS_CORE_ASSERT(false, "Unknown shader type!");
             return 0;
         }
@@ -278,19 +279,23 @@ namespace CsasEngine
 
             // We don't need the program anymore.
             glDeleteProgram(program);
+            for(int i=0;i<glShaderIDIndex;i++)
+            {
+                glDeleteShader(glShaderIDs[i]);
+            }
 
-            for (auto id : glShaderIDs)
-                glDeleteShader(id);
+
 
             CSAS_CORE_ERROR("{0}", infoLog.data());
             CSAS_CORE_ASSERT(false, "Shader link failure!");
             return;
         }
 
-        for (auto id : glShaderIDs)
+
+        for(int i=0;i<glShaderIDIndex;i++)
         {
-            glDetachShader(program, id);
-            glDeleteShader(id);
+            glDetachShader(program, glShaderIDs[i]);
+            glDeleteShader(glShaderIDs[i]);
         }
 
     }
@@ -578,6 +583,18 @@ namespace CsasEngine
                                              GL_FRAGMENT_SHADER,name.c_str());
             glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &loc);
         }
+    }
+
+    void OpenGLShader::Dispatch(uint nx, uint ny, uint nz) const
+    {
+
+        glDispatchCompute(nx, ny, nz);
+    }
+
+    void OpenGLShader::SyncWait(uint barriers) const
+    {
+        glMemoryBarrier(barriers);  // sync to ensure all writes are complete
+
     }
 
 

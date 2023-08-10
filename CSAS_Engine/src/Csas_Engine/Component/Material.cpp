@@ -160,7 +160,12 @@ namespace CsasEngine {
     Material_Skybox::Material_Skybox(const std::string filename)
     {
         type=MaterialType::Skybox;
-        this->cube_map=CubeTexture::Create(filename);
+        //this->cube_map=CubeTexture::Create(filename);
+        TextureSpecification spec;
+                        spec.RGB= false;//hdr
+
+                        //hdr_texture=
+        this->cube_map=CubeTexture::Create("./assets/textures/HDR/satara_night_2k.hdr",spec);
         m_Shader=Shader::Create("./assets/shaders/skybox.glsl");
         
     }

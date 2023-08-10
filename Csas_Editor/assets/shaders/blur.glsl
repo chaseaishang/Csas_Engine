@@ -27,8 +27,8 @@ layout(binding = 0) uniform sampler2D source_texture;
 void main()
 {
     // caution: do not blur the alpha channel!
-//    float dx = 1.0 / (textureSize(source_texture, 0)).x;
-//    float dy = 1.0 / (textureSize(source_texture, 0)).y;
+    float dx = 1.0 / (textureSize(source_texture, 0)).x;
+    float dy = 1.0 / (textureSize(source_texture, 0)).y;
 
     float sdx = 1.0 / (textureSize(source_texture, 0)).x;
     vec3 color = texture(source_texture, v_UV).rgb * weight[0];
@@ -39,7 +39,12 @@ void main()
         color += texture(source_texture, v_UV - offset).rgb * weight[i];
     }
     blur_color=vec4(color,1.0);
-
-
+//    vec3 hdrColor= texture(source_texture, v_UV).rgb;
+//    const float gamma = 2.2;
+//    // Reinhard色调映射
+//    vec3 mapped = hdrColor / (hdrColor + vec3(1.0));
+//    // Gamma校正
+//    mapped = pow(mapped, vec3(1.0 / gamma));
+//    blur_color=vec4(mapped,1.0);
 
 }

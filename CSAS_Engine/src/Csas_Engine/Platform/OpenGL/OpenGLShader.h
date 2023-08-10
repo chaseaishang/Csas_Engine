@@ -40,6 +40,9 @@ namespace CsasEngine {
 
         void UploadUniformMat3(const std::string& name, const glm::mat3& matrix);
         void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
+
+        void Dispatch(uint nx, uint ny, uint nz = 1) const override;
+        void SyncWait(uint barriers) const override;
     private:
         std::string ReadFile(const std::string& filepath);
         std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);

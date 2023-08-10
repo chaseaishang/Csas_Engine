@@ -3,13 +3,24 @@
 #include <string>
 #include <unordered_map>
 #include <glm/glm.hpp>
+/*
+ *
+   > compute_shader.Bind();
+   > compute_shader.Dispatch(nx, ny, nz);
+   > compute_shader.SyncWait(GL_ALL_BARRIER_BITS);  // safest but wasteful and slow!
+   > compute_shader.Unbind();
 
+ *
+ *
+ *
+ *
+ * */
 namespace CsasEngine {
 
     class Shader
     {
     public:
-        enum class Shader_Type{Vertex,Fragment};
+        enum class Shader_Type{Vertex,Fragment,Computer};
         virtual ~Shader() = default;
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
@@ -27,6 +38,9 @@ namespace CsasEngine {
 
         static Ref<Shader> Create(const std::string& filepath);
         static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+        virtual void Dispatch(uint nx, uint ny, uint nz = 1) const=0;
+        virtual void SyncWait(uint barriers) const=0;
+
     };
 
     class ShaderLibrary

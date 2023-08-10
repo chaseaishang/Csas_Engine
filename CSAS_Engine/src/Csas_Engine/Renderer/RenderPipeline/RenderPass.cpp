@@ -8,19 +8,49 @@
 #include "Csas_Engine/Renderer/RenderCommand.h"
 #include "Csas_Engine/Renderer/UniformBuffer.h"
 #include "Csas_Engine/Renderer/Shader.h"
+#include "Csas_Engine/Renderer/Texture.h"
 namespace CsasEngine {
     namespace GlobalCameraSpec
     {
         glm::mat4 ViewProjMatrix[2];
     }
+    //temp
+
+    Ref<CubeTexture>hdr_texture= nullptr;
+    //Ref<Texture2D>hdr_texture= nullptr;
     void ForwardPass::PrepareRenderer()
     {
+
+        {
+//            if(!hdr_texture)
+//            {
+//
+//                TextureSpecification spec;
+//                spec.RGB= false;//hdr
+//
+//                hdr_texture=CubeTexture::Create("./assets/textures/HDR/satara_night_2k.hdr",spec);
+//
+//
+//
+//                //CubeMap= CreateRef<CubeTexture>(spec);
+//            }
+
+
+
+
+        }
+        TextureSpecification spec;
+        spec.RGB= false;//hdr
+
+//hdr_texture=Texture2D::Create("./assets/textures/HDR/satara_night_2k.hdr",spec);
+
 
         auto Spec=render_Target->GetSpecification();
 //        Spec.ColorAttachmentSize=1;
 //        Spec.Has_Depth=false;
         if(post_processing==nullptr)
         {
+            Spec.Hdr=true;
             post_processing=Framebuffer::Create(Spec);
         }
         else
@@ -55,6 +85,7 @@ namespace CsasEngine {
         if(has_skybox)//@TODO temp need to remove
         {
             auto &renderWrap=renderMap[0];
+            auto&data=renderWrap.skyboxdata;
             static_cast<SkyboxPassNode*>(renderWrap.passNode_ptr)->OnExecute(&renderWrap.skyboxdata);
             index++;
         }
@@ -68,12 +99,22 @@ namespace CsasEngine {
 
             post_processing->Bind();
             auto&Wrap=renderMap[index];
+            //
             Wrap.blurPassData.source_tex=render_Target->GetColorAttachment(0);
             Wrap.passNode_ptr->OnExecute(&Wrap.blurPassData);
             post_processing->Unbind();
             Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
         }
-
+        if(false)
+        {
+            post_processing->Bind();
+            auto&Wrap=renderMap[index];
+            //
+            Wrap.blurPassData.source_tex=render_Target->GetColorAttachment(0);
+            Wrap.passNode_ptr->OnExecute(&Wrap.blurPassData);
+            post_processing->Unbind();
+            Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
+        }
 
 
 
