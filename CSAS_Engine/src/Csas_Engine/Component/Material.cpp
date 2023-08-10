@@ -164,7 +164,7 @@ namespace CsasEngine {
         TextureSpecification spec;
                         spec.RGB= false;//hdr
 
-                        //hdr_texture=
+                        //hdr_texture= sky30  satara_night_2k
         this->cube_map=CubeTexture::Create("./assets/textures/HDR/satara_night_2k.hdr",spec);
         m_Shader=Shader::Create("./assets/shaders/skybox.glsl");
         

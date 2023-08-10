@@ -1,7 +1,7 @@
 
 #type compute
 #version 450 core
-
+// convert a (2:1) equirectangle texture to a (1:1 x 6) cubemap texture
 layout(local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 layout(binding = 0) uniform sampler2D equirectangle;
 layout(binding = 0, rgba16f) restrict writeonly uniform imageCube cubemap;

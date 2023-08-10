@@ -76,7 +76,7 @@ namespace CsasEngine {
     void OpenGLTexture2D::LoadHDRCacheORSource(const std::string &path)
     {
         int width, height, channels;
-        stbi_set_flip_vertically_on_load(1);
+        stbi_set_flip_vertically_on_load(0);
         bool flag=stbi_is_hdr(path.c_str());
         float* data = nullptr;
         {
@@ -309,7 +309,7 @@ namespace CsasEngine {
         GlCheckError();
         shader.Bind();
         GlCheckError();
-        shader.Dispatch(32,32);
+        shader.Dispatch(32,32,6);
         GlCheckError();
         shader.SyncWait(GL_SHADER_STORAGE_BARRIER_BIT);
         GlCheckError();
