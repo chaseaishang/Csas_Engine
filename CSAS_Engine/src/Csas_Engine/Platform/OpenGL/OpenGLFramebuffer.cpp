@@ -82,12 +82,13 @@ namespace CsasEngine {
         if(m_Specification.Hdr)
         {
             spec.target=GL_RGBA16F;
+            spec.hdr= true;
 
         }
         else
         {
             spec.target=GL_RGBA8;
-            spec.RGB= true;
+
         }
         spec.size=1;
         spec.height=m_Specification.Height;
@@ -138,7 +139,7 @@ namespace CsasEngine {
         spec.size=1;
         spec.height=m_Specification.Height;
         spec.width=m_Specification.Width;
-        spec.RGB=true;
+        spec.hdr= false;
         DepthAttachment=Texture2D::Create(spec);
         glTextureParameteri(DepthAttachment->GetRendererID(), GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
         GLint immutable_format;

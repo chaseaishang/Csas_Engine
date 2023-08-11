@@ -26,7 +26,7 @@ namespace CsasEngine {
     struct TextureSpecification
     {
 
-        bool RGB=true;
+        bool hdr=true;
         uint target=0;
         uint size=1;
         uint32_t width;

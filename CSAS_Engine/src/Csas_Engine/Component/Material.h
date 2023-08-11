@@ -81,8 +81,11 @@ namespace CsasEngine {
     struct Material_Skybox:public Material
     {
     public:
+        bool IBL=false;
+    public:
         Material_Skybox(const std::string filename);
         Ref<CubeTexture>cube_map;
+        Ref<CubeTexture>irradiance_map= nullptr;
         void Update(glm::mat4 & model);
     };
     struct Material_Blur:public Material

@@ -23,7 +23,7 @@ namespace CsasEngine {
         renderPipeline->EndPass();
 
         skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky
-        skybox.AddComponent<Material_Skybox>("assets/textures/cubemap");
+        skybox.AddComponent<Material_Skybox>("./assets/textures/HDR/kloppenheim_02_2k.hdr");
         skybox.AddComponent<MeshComponent>(Primitive::Cube,FirstIndex);
         glm::vec3 lightPositions[4];
         lightPositions[0]={-10.0f,  10.0f, 10.0f};

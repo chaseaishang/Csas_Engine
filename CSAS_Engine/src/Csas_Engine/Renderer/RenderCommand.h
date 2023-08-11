@@ -15,6 +15,11 @@ namespace CsasEngine {
         {
             s_RendererAPI->Init();
         }
+        inline static void FaceCulling(bool Enable,bool back=true)
+        {
+            s_RendererAPI->FaceCulling(Enable,back);
+        }
+
         inline static void DepthMask(bool Enable)
         {
             s_RendererAPI->DepthMask(Enable);

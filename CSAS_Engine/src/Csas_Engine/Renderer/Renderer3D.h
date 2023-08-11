@@ -19,7 +19,6 @@
 namespace CsasEngine {
 
     class Renderer3D {
-
     public:
         static void Init();
 
@@ -61,6 +60,10 @@ namespace CsasEngine {
         static void ResetStats();
 
         static Statistics GetStats();
+        class Utils
+        {
+            static Ref<CubeTexture> PreComputeIBL(Ref<CubeTexture>&envTexture);
+        };
     private:
          static Ref<VertexArray> dummy_vao;
     };

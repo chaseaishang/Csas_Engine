@@ -24,11 +24,21 @@ void main()
 layout(location = 0)  out vec4 FragColor;
 layout(location = 0)  in vec3 v_tex_coords;
 layout(binding = 0) uniform samplerCube skybox;
+vec3 Reinhard(vec3 irradiance)
+{
+    return irradiance / (1.0 + irradiance);
+}
 void main()
 {
+    vec3 hdrColor = texture(skybox, v_tex_coords).rgb;
 
+    vec3 mapped=Reinhard(hdrColor);
+    // Gamma校正
+    const float gamma = 2.2;
+    mapped = pow(mapped, vec3(1.0 / gamma));
 
-    FragColor = texture(skybox, v_tex_coords);
+    //FragColor = vec4(hdrColor,1.0);
+    FragColor = vec4(mapped,1.0);
 
 
 }

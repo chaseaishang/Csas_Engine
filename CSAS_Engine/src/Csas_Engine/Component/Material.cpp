@@ -5,6 +5,7 @@
 #include "Csas_Engine/Renderer/Shader.h"
 #include "Csas_Engine/Renderer/Texture.h"
 #include "Material.h"
+#include "Csas_Engine/Renderer/Renderer3D.h"
 #include "Mesh.h"
 
 namespace CsasEngine {
@@ -160,12 +161,12 @@ namespace CsasEngine {
     Material_Skybox::Material_Skybox(const std::string filename)
     {
         type=MaterialType::Skybox;
-        //this->cube_map=CubeTexture::Create(filename);
-        TextureSpecification spec;
-                        spec.RGB= false;//hdr
 
-                        //hdr_texture= sky30  satara_night_2k
-        this->cube_map=CubeTexture::Create("./assets/textures/HDR/satara_night_2k.hdr",spec);
+        this->cube_map=CubeTexture::Create(filename);
+        if(IBL)
+        {
+
+        }
         m_Shader=Shader::Create("./assets/shaders/skybox.glsl");
         
     }

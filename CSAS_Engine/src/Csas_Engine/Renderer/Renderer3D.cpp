@@ -147,4 +147,12 @@ namespace CsasEngine {
     }
 
 
+    Ref <CubeTexture> Renderer3D::Utils::PreComputeIBL(Ref <CubeTexture> &envTexture)
+    {
+
+
+
+
+        return CsasEngine::Ref<CubeTexture>();
+    }
 }

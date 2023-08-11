@@ -83,6 +83,31 @@ namespace CsasEngine {
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
+    void OpenGLRendererAPI::FaceCulling(bool Enable,bool back)
+    {
+        if(Enable)
+        {
+            glEnable(GL_CULL_FACE);
+
+            glFrontFace(GL_CCW);
+            if(back)
+            {
+                glCullFace(GL_BACK);
+            }
+            else
+            {
+                glCullFace(GL_FRONT);
+            }
+
+
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+    }
+
 
 }
 

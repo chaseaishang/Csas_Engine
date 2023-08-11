@@ -21,26 +21,7 @@ namespace CsasEngine {
     void ForwardPass::PrepareRenderer()
     {
 
-        {
-//            if(!hdr_texture)
-//            {
-//
-//                TextureSpecification spec;
-//                spec.RGB= false;//hdr
-//
-//                hdr_texture=CubeTexture::Create("./assets/textures/HDR/satara_night_2k.hdr",spec);
-//
-//
-//
-//                //CubeMap= CreateRef<CubeTexture>(spec);
-//            }
 
-
-
-
-        }
-        TextureSpecification spec;
-        spec.RGB= false;//hdr
 
 //hdr_texture=Texture2D::Create("./assets/textures/HDR/satara_night_2k.hdr",spec);
 
@@ -84,10 +65,14 @@ namespace CsasEngine {
         int index=0;
         if(has_skybox)//@TODO temp need to remove
         {
+            //
+            RenderCommand::FaceCulling(true, false);
             auto &renderWrap=renderMap[0];
             auto&data=renderWrap.skyboxdata;
             static_cast<SkyboxPassNode*>(renderWrap.passNode_ptr)->OnExecute(&renderWrap.skyboxdata);
             index++;
+            //
+            RenderCommand::FaceCulling(false);
         }
         RenderCommand::DepthMask(true);
 

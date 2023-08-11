@@ -124,13 +124,14 @@ namespace CsasEngine {
             : m_Path(path),m_textureSpecification(Spec)
     {
         CSAS_PROFILE_FUNCTION();
-        if(Spec.RGB)
+        if(Spec.hdr)
         {
-            LoadCacheORSource(path);
+            LoadHDRCacheORSource(path);
         }
         else
         {//hdr
-            LoadHDRCacheORSource(path);
+            LoadCacheORSource(path);
+
         }
 
 
@@ -201,14 +202,21 @@ namespace CsasEngine {
             : m_Path(path),m_textureSpecification(Spec)
     {
         {
-            Timer timer;
-            if(Spec.RGB)
+            std::string suffix=path.substr(path.find_last_of('.')+1);
+            if(suffix=="hdr")
             {
-                LoadCacheORSource(path);
+                Spec.hdr=true;
+            }
+
+
+            Timer timer;
+            if(Spec.hdr)
+            {
+                LoadHDRCacheORSource(path);
             }
             else
             {//hdr
-                LoadHDRCacheORSource(path);
+                LoadCacheORSource(path);
             }
 
             CSAS_CORE_WARN("CubeMapTexture took {0} s", timer.Elapsed());
@@ -294,22 +302,19 @@ namespace CsasEngine {
     {
         GLClearError();
         OpenGLTexture2D texture(path,m_textureSpecification);
-        GlCheckError();
         OpenGLShader shader("./assets/shaders/utils/equirect2cube.glsl");
-        GlCheckError();
-
         texture.Bind(0);
-        GlCheckError();
         m_textureSpecification.height=512;
         m_textureSpecification.width=512;
-        m_textureSpecification.RGB= false;
+        m_textureSpecification.hdr= true;
         OpenGLCubeTexture cubeTexture(m_textureSpecification);
-        GlCheckError();
         cubeTexture.BindILS(0,0,GL_WRITE_ONLY);
-        GlCheckError();
         shader.Bind();
         GlCheckError();
-        shader.Dispatch(32,32,6);
+        //cubeTexture
+        uint wight=texture.GetWidth();
+        uint height=texture.GetHeight();
+        shader.Dispatch(wight/32,height/32,6);
         GlCheckError();
         shader.SyncWait(GL_SHADER_STORAGE_BARRIER_BIT);
         GlCheckError();
@@ -327,20 +332,28 @@ namespace CsasEngine {
     OpenGLCubeTexture::OpenGLCubeTexture(TextureSpecification Spec)
     {
         uint target=0;
-        if(Spec.RGB)
-        {
-            target=GL_RGBA;
-        }
-        else
+        if(Spec.hdr)
         {
             target=GL_RGBA16F;
         }
+        else
+        {
+            target=GL_RGBA;
+        }
         m_InternalFormat=target;
         glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
+
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         glTextureStorage2D(m_RendererID,
                            Spec.size,
                            target,
                            Spec.width, Spec.height);
+
     }
 
     OpenGLCubeTexture::~OpenGLCubeTexture()
