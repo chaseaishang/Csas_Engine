@@ -139,11 +139,39 @@ namespace CsasEngine {
     OpenGLTexture2D::OpenGLTexture2D(TextureSpecification Spec)
     :m_textureSpecification(Spec)
     {
+        if(Spec.target==GL_DEPTH24_STENCIL8)
+        {
+            glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+            glTextureParameteri(m_RendererID, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+            glTextureStorage2D(m_RendererID,
+                               Spec.size,
+                               GL_DEPTH24_STENCIL8,
+                               Spec.width, Spec.height);
+            return;
+        }
+        uint target;
+        if(Spec.hdr)
+        {
+            target=GL_RGBA16F;
+        }
+        else
+        {
+            target=GL_RGBA;
+        }
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
         glTextureStorage2D(m_RendererID,
                            Spec.size,
-                           Spec.target,
+                           target,
                            Spec.width, Spec.height);
+        m_Height=Spec.height;
+        m_Width=Spec.width;
+        m_InternalFormat=target;
 
     }
     OpenGLTexture2D::~OpenGLTexture2D()
@@ -320,7 +348,8 @@ namespace CsasEngine {
         GlCheckError();
         m_RendererID=cubeTexture.m_RendererID;
         cubeTexture.m_RendererID=0;
-
+        m_Height=512;
+        m_Width=512;
         shader.Unbind();
     }
 
@@ -361,6 +390,8 @@ namespace CsasEngine {
                            Spec.size,
                            target,
                            Spec.width, Spec.height);
+        m_Height=Spec.height;
+        m_Width=Spec.width;
         if(Spec.size>1)
         {
             glGenerateTextureMipmap(m_RendererID);
@@ -386,10 +417,12 @@ namespace CsasEngine {
         spec.size=1;
         Ref<OpenGLCubeTexture> irradiance_map= CreateRef<OpenGLCubeTexture>(spec);
         OpenGLShader irradiance_shader("./assets/shaders/utils/irradiance_map.glsl");
-        spec.height=spec.width=2048;
+
+        spec.height=spec.width=512;
         spec.size=6;
         Ref<OpenGLCubeTexture> prefiltered_map= CreateRef<OpenGLCubeTexture>(spec);
         OpenGLShader prefiltered_shader("./assets/shaders/utils/prefilter_envmap.glsl");
+
         spec.height=spec.width=1024;
         spec.size=1;
         Ref<OpenGLTexture2D> BRDF_LUT= CreateRef<OpenGLTexture2D>(spec);
@@ -407,7 +440,7 @@ namespace CsasEngine {
 
         this->Bind(0);
         prefiltered_shader.Bind();
-        GLuint resolution = 1024;
+        GLuint resolution = 512;
         uint max_level=6-1;
         for(int level=0;level<=max_level;level++,resolution/=2)
         {
@@ -423,6 +456,7 @@ namespace CsasEngine {
         GlCheckError();
 
         BRDF_LUT->BindILS(0, 2, GL_WRITE_ONLY);
+        GlCheckError();
         if (precompute_BRDF_shader.Bind(); true) {
             precompute_BRDF_shader.Dispatch(1024 / 32, 1024 / 32, 1);
             precompute_BRDF_shader.SyncWait(GL_ALL_BARRIER_BITS);

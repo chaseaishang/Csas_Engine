@@ -173,9 +173,9 @@ namespace CsasEngine {
 
         auto pbr_data=envTexture->PreComputeIBL();
 
-        Pbr_data::irradiance_map= std::get<0>(pbr_data);
+        Pbr_data::irradiance_map =  std::get<0>(pbr_data);
         Pbr_data::prefiltered_map=  std::get<1>(pbr_data);
-        Pbr_data::BRDF_LUT=  std::get<2>(pbr_data);
+        Pbr_data::BRDF_LUT       =  std::get<2>(pbr_data);
 
     }
 }

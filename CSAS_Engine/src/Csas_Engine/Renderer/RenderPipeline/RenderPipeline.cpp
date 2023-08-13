@@ -35,7 +35,8 @@ namespace CsasEngine
 
     }
     //camera
-    void RenderPipeline::BeginPipeline(CameraPtr camera,SpotLightPtrVec spots,CubeTexture*irradiance_map,
+    void RenderPipeline::BeginPipeline(CameraPtr camera,SpotLightPtrVec spots,
+                                       CubeTexture*irradiance_map,
                                        CubeTexture*prefiltered_map,
                                        Texture2D*BRDF_LUT
     )

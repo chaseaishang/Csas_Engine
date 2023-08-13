@@ -141,7 +141,7 @@ namespace CsasEngine {
         spec.width=m_Specification.Width;
         spec.hdr= false;
         DepthAttachment=Texture2D::Create(spec);
-        glTextureParameteri(DepthAttachment->GetRendererID(), GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+
         GLint immutable_format;
         glGetTextureParameteriv(DepthAttachment->GetRendererID(), GL_TEXTURE_IMMUTABLE_FORMAT, &immutable_format);
 
