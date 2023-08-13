@@ -1,7 +1,11 @@
 #ifndef BRDF_H
 #define BRDF_H
-#define PI 3.14159265359
 
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
 //                N normal
 //                H half vector
 //                a metalness
@@ -23,10 +27,12 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 //
 float GeometrySchlickGGX(float NdotV, float roughness)
 {
-    float r = (roughness + 1.0);
-    float k = (r*r) / 8.0;
+    float a = roughness;
+    float k = (a * a) / 2.0;
+
     float nom   = NdotV;
     float denom = NdotV * (1.0 - k) + k;
+
     return nom / denom;
 }
 // N normal

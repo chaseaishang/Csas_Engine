@@ -316,7 +316,7 @@ namespace CsasEngine {
         uint height=texture.GetHeight();
         shader.Dispatch(wight/32,height/32,6);
         GlCheckError();
-        shader.SyncWait(GL_SHADER_STORAGE_BARRIER_BIT);
+        shader.SyncWait(GL_ALL_BARRIER_BITS);
         GlCheckError();
         m_RendererID=cubeTexture.m_RendererID;
         cubeTexture.m_RendererID=0;
@@ -342,9 +342,17 @@ namespace CsasEngine {
         }
         m_InternalFormat=target;
         glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
+        if(Spec.size==1)
+        {
+            glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }
+        else
+        {
+            glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }
 
-        glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -353,6 +361,12 @@ namespace CsasEngine {
                            Spec.size,
                            target,
                            Spec.width, Spec.height);
+        if(Spec.size>1)
+        {
+            glGenerateTextureMipmap(m_RendererID);
+            GlCheckError();
+        }
+
 
     }
 
@@ -361,6 +375,67 @@ namespace CsasEngine {
         glDeleteTextures(1,&m_RendererID);
 
     }
+
+    std::tuple<Ref<CubeTexture>,Ref<CubeTexture>,Ref<Texture2D>> OpenGLCubeTexture::PreComputeIBL()
+    {
+        Timer timer;
+        GLClearError();
+        TextureSpecification spec;
+        spec.height=spec.width=128;
+        spec.hdr= true;
+        spec.size=1;
+        Ref<OpenGLCubeTexture> irradiance_map= CreateRef<OpenGLCubeTexture>(spec);
+        OpenGLShader irradiance_shader("./assets/shaders/utils/irradiance_map.glsl");
+        spec.height=spec.width=2048;
+        spec.size=6;
+        Ref<OpenGLCubeTexture> prefiltered_map= CreateRef<OpenGLCubeTexture>(spec);
+        OpenGLShader prefiltered_shader("./assets/shaders/utils/prefilter_envmap.glsl");
+        spec.height=spec.width=1024;
+        spec.size=1;
+        Ref<OpenGLTexture2D> BRDF_LUT= CreateRef<OpenGLTexture2D>(spec);
+        OpenGLShader precompute_BRDF_shader("./assets/shaders/utils/precompute_brdf.glsl");
+
+        this->Bind(0);
+        irradiance_map->BindILS(0,0,GL_WRITE_ONLY);
+        if(irradiance_shader.Bind();true)
+        {
+            //cubeTexture
+            irradiance_shader.Dispatch(128/32,128/32,6);
+            irradiance_shader.SyncWait(GL_ALL_BARRIER_BITS);
+            GlCheckError();
+        }
+
+        this->Bind(0);
+        prefiltered_shader.Bind();
+        GLuint resolution = 1024;
+        uint max_level=6-1;
+        for(int level=0;level<=max_level;level++,resolution/=2)
+        {
+            float roughness = level / static_cast<float>(max_level);
+            uint n_groups = glm::max<uint>(resolution / 32, 1);
+
+            prefiltered_map->BindILS(level, 1, GL_WRITE_ONLY);
+            prefiltered_shader.SetFloat("roughness", roughness);
+            prefiltered_shader.Dispatch(n_groups, n_groups, 6);
+            prefiltered_shader.SyncWait(GL_ALL_BARRIER_BITS);
+
+        }
+        GlCheckError();
+
+        BRDF_LUT->BindILS(0, 2, GL_WRITE_ONLY);
+        if (precompute_BRDF_shader.Bind(); true) {
+            precompute_BRDF_shader.Dispatch(1024 / 32, 1024 / 32, 1);
+            precompute_BRDF_shader.SyncWait(GL_ALL_BARRIER_BITS);
+            GlCheckError();
+
+        }
+        precompute_BRDF_shader.Unbind();
+
+        CSAS_CORE_WARN("IBL creation took {0} ms", timer.ElapsedMillis());
+        return {irradiance_map,prefiltered_map,BRDF_LUT};
+    }
+
+
 
 
 }

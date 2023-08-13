@@ -134,7 +134,12 @@ namespace CsasEngine {
 
     }
 
-    void Material_BaseBRDF::Update(glm::mat4 &model,glm::mat4 &CameraView,std::vector<SpotLightComponent>&spots)
+    void Material_BaseBRDF::Update(glm::mat4 &model,glm::mat4 &CameraView,
+                                   std::vector<SpotLightComponent>&spots,
+                                   const CubeTexture&irradiance_map,
+                                   const CubeTexture&prefiltered_map,
+                                   const Texture2D&BRDF_LUT
+                                   )
     {
         m_Shader->Bind();
         m_Shader->SetMat4("model",model);
@@ -142,6 +147,9 @@ namespace CsasEngine {
 //        uniform float roughness;
         m_Shader->SetFloat("metallic",metallic);
         m_Shader->SetFloat("roughness",roughness);
+        irradiance_map.Bind(17);
+        prefiltered_map.Bind(18);
+        BRDF_LUT.Bind(19);
         if(int size=spots.size();size>=0)
         {
             m_Shader->SetInt("light_nums",size);
@@ -165,6 +173,7 @@ namespace CsasEngine {
         this->cube_map=CubeTexture::Create(filename);
         if(IBL)
         {
+            Renderer3D::Utils::PreComputeIBL(cube_map);
 
         }
         m_Shader=Shader::Create("./assets/shaders/skybox.glsl");

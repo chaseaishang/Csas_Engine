@@ -16,7 +16,11 @@ namespace CsasEngine
         using RenderPassMap=std::unordered_map<RenderIndex,RenderPassVec>;
 
     public:
-         void BeginPipeline(CameraPtr camera,SpotLightPtrVec spots );//camera
+         void BeginPipeline(CameraPtr camera,SpotLightPtrVec spots,
+                            CubeTexture*irradiance_map,
+                            CubeTexture*prefiltered_map,
+                            Texture2D*BRDF_LUT
+         );//camera
         //mesh light material
 
          void Submit(RenderDataVec data,RenderIndex nowIndex);
@@ -41,7 +45,9 @@ namespace CsasEngine
         Ref<Framebuffer> render_Target;
         static CameraPtr m_camera;
         static SpotLightPtrVec m_spots;
+
     private:
         static RenderPipeline*m_Instance;
+
     };
 }

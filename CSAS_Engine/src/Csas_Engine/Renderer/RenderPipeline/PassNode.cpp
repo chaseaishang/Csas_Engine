@@ -45,7 +45,12 @@ namespace CsasEngine
             auto transform=mesh->transform.GetTransform();
             mesh->Update();
             vao->Bind();
-            static_cast<Material_BaseBRDF*>(material)->Update(transform,ForwardPass::get_CameraView(),spotlights);
+            static_cast<Material_BaseBRDF*>(material)->Update(transform,ForwardPass::get_CameraView(),
+                                                              spotlights,
+                                                              *ptr->irradiance_map,
+                                                              *ptr->prefiltered_map,
+                                                              *ptr->BRDF_LUT
+                                                              );
 
             RenderCommand::DrawIndexed(vao);
         }

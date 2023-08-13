@@ -48,7 +48,9 @@ float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
+#include utils/extension.glsl
 #include BRDF.glsl
+#include pbr/pbr_uniform.glsl
 void main()
 {
     vec3 N = normalize(v_Normal);
@@ -101,8 +103,21 @@ void main()
 
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * albedo * ao;
 
+    vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+    vec3 kD = 1.0 - kS;
+    kD *= 1.0 - metallic;
+
+    vec3 irradiance = texture(irradiance_map, N).rgb;
+    vec3 diffuse    = irradiance * albedo;
+
+    vec3 R = normalize(reflect(-V, N));
+    const float MAX_REFLECTION_LOD = 5.0;
+    vec3 prefilteredColor = textureLod(prefilter_map, R,  roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 envBRDF  = texture(BRDF_LUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
+
+    vec3 ambient = (kD * diffuse + specular) * ao;
     vec3 color = ambient + Lo;
 
     // HDR tonemapping

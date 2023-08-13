@@ -1,23 +1,35 @@
-////////////////////////////////////////////////////////////////////////////////
 
-#define EPS      1e-5
-#define PI       3.141592653589793
-#define PI2      6.283185307179586
-#define INV_PI   0.318309886183791  // 1 over PI
-#define HLF_PI   1.570796326794897  // half PI
-#define SQRT2    1.414213562373095
-#define SQRT3    1.732050807568877
-#define SQRT5    2.236067977499789
-#define CBRT2    1.259921049894873  // cube root 2
-#define CBRT3    1.442249570307408  // cube root 3
-#define G_PHI    1.618033988749894  // golden ratio
-#define EULER_E  2.718281828459045  // natural exponent e
-#define LN2      0.693147180559945
-#define LN10     2.302585092994046
-#define INV_LN2  1.442695040888963  // 1 over ln2
-#define INV_LN10 0.434294481903252  // 1 over ln10
 
-#define clamp01(x) clamp(x, 0.0, 1.0)
+
+
+
+#include extension.glsl
+/* convert a vector v in tangent space defined by normal N (e.g. hemisphere) to world space
+
+   this is an easy-peezy change-of-frame problem, where texture coordinates ain't involved.
+   given a normal vector N, we can find a tangent vector T and a bitangent vector B, such
+   that T, B and N together define the orthonormal basis of the tangent space, then what's
+   left to do is simply to project them onto the world basis unit vector X, Y and Z.
+
+   there's an infinite number of vectors T and B that we can choose to build an orthonormal
+   basis with N, so that implementations can differ, but results will be the same as long
+   as the TB plane is tangent to the shading point on the hemisphere. That said, we should
+   carefully choose an initial up vector U who does not overlap with N, o/w `cross(U, N)`
+   might not be able to calculate the correct T due to precision errors. Also, make sure to
+   normalize every vector before use.
+*/
+vec3 Tangent2World(vec3 N, vec3 v) {
+    N = normalize(N);
+
+    // choose the up vector U that does not overlap with N
+    vec3 U = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), step(abs(N.y), 0.999));
+    vec3 T = normalize(cross(U, N));
+    vec3 B = normalize(cross(N, T));
+    return T * v.x + B * v.y + N * v.z;  // mat3(T, B, N) * v
+}
+
+
+
 
 // convert a vector v in Cartesian coordinates to spherical coordinates
 vec2 Cartesian2Spherical(vec3 v) {

@@ -42,6 +42,7 @@ namespace CsasEngine {
     class OpenGLCubeTexture:public CubeTexture
     {
     public:
+        std::tuple<Ref<CubeTexture>,Ref<CubeTexture>,Ref<Texture2D>> PreComputeIBL()override;
         OpenGLCubeTexture(const std::string& path,TextureSpecification Spec);
         OpenGLCubeTexture(TextureSpecification Spec);
         ~OpenGLCubeTexture()override;

@@ -56,7 +56,11 @@ namespace CsasEngine
         ForwardPass()=default;
         void SetConstData(const Ref<Framebuffer>& render_Target,
                           const CameraPtr& m_camera,
-                          const SpotLightPtrVec& m_spots);
+                          const SpotLightPtrVec& m_spots,
+                          const CubeTexture*irradiance_map,
+                          const CubeTexture*prefiltered_map,
+                          const Texture2D*BRDF_LUT
+                          );
 
         ~ForwardPass()override;
         void AddPass(RenderIndex index,PassNodeType);
@@ -77,6 +81,9 @@ namespace CsasEngine
         Ref<Framebuffer> render_Target;
         RenderPassMap renderMap;
         Ref<Framebuffer> post_processing= nullptr;
+        const CubeTexture*irradiance_map;
+        const CubeTexture*prefiltered_map;
+        const Texture2D*BRDF_LUT;
 
     private:
 

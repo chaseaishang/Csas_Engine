@@ -81,11 +81,10 @@ namespace CsasEngine {
     struct Material_Skybox:public Material
     {
     public:
-        bool IBL=false;
+        bool IBL=true;
     public:
         Material_Skybox(const std::string filename);
         Ref<CubeTexture>cube_map;
-        Ref<CubeTexture>irradiance_map= nullptr;
         void Update(glm::mat4 & model);
     };
     struct Material_Blur:public Material
@@ -106,7 +105,11 @@ namespace CsasEngine {
             float roughness=0.5f;
         };
         Material_BaseBRDF();
-        void Update(glm::mat4 & model,glm::mat4 &CameraView,std::vector<SpotLightComponent>&spots);
+        void Update(glm::mat4 & model,glm::mat4 &CameraView,std::vector<SpotLightComponent>&spots,
+                    const CubeTexture&irradiance_map,
+                    const CubeTexture&prefiltered_map,
+                    const Texture2D&BRDF_LUT
+        );
         ~Material_BaseBRDF() override =default ;
         glm::vec3 lightPositions[4];
 

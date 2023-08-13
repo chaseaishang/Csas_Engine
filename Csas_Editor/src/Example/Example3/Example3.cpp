@@ -23,7 +23,7 @@ namespace CsasEngine {
         renderPipeline->EndPass();
 
         skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky
-        skybox.AddComponent<Material_Skybox>("./assets/textures/HDR/kloppenheim_02_2k.hdr");
+        skybox.AddComponent<Material_Skybox>("./assets/textures/HDR/newport_loft.hdr");
         skybox.AddComponent<MeshComponent>(Primitive::Cube,FirstIndex);
         glm::vec3 lightPositions[4];
         lightPositions[0]={-10.0f,  10.0f, 10.0f};
@@ -40,7 +40,7 @@ namespace CsasEngine {
 
 
         // BRDF
-        for(int i=0;i<9;i++)
+        for(int i=0;i<49;i++)
         {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
             m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(name);
@@ -48,18 +48,23 @@ namespace CsasEngine {
             m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Sphere,index);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();
         }
-        for(int i=0;i<3;i++)
+        float spacing = 1;
+
+        for(int i=0;i<7;i++)
         {
-            for(int j=0;j<3;j++)
+            float metallic=(float)i / (float)7;
+            for(int j=0;j<7;j++)
             {
-                int index=i*3+j;
+                int index=i*7+j;
                 auto &material=m_BRDF_Sphere[index].GetComponent<Material_BaseBRDF>();
                 auto &metalness=material.metallic;
-                metalness=(float)i / (float)3;
+                metalness=metallic;
                 auto &roughness=material.roughness;
-                roughness=glm::clamp((float)j / (float)3, 0.05f, 1.0f);
+                roughness=glm::clamp((float)j / (float)7, 0.05f, 1.0f);
                 auto &position =m_BRDF_Sphere[index].GetComponent<MeshComponent>().transform.Translation;
-                position={i,j,0};
+                position={(j - (7 / 2)) * spacing,
+                          (i - (7 / 2)) * spacing,
+                          0.0f};
 
 
             }

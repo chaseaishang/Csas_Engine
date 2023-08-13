@@ -141,8 +141,12 @@ namespace CsasEngine {
                 auto&datavec=wrap.dataVec;
                 datavec={
                         .data_vec=std::move(data),
-                        .spots=m_spots
+                        .spots=m_spots,
+                        .irradiance_map= this->irradiance_map,
+                        .prefiltered_map=this->prefiltered_map,
+                        .BRDF_LUT=this->BRDF_LUT
                 };
+
                 break;
             }
             case PassNodeType::BlurPass:
@@ -161,7 +165,11 @@ namespace CsasEngine {
 
     void ForwardPass::SetConstData(const Ref<Framebuffer>& render_Target,
                                    const CameraPtr& m_camera,
-                                   const SpotLightPtrVec& m_spots)
+                                   const SpotLightPtrVec& m_spots,
+                                   const CubeTexture*irradiance_map,
+                                   const CubeTexture*prefiltered_map,
+                                   const Texture2D*BRDF_LUT
+                                   )
     {
 
         this->m_spots=m_spots;
@@ -169,7 +177,9 @@ namespace CsasEngine {
         this->m_camera=m_camera;
         GlobalCameraSpec::ViewProjMatrix[0]=m_camera->GetView();
         GlobalCameraSpec::ViewProjMatrix[1]=m_camera->GetProjection();
-
+        this->irradiance_map=irradiance_map;
+        this->prefiltered_map=prefiltered_map;
+        this->BRDF_LUT=BRDF_LUT;
 
     }
 

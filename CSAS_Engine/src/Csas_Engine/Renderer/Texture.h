@@ -47,6 +47,7 @@ namespace CsasEngine {
     class CubeTexture:public Texture
     {
     public:
+        virtual std::tuple<Ref<CubeTexture>,Ref<CubeTexture>,Ref<Texture2D>> PreComputeIBL()=0;
         static Ref<CubeTexture> Create(const std::string& path,TextureSpecification Spec=TextureSpecification());
         static Ref<CubeTexture> Create( TextureSpecification Spec=TextureSpecification());
         // OpenGLCubeTexture(TextureSpecification Spec);

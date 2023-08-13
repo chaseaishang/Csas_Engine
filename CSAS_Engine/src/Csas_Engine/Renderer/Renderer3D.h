@@ -62,10 +62,13 @@ namespace CsasEngine {
         static Statistics GetStats();
         class Utils
         {
-            static Ref<CubeTexture> PreComputeIBL(Ref<CubeTexture>&envTexture);
+        public:
+            static void PreComputeIBL(Ref<CubeTexture>&envTexture);
         };
     private:
          static Ref<VertexArray> dummy_vao;
+
+
     };
 
 
