@@ -81,13 +81,13 @@ namespace CsasEngine {
         TextureSpecification spec;
         if(m_Specification.Hdr)
         {
-            spec.target=GL_RGBA16F;
+            spec.format=TextureSpecification::Format::RGBA16F;
             spec.hdr= true;
 
         }
         else
         {
-            spec.target=GL_RGBA8;
+            spec.format=spec.format=TextureSpecification::Format::RGBA;
 
         }
         spec.size=1;
@@ -96,7 +96,7 @@ namespace CsasEngine {
 
         for (GLuint i = 0; i < count; i++)
         {
-            GLenum target = GL_TEXTURE_2D;
+
             Ref<Texture2D>texture=Texture2D::Create(spec);
 
             const auto&renderID=texture->GetRendererID();
@@ -135,7 +135,7 @@ namespace CsasEngine {
 
 
         TextureSpecification spec;
-        spec.target=GL_DEPTH24_STENCIL8;
+        spec.format=TextureSpecification::Format::DEPTH;
         spec.size=1;
         spec.height=m_Specification.Height;
         spec.width=m_Specification.Width;

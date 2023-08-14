@@ -31,7 +31,9 @@ namespace CsasEngine {
 
         Ref<Scene> m_ActiveScene;
         Entity skybox;
-        Entity m_BRDF_Sphere[49];
+        Entity m_plane;
+        Entity m_BRDF_Sphere[9];
+
 
 
 

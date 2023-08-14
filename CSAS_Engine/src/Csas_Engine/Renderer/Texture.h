@@ -25,10 +25,15 @@ namespace CsasEngine {
     };
     struct TextureSpecification
     {
-
-        bool hdr=true;
-        uint target=0;
-        uint size=1;
+        enum class Format
+        {
+            RGBA,
+            RGBA16F,
+            DEPTH
+        };
+        Format format=Format::RGBA16F;
+        bool   hdr=true;
+        uint  size=1;
         uint32_t width;
         uint32_t height;
     };
@@ -36,13 +41,11 @@ namespace CsasEngine {
     class Texture2D : public Texture
     {
     public:
-        static Ref<Texture2D> Create(uint32_t width, uint32_t height,TextureSpecification Spec=TextureSpecification());
+        static Ref<Texture2D> Create(TextureSpecification Spec=TextureSpecification());
         static Ref<Texture2D> Create(const std::string& path,TextureSpecification Spec=TextureSpecification());
 
 
 
-        //for frameBuffer
-        static Ref<Texture2D> Create(TextureSpecification Spec=TextureSpecification());
     };
     class CubeTexture:public Texture
     {

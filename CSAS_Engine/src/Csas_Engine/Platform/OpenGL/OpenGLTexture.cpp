@@ -10,24 +10,24 @@
 #include <Csas_Engine/Core/Timer.h>
 
 namespace CsasEngine {
-
-    OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height,TextureSpecification Spec)
-            : m_Width(width), m_Height(height),m_textureSpecification(Spec)
-    {
-        CSAS_PROFILE_FUNCTION();
-
-        m_InternalFormat = GL_RGBA8;
-        m_DataFormat = GL_RGBA;
-
-        glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-        glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
-
-        glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    namespace Utils{
+        using TexSpecFormat=TextureSpecification::Format;
+        uint TextureSpec2Opengl(TexSpecFormat format)
+        {
+            switch (format)
+            {
+                case TexSpecFormat::RGBA:
+                    return GL_RGBA;
+                case TexSpecFormat::RGBA16F:
+                    return GL_RGBA16F;
+                case TexSpecFormat::DEPTH:
+                    return GL_DEPTH24_STENCIL8;
+                default: CSAS_CORE_ASSERT(true,"Error TexSpecFormat");
+            }
+            return 0;
+        }
     }
+
     void OpenGLTexture2D::LoadCacheORSource(const std::string &path)
     {
         int width, height, channels;
@@ -38,14 +38,14 @@ namespace CsasEngine {
             data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         }
         CSAS_CORE_ASSERT(data, "Failed to load image!");
-        m_Width = width;
-        m_Height = height;
-
+        m_textureSpecification.width=width;
+        m_textureSpecification.height=height;
         GLenum internalFormat = 0, dataFormat = 0;
         if (channels == 4)
         {
             internalFormat = GL_RGBA8;
             dataFormat = GL_RGBA;
+            m_textureSpecification.format=TextureSpecification::Format::RGBA;
         }
         else if (channels == 3)
         {
@@ -59,7 +59,7 @@ namespace CsasEngine {
         CSAS_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-        glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
+        glTextureStorage2D(m_RendererID, 1, internalFormat, width, height);
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -67,7 +67,7 @@ namespace CsasEngine {
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+        glTextureSubImage2D(m_RendererID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);
 
@@ -85,8 +85,8 @@ namespace CsasEngine {
 
         }
         CSAS_CORE_ASSERT(data,"STBI failure reason: {0}", stbi_failure_reason());
-        m_Width = width;
-        m_Height = height;
+        m_textureSpecification.width=width;
+        m_textureSpecification.height=height;
 
         GLenum internalFormat = 0, dataFormat = 0;
         if (channels == 4)
@@ -106,7 +106,7 @@ namespace CsasEngine {
         CSAS_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-        glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
+        glTextureStorage2D(m_RendererID, 1, internalFormat, width, height);
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -114,7 +114,7 @@ namespace CsasEngine {
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_FLOAT, data);
+        glTextureSubImage2D(m_RendererID, 0, 0, 0, width, height, dataFormat, GL_FLOAT, data);
 
         stbi_image_free(data);
 
@@ -139,7 +139,8 @@ namespace CsasEngine {
     OpenGLTexture2D::OpenGLTexture2D(TextureSpecification Spec)
     :m_textureSpecification(Spec)
     {
-        if(Spec.target==GL_DEPTH24_STENCIL8)
+        m_InternalFormat=Utils::TextureSpec2Opengl(Spec.format);
+        if(m_InternalFormat==GL_DEPTH24_STENCIL8)
         {
             glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
             glTextureParameteri(m_RendererID, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
@@ -150,14 +151,7 @@ namespace CsasEngine {
             return;
         }
         uint target;
-        if(Spec.hdr)
-        {
-            target=GL_RGBA16F;
-        }
-        else
-        {
-            target=GL_RGBA;
-        }
+
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -167,11 +161,10 @@ namespace CsasEngine {
 
         glTextureStorage2D(m_RendererID,
                            Spec.size,
-                           target,
+                           m_InternalFormat,
                            Spec.width, Spec.height);
-        m_Height=Spec.height;
-        m_Width=Spec.width;
-        m_InternalFormat=target;
+
+
 
     }
     OpenGLTexture2D::~OpenGLTexture2D()
@@ -186,8 +179,10 @@ namespace CsasEngine {
         CSAS_PROFILE_FUNCTION();
 
         uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
-        CSAS_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
-        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+        auto&width=m_textureSpecification.width;
+        auto&height=m_textureSpecification.height;
+        CSAS_CORE_ASSERT(size == width * height * bpp, "Data must be entire texture!");
+        glTextureSubImage2D(m_RendererID, 0, 0, 0, width, height, m_DataFormat, GL_UNSIGNED_BYTE, data);
     }
 
     void OpenGLTexture2D::Bind(uint32_t slot) const
@@ -360,16 +355,8 @@ namespace CsasEngine {
 
     OpenGLCubeTexture::OpenGLCubeTexture(TextureSpecification Spec)
     {
-        uint target=0;
-        if(Spec.hdr)
-        {
-            target=GL_RGBA16F;
-        }
-        else
-        {
-            target=GL_RGBA;
-        }
-        m_InternalFormat=target;
+
+        m_InternalFormat=Utils::TextureSpec2Opengl(Spec.format);
         glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
         if(Spec.size==1)
         {
@@ -388,7 +375,7 @@ namespace CsasEngine {
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         glTextureStorage2D(m_RendererID,
                            Spec.size,
-                           target,
+                           m_InternalFormat,
                            Spec.width, Spec.height);
         m_Height=Spec.height;
         m_Width=Spec.width;
@@ -409,21 +396,25 @@ namespace CsasEngine {
 
     std::tuple<Ref<CubeTexture>,Ref<CubeTexture>,Ref<Texture2D>> OpenGLCubeTexture::PreComputeIBL()
     {
+        const uint irradiance_map_width=128;
+        const uint prefiltered_width=512;
+        const uint preBRDF_width=1024;
         Timer timer;
         GLClearError();
         TextureSpecification spec;
-        spec.height=spec.width=128;
+        spec.height=spec.width=irradiance_map_width;
         spec.hdr= true;
         spec.size=1;
+        spec.format=TextureSpecification::Format::RGBA16F;
         Ref<OpenGLCubeTexture> irradiance_map= CreateRef<OpenGLCubeTexture>(spec);
         OpenGLShader irradiance_shader("./assets/shaders/utils/irradiance_map.glsl");
 
-        spec.height=spec.width=512;
+        spec.height=spec.width=prefiltered_width;
         spec.size=6;
         Ref<OpenGLCubeTexture> prefiltered_map= CreateRef<OpenGLCubeTexture>(spec);
         OpenGLShader prefiltered_shader("./assets/shaders/utils/prefilter_envmap.glsl");
 
-        spec.height=spec.width=1024;
+        spec.height=spec.width=preBRDF_width;
         spec.size=1;
         Ref<OpenGLTexture2D> BRDF_LUT= CreateRef<OpenGLTexture2D>(spec);
         OpenGLShader precompute_BRDF_shader("./assets/shaders/utils/precompute_brdf.glsl");
@@ -433,14 +424,14 @@ namespace CsasEngine {
         if(irradiance_shader.Bind();true)
         {
             //cubeTexture
-            irradiance_shader.Dispatch(128/32,128/32,6);
+            irradiance_shader.Dispatch(irradiance_map_width/32,irradiance_map_width/32,6);
             irradiance_shader.SyncWait(GL_ALL_BARRIER_BITS);
             GlCheckError();
         }
 
         this->Bind(0);
         prefiltered_shader.Bind();
-        GLuint resolution = 512;
+        GLuint resolution = prefiltered_width;
         uint max_level=6-1;
         for(int level=0;level<=max_level;level++,resolution/=2)
         {
@@ -458,7 +449,7 @@ namespace CsasEngine {
         BRDF_LUT->BindILS(0, 2, GL_WRITE_ONLY);
         GlCheckError();
         if (precompute_BRDF_shader.Bind(); true) {
-            precompute_BRDF_shader.Dispatch(1024 / 32, 1024 / 32, 1);
+            precompute_BRDF_shader.Dispatch(preBRDF_width / 32, preBRDF_width / 32, 1);
             precompute_BRDF_shader.SyncWait(GL_ALL_BARRIER_BITS);
             GlCheckError();
 

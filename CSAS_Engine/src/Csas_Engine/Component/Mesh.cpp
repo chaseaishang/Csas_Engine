@@ -36,6 +36,7 @@ namespace CsasEngine
             case Primitive::Sphere:CreatSphere(0.5f);break;
             case Primitive::Quad:CreatQuad(1.0);break;
             case Primitive::Torus:CreatTorus(0.5f,0.17);break;
+            case Primitive::Plane:CreatPlane(1.0);break;
             case Primitive::None: CSAS_ASSERT(false,"error primitive!");
         }
     }
@@ -329,8 +330,59 @@ namespace CsasEngine
         CreateBuffers(vertices,indices,layout);
 
     }
+    namespace PlaneSpec
+    {
+        static uint8_t PlaneVertexSize=sizeof(Vertex);
+        static const uint32_t OnePlaneVertices =  8 ;
+        static const uint32_t OnePlaneIndices  =  6;
+
+    }
+    void MeshComponent::CreatPlane(float size) {
+
+        std::vector<Vertex> &vertices=m_vertices;
+        vertices.reserve(PlaneSpec::OnePlaneVertices);
+
+        const static int stride = 8;  // 3 + 3 + 2
+
+        const static float data[] = {
+                // ---position----    ------normal-----    ----uv----
+                -1.0f, 0.0f, +1.0f,   0.0f, +1.0f, 0.0f,   0.0f, 0.0f,
+                +1.0f, 0.0f, +1.0f,   0.0f, +1.0f, 0.0f,   1.0f, 0.0f,
+                +1.0f, 0.0f, -1.0f,   0.0f, +1.0f, 0.0f,   1.0f, 1.0f,
+                -1.0f, 0.0f, -1.0f,   0.0f, +1.0f, 0.0f,   0.0f, 1.0f,
+                -1.0f, 0.0f, +1.0f,   0.0f, -1.0f, 0.0f,   0.0f, 1.0f,
+                +1.0f, 0.0f, +1.0f,   0.0f, -1.0f, 0.0f,   1.0f, 1.0f,
+                +1.0f, 0.0f, -1.0f,   0.0f, -1.0f, 0.0f,   1.0f, 0.0f,
+                -1.0f, 0.0f, -1.0f,   0.0f, -1.0f, 0.0f,   0.0f, 0.0f
+        };
+        for (unsigned int i = 0; i < PlaneSpec::OnePlaneVertices; i++) {
+            unsigned int offset = i * stride;
+
+            Vertex vertex {};
+            vertex.Position  = glm::vec3(data[offset + 0], data[offset + 1], data[offset + 2]) * size;
+            vertex.Normal    = glm::vec3(data[offset + 3], data[offset + 4], data[offset + 5]);
+            vertex.UV        = glm::vec2(data[offset + 6], data[offset + 7]);  // keep in [0, 1] range
+            vertices.push_back(vertex);
+        }
 
 
+        std::vector<uint32_t> &indices=m_indices;
+        // counter-clockwise winding order
+        indices = { 0, 1, 2, 2, 3, 0, 6, 5, 4, 4, 7, 6 };
+
+
+
+
+
+        BufferLayout layout=
+                {
+                        {ShaderDataType::Float3, "a_Position"},
+                        {ShaderDataType::Float3, "a_Normal"},
+                        {ShaderDataType::Float2, "a_UV"}
+                };
+        CreateBuffers(vertices,indices,layout);
+
+    }
 
 
 }

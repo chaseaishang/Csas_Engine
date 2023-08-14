@@ -21,7 +21,7 @@ namespace CsasEngine
         glm::vec2 UV;
     };
 
-    enum class Primitive {None,Cube,Sphere,Quad,Torus,FromModel};
+    enum class Primitive {None,Cube,Sphere,Quad,Torus,FromModel,Plane};
     struct MeshComponent
     {
     public:
@@ -46,6 +46,7 @@ namespace CsasEngine
 
         void CreatTorus(float R = 0.5f, float r = 0.17f);
         void CreatCube(float size=1.0);
+        void CreatPlane(float size=1.0);
         void CreatSphere(float radius = 0.5f);
         void CreatQuad(float size=1.0);
         void CreateBuffers(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices,BufferLayout &layout);

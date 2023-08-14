@@ -12,14 +12,13 @@ namespace CsasEngine {
     class OpenGLTexture2D : public Texture2D
     {
     public:
-        OpenGLTexture2D(uint32_t width, uint32_t height,TextureSpecification Spec);
         OpenGLTexture2D(const std::string& path,TextureSpecification Spec);
         OpenGLTexture2D(TextureSpecification Spec);
         //
         virtual ~OpenGLTexture2D();
 
-        uint32_t GetWidth() const override { return m_Width;  }
-        uint32_t GetHeight() const override { return m_Height; }
+        uint32_t GetWidth() const override { return m_textureSpecification.width;  }
+        uint32_t GetHeight() const override { return m_textureSpecification.height; }
         uint32_t GetRendererID() const override { return m_RendererID; }
         void SetData(void* data, uint32_t size) override;
 
@@ -34,7 +33,6 @@ namespace CsasEngine {
         void LoadHDRCacheORSource(const std::string& path);
     private:
         std::string m_Path;
-        uint32_t m_Width, m_Height;
         uint32_t m_RendererID;
         GLenum m_InternalFormat, m_DataFormat;
         TextureSpecification m_textureSpecification;
