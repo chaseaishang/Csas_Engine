@@ -40,7 +40,10 @@ namespace CsasEngine {
 
             SpotLights[i]=m_ActiveScene->CreateEntity(name);
 
-            auto&pos=SpotLights[i].AddComponent<MeshComponent>(Primitive::Cube,thirdIndex).transform.Translation;
+            auto&Trans=SpotLights[i].AddComponent<MeshComponent>(Primitive::Cube,thirdIndex).transform;
+            auto&pos=Trans.Translation;
+            auto&scale=Trans.Scale;
+            scale={0.1,0.1,0.1};
             pos={lightPositions[i].x,
                       lightPositions[i].y,
                       lightPositions[i].z

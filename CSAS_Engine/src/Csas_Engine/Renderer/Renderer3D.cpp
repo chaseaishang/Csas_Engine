@@ -28,10 +28,14 @@ namespace CsasEngine {
         Ref<Texture2D>BRDF_LUT= nullptr;
         //prefiltered_map BRDF_LUT
     }
-    void Renderer3D::BeginScene(Camera &camera, std::vector<SpotLightComponent *> SpotlightsPtr)
+    void Renderer3D::BeginScene(Camera &camera,
+                                std::vector<SpotLightComponent *> SpotlightsPtr,
+                                std::vector<MeshComponent *> SpotMeshPtr
+
+                                )
     {
         auto m_pipeline=RenderPipeline::getInstance();
-        m_pipeline->BeginPipeline(&camera,SpotlightsPtr,
+        m_pipeline->BeginPipeline(&camera,SpotlightsPtr,SpotMeshPtr,
                                   Pbr_data::irradiance_map.get(),
                                   Pbr_data::prefiltered_map.get(),
                                      Pbr_data::BRDF_LUT.get()
@@ -49,7 +53,6 @@ namespace CsasEngine {
     }
     void Renderer3D::Submit(MeshComponent &mesh, SpotLightComponent &material)
     {
-        material.position=mesh.transform.Translation;
         uint8_t index=mesh.RenderIndex;
         auto&vec=Render_map[index];
         vec.push_back({&mesh,&material});

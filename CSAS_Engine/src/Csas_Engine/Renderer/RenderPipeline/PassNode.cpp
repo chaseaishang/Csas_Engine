@@ -29,16 +29,6 @@ namespace CsasEngine
         // state switch
         auto ptr=static_cast<BRDFPassData*>(data);
 
-
-
-
-
-        auto& Spotlights=ptr->spots;
-        std::vector<SpotLightComponent> spotlights;
-        for(auto&spot:Spotlights)
-        {
-            spotlights.push_back(*spot);
-        }
         for(auto &[mesh,material]:ptr->data_vec)
         {
             auto &vao=mesh->m_VAO;
@@ -46,7 +36,6 @@ namespace CsasEngine
             mesh->Update();
             vao->Bind();
             static_cast<Material_BaseBRDF*>(material)->Update(transform,ForwardPass::get_CameraView(),
-                                                              spotlights,
                                                               *ptr->irradiance_map,
                                                               *ptr->prefiltered_map,
                                                               *ptr->BRDF_LUT

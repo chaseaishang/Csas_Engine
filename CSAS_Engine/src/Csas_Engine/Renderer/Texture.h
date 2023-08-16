@@ -22,6 +22,7 @@ namespace CsasEngine {
         virtual bool operator==(const Texture& other) const = 0;
         virtual void Bind(uint32_t slot = 0) const = 0;
         virtual void BindILS(uint32_t level, uint32_t index, uint32_t access)const = 0;
+        virtual void UnBindILS(uint32_t index)const = 0;
     };
     struct TextureSpecification
     {

@@ -35,7 +35,9 @@ namespace CsasEngine
 
     }
     //camera
-    void RenderPipeline::BeginPipeline(CameraPtr camera,SpotLightPtrVec spots,
+    void RenderPipeline::BeginPipeline(CameraPtr camera,
+                                       SpotLightPtrVec spots,
+                                       MeshPtrVec mesh,
                                        CubeTexture*irradiance_map,
                                        CubeTexture*prefiltered_map,
                                        Texture2D*BRDF_LUT
@@ -45,7 +47,7 @@ namespace CsasEngine
         m_camera=camera;
         m_spots=spots;
 
-        forwardPass.SetConstData(this->render_Target,camera,spots,irradiance_map,prefiltered_map,BRDF_LUT);
+        forwardPass.SetConstData(this->render_Target,camera,spots,mesh,irradiance_map,prefiltered_map,BRDF_LUT);
 
 
     }

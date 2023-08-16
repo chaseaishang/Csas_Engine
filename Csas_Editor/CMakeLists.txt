@@ -14,6 +14,7 @@ add_compile_definitions(CSAS_ENABLE_ASSERTS)
 set(ENGINE_INCLDE_DIR /home/chaseaishang/code/CSAS_Engine/CSAS_Engine)
 add_executable(Csas_Editor)
 add_subdirectory(src/UI/)
+add_subdirectory(src/utils)
 add_subdirectory(src/Example/)
 add_subdirectory(../CSAS_Engine CSAS_Engine_dir)
 target_sources(Csas_Editor
@@ -31,5 +32,5 @@ target_include_directories(Csas_Editor
 target_link_libraries(Csas_Editor
         CSAS_Editor_UI
         CSAS_Engine
-
+        CSAS_Editor_UTILS
         )

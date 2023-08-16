@@ -16,7 +16,9 @@ namespace CsasEngine
         using RenderPassMap=std::unordered_map<RenderIndex,RenderPassVec>;
 
     public:
-         void BeginPipeline(CameraPtr camera,SpotLightPtrVec spots,
+         void BeginPipeline(CameraPtr camera,
+                            SpotLightPtrVec spots,
+                            MeshPtrVec mesh,
                             CubeTexture*irradiance_map,
                             CubeTexture*prefiltered_map,
                             Texture2D*BRDF_LUT

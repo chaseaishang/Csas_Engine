@@ -88,7 +88,6 @@ namespace CsasEngine
             BRDFPassData()=default;
             ~BRDFPassData()=default;
             RenderDataVec data_vec;
-            std::vector<SpotLightComponent*>spots;
             const CubeTexture*irradiance_map;
             const CubeTexture*prefiltered_map;
             const Texture2D*BRDF_LUT;

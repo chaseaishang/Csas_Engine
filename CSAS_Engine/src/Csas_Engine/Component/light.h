@@ -20,7 +20,6 @@ namespace CsasEngine {
     public:
         glm::vec4 color={1,1,1,1};
         float intensity=1.0f;
-        glm::vec3 position;//@TODO remove
     public:
         SpotLightComponent( glm::vec4 color={5.0f,5.0f,2.0f,1.0f},float intensity=1.0f);
         ~SpotLightComponent()=default;

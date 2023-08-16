@@ -40,10 +40,6 @@ uniform float ao;
 //     albedo 0.5f, 0.0f, 0.0f
 //      ao", 1.0
 //
-// lights
-uniform int  light_nums;
-uniform vec3 lightPositions[4];
-uniform vec3 lightColors[4];
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
@@ -63,14 +59,16 @@ void main()
     F0 = mix(F0, albedo, metallic);
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < light_nums; ++i)
+    for(int i = 0; i < Spot_Lights.SpotLightNumber; ++i)
     {
         // calculate per-light radiance
-        vec3 L = normalize(lightPositions[i] - v_Position);
+        vec3 spot_position=vec3(Spot_Lights.position[i]);
+        vec3 spot_color=vec3(Spot_Lights.color[i]);
+        vec3 L = normalize( spot_position- v_Position);
         vec3 H = normalize(V + L);
-        float distance = length(lightPositions[i] - v_Position);
+        float distance = length(spot_position - v_Position);
         float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = lightColors[i] * attenuation;
+        vec3 radiance =spot_color  * attenuation;
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);

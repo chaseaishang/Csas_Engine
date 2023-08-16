@@ -68,7 +68,7 @@ namespace CsasEngine {
     {
 
 
-        if(ImGui::DragFloat3("Position",glm::value_ptr(spot.position)));
+
         if(ImGui::DragFloat3("Color",glm::value_ptr(spot.color),10,0,1000));
 
 

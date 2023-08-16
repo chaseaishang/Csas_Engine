@@ -24,6 +24,7 @@ namespace CsasEngine {
 
         void Bind(uint32_t slot = 0) const override;
         void BindILS(uint32_t level, uint32_t index, uint32_t access)const override;
+        void UnBindILS(uint32_t index)const;
         bool operator==(const Texture& other) const override
         {
             return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
@@ -51,6 +52,7 @@ namespace CsasEngine {
 
         void Bind(uint32_t slot = 0) const override;
         void BindILS(uint32_t level, uint32_t index, uint32_t access)const override;
+        void UnBindILS(uint32_t index)const override;
         bool operator==(const Texture& other) const override
         {
             return m_RendererID == ((OpenGLCubeTexture&)other).m_RendererID;

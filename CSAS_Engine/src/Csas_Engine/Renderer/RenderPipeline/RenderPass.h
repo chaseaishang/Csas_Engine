@@ -58,6 +58,7 @@ namespace CsasEngine
         void SetConstData(const Ref<Framebuffer>& render_Target,
                           const CameraPtr& m_camera,
                           const SpotLightPtrVec& m_spots,
+                          const MeshVector &mesh,
                           const CubeTexture*irradiance_map,
                           const CubeTexture*prefiltered_map,
                           const Texture2D*BRDF_LUT
@@ -77,6 +78,7 @@ namespace CsasEngine
         bool has_blur= false;
         //const
         Ref<UniformBuffer> CameraUBO;
+        Ref<UniformBuffer> Spot_LightsUBO;
         CameraPtr m_camera;
         SpotLightPtrVec m_spots;
         Ref<Framebuffer> render_Target;

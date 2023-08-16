@@ -133,7 +133,6 @@ namespace CsasEngine {
     }
 
     void Material_BaseBRDF::Update(glm::mat4 &model,glm::mat4 &CameraView,
-                                   std::vector<SpotLightComponent>&spots,
                                    const CubeTexture&irradiance_map,
                                    const CubeTexture&prefiltered_map,
                                    const Texture2D&BRDF_LUT
@@ -151,21 +150,7 @@ namespace CsasEngine {
         irradiance_map.Bind(17);
         prefiltered_map.Bind(18);
         BRDF_LUT.Bind(19);
-        if(int size=spots.size();size>=0)
-        {
-            m_Shader->SetInt("light_nums",size);
-            for(int i=0;i<size;i++)
-            {
-                std::string light_position="lightPositions[" + std::to_string(i)+']';
-                std::string light_color   ="lightColors["    + std::to_string(i)+']';
 
-                glm::vec3 light_pos=spots[i].position;
-                auto light_col=glm::vec3(spots[i].color);
-                glm::vec3 position=glm::vec3(CameraView*glm::vec4(light_pos,0.0));
-                m_Shader->SetFloat3(light_position,position);
-                m_Shader->SetFloat3(light_color,light_col);
-            }
-        }
     }
 
     Material_Skybox::Material_Skybox(const std::string filename)

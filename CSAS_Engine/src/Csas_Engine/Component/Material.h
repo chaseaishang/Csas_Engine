@@ -108,7 +108,7 @@ namespace CsasEngine {
             float roughness=0.5f;
         };
         Material_BaseBRDF();
-        void Update(glm::mat4 & model,glm::mat4 &CameraView,std::vector<SpotLightComponent>&spots,
+        void Update(glm::mat4 & model,glm::mat4 &CameraView,
                     const CubeTexture&irradiance_map,
                     const CubeTexture&prefiltered_map,
                     const Texture2D&BRDF_LUT

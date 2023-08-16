@@ -14,6 +14,12 @@ namespace CsasEngine {
     {
         glm::mat4 ViewProjMatrix[2];
     }
+    namespace GlobalSpotLightsSpec
+    {
+        glm::vec4 color[4];
+        glm::vec4 position[4];
+        int size[4];//0 is use other is just ext
+    }
     //temp
 
     Ref<CubeTexture>hdr_texture= nullptr;
@@ -49,7 +55,7 @@ namespace CsasEngine {
         }
 
         CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
-
+        Spot_LightsUBO=UniformBuffer::Create(sizeof(glm::vec4)*8+sizeof(int)*4,1);
 
 
     }
@@ -57,7 +63,9 @@ namespace CsasEngine {
     void ForwardPass::ExecuteRenderer()
     {
         CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix,sizeof(GlobalCameraSpec::ViewProjMatrix));
-
+        Spot_LightsUBO->SetData(GlobalSpotLightsSpec::color,sizeof(GlobalSpotLightsSpec::color));
+        Spot_LightsUBO->SetData(GlobalSpotLightsSpec::position,sizeof(GlobalSpotLightsSpec::position),sizeof(GlobalSpotLightsSpec::color));
+        Spot_LightsUBO->SetData(&GlobalSpotLightsSpec::size,sizeof(int)*4,sizeof(GlobalSpotLightsSpec::color)*2);
         this->render_Target->Bind();
         RenderCommand::Clear();
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
@@ -137,7 +145,6 @@ namespace CsasEngine {
                 auto&datavec=wrap.dataVec;
                 datavec={
                         .data_vec=std::move(data),
-                        .spots=m_spots,
                         .irradiance_map= this->irradiance_map,
                         .prefiltered_map=this->prefiltered_map,
                         .BRDF_LUT=this->BRDF_LUT
@@ -172,6 +179,7 @@ namespace CsasEngine {
     void ForwardPass::SetConstData(const Ref<Framebuffer>& render_Target,
                                    const CameraPtr& m_camera,
                                    const SpotLightPtrVec& m_spots,
+                                   const MeshVector &mesh,
                                    const CubeTexture*irradiance_map,
                                    const CubeTexture*prefiltered_map,
                                    const Texture2D*BRDF_LUT
@@ -183,6 +191,15 @@ namespace CsasEngine {
         this->m_camera=m_camera;
         GlobalCameraSpec::ViewProjMatrix[0]=m_camera->GetView();
         GlobalCameraSpec::ViewProjMatrix[1]=m_camera->GetProjection();
+        GlobalSpotLightsSpec::size[0]=m_spots.size();
+        for(int i=0;i<GlobalSpotLightsSpec::size[0];i++)
+        {
+            GlobalSpotLightsSpec::color[i]=m_spots[i]->color;
+            GlobalSpotLightsSpec::position[i]=
+                    GlobalCameraSpec::ViewProjMatrix[0]*
+                    glm::vec4{mesh[i]->transform.Translation,1.0};
+        }
+
         this->irradiance_map=irradiance_map;
         this->prefiltered_map=prefiltered_map;
         this->BRDF_LUT=BRDF_LUT;

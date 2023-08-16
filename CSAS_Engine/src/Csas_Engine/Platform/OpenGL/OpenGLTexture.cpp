@@ -194,8 +194,13 @@ namespace CsasEngine {
 
     void OpenGLTexture2D::BindILS(uint32_t level, uint32_t index, uint32_t access) const
     {
-
         glBindImageTexture(index, m_RendererID, level, GL_TRUE, 0, access, m_InternalFormat);
+    }
+
+    void OpenGLTexture2D::UnBindILS(uint32_t index) const
+    {
+        // If texture is zero, then any existing binding to the image unit is broken.
+        glBindImageTexture(index, 0, 0, GL_TRUE, 0, GL_READ_ONLY, m_InternalFormat);
     }
 
 
@@ -352,6 +357,11 @@ namespace CsasEngine {
     {
         glBindImageTexture(index, m_RendererID, level, GL_TRUE, 0, access, m_InternalFormat);
     }
+    void OpenGLCubeTexture::UnBindILS(uint32_t index) const
+    {
+        // If texture is zero, then any existing binding to the image unit is broken.
+        glBindImageTexture(index, 0, 0, GL_TRUE, 0, GL_READ_ONLY, m_InternalFormat);
+    }
 
     OpenGLCubeTexture::OpenGLCubeTexture(TextureSpecification Spec)
     {
@@ -394,6 +404,8 @@ namespace CsasEngine {
 
     }
 
+
+
     std::tuple<Ref<CubeTexture>,Ref<CubeTexture>,Ref<Texture2D>> OpenGLCubeTexture::PreComputeIBL()
     {
         const uint irradiance_map_width=128;
@@ -426,6 +438,7 @@ namespace CsasEngine {
             //cubeTexture
             irradiance_shader.Dispatch(irradiance_map_width/32,irradiance_map_width/32,6);
             irradiance_shader.SyncWait(GL_ALL_BARRIER_BITS);
+            irradiance_map->UnBindILS(0);
             GlCheckError();
         }
 
@@ -444,6 +457,7 @@ namespace CsasEngine {
             prefiltered_shader.SyncWait(GL_ALL_BARRIER_BITS);
 
         }
+        prefiltered_map->UnBindILS(1);
         GlCheckError();
 
         BRDF_LUT->BindILS(0, 2, GL_WRITE_ONLY);
@@ -451,6 +465,7 @@ namespace CsasEngine {
         if (precompute_BRDF_shader.Bind(); true) {
             precompute_BRDF_shader.Dispatch(preBRDF_width / 32, preBRDF_width / 32, 1);
             precompute_BRDF_shader.SyncWait(GL_ALL_BARRIER_BITS);
+            BRDF_LUT->UnBindILS(2);
             GlCheckError();
 
         }
