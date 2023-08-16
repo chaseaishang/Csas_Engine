@@ -110,4 +110,25 @@ namespace CsasEngine
         Renderer3D::DrawQuad();
 
     }
+
+    void LightPassNode::OnPrepare(PassData *data) {
+
+    }
+
+    void LightPassNode::OnExecute(PassData *data)
+    {
+        // state switch
+        auto ptr=static_cast<LightPassData*>(data);
+        for(auto &[mesh,material]:ptr->data_vec)
+        {
+            auto &vao=mesh->m_VAO;
+            auto transform=mesh->transform.GetTransform();
+            mesh->Update();
+            vao->Bind();
+            static_cast<SpotLightComponent*>(material)->Update(transform);
+
+            RenderCommand::DrawIndexed(vao);
+        }
+
+    }
 }

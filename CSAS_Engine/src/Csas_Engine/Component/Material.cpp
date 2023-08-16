@@ -7,7 +7,7 @@
 #include "Material.h"
 #include "Csas_Engine/Renderer/Renderer3D.h"
 #include "Mesh.h"
-
+#include "light.h"
 namespace CsasEngine {
     static ShaderLibrary shaderLibrary;
     std::string Material::GetShader_name()
@@ -57,11 +57,9 @@ namespace CsasEngine {
         }
         {
             auto &light = spots[0];// temp
-            light.position = glm::vec3(CameraView * glm::vec4(light.position, 0));
-            m_Shader->SetFloat3("Light.Position", light.position);
-            m_Shader->SetFloat3("Light.La", light.La);
-            m_Shader->SetFloat3("Light.Ld", light.Ld);
-            m_Shader->SetFloat3("Light.Ls", light.Ls);
+//            light.position = glm::vec3(CameraView * glm::vec4(light.position, 0));
+//            m_Shader->SetFloat3("Light.Position", light.position);
+
 
 
         }
@@ -70,8 +68,8 @@ namespace CsasEngine {
             {
                 m_Shader->SetBoolean("DirLightsEnable", true);
                 auto direct_light=Direction_lights[0];
-                direct_light.position = glm::vec3(CameraView * glm::vec4(direct_light.position, 0));
-                m_Shader->SetFloat3("DirLights.direction", direct_light.position);
+//                direct_light.position = glm::vec3(CameraView * glm::vec4(direct_light.position, 0));
+//                m_Shader->SetFloat3("DirLights.direction", direct_light.position);
                 m_Shader->SetFloat3("DirLights.ambient", direct_light.La);
                 m_Shader->SetFloat3("DirLights.diffuse", direct_light.Ld);
                 m_Shader->SetFloat3("DirLights.specular", direct_light.Ls);
@@ -106,9 +104,9 @@ namespace CsasEngine {
         }
         {
             auto &light = spots[0];// temp
-            light.position = glm::vec3(CameraView * glm::vec4(light.position, 0));
-            m_Shader->SetFloat3("Light.position", light.position);
-            m_Shader->SetFloat3("Light.intensity", light.La);
+//            light.position = glm::vec3(CameraView * glm::vec4(light.position, 0));
+//            m_Shader->SetFloat3("Light.position", light.position);
+
         }
 
     }
@@ -160,6 +158,7 @@ namespace CsasEngine {
             {
                 std::string light_position="lightPositions[" + std::to_string(i)+']';
                 std::string light_color   ="lightColors["    + std::to_string(i)+']';
+
                 glm::vec3 light_pos=spots[i].position;
                 auto light_col=glm::vec3(spots[i].color);
                 glm::vec3 position=glm::vec3(CameraView*glm::vec4(light_pos,0.0));
@@ -204,4 +203,8 @@ namespace CsasEngine {
         m_Shader->Bind();
         texture->Bind(0);
     }
+
+
+
+
 }

@@ -384,5 +384,17 @@ namespace CsasEngine
 
     }
 
+    MeshComponent::MeshComponent(const MeshComponent &mesh)
+    {
+        this->m_VAO=mesh.m_VAO;
+        this->m_VBO=mesh.m_VBO;
+        this->m_IBO=mesh.m_IBO;
+        m_primitive=mesh.m_primitive;
+        transform=mesh.transform;
+        m_vertices=mesh.m_vertices;
+        m_indices=mesh.m_indices;
+        this->RenderIndex=mesh.RenderIndex;
+    }
+
 
 }

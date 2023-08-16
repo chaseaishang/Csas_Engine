@@ -44,6 +44,7 @@ namespace CsasEngine
             BRDFPassNode::BRDFPassData dataVec;
             SkyboxPassNode::SkyboxPassData skyboxdata;
             BlurPassNode::BlurPassData     blurPassData;
+            LightPassNode::LightPassData   lightPassData;
 
 
         };

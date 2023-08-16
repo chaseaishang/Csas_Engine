@@ -39,6 +39,13 @@ namespace CsasEngine {
             DrawComponents(m_SelectionContext);
 
         ImGui::End();
+        ImGui::Begin("Material");
+        if (m_SelectionContext)
+        {
+            
+        }
+
+        ImGui::End();
     }
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)

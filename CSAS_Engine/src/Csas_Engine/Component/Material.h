@@ -6,10 +6,12 @@
 
 
 #include "glm/glm.hpp"
-#include "light.h"
+
 namespace CsasEngine {
     class Shader;
     class Texture2D;
+    class SpotLightComponent;
+    class DirectionLightComponent;
     enum class MaterialType
     {
         BasePrimitive,
@@ -17,7 +19,8 @@ namespace CsasEngine {
         Cartoon,
         BaseBRDF,
         Skybox,
-        Blur
+        Blur,
+        Light
     };
     struct Material
     {
@@ -119,6 +122,7 @@ namespace CsasEngine {
         float roughness=0.5f;
 
     };
+
 }
 
 

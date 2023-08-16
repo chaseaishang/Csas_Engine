@@ -90,15 +90,11 @@ namespace CsasEngine {
             post_processing->Unbind();
             Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
         }
-        if(false)
+        if(auto&Wrap=renderMap[index];true)//Light pass
         {
-            post_processing->Bind();
-            auto&Wrap=renderMap[index];
-            //
-            Wrap.blurPassData.source_tex=render_Target->GetColorAttachment(0);
-            Wrap.passNode_ptr->OnExecute(&Wrap.blurPassData);
-            post_processing->Unbind();
-            Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
+            Wrap.passNode_ptr->OnExecute(&Wrap.lightPassData);
+
+            index++;
         }
 
 
@@ -156,6 +152,16 @@ namespace CsasEngine {
                 blurdata.blur_material= CreateRef<Material_Blur>();
                 break;
             }
+            case PassNodeType::LightPass:
+            {
+                auto&Lightdata=wrap.lightPassData;
+                Lightdata.data_vec=std::move(data);
+                break;
+            }
+            default:
+            {
+                CSAS_CORE_ASSERT(true,"Unknown RenderPass! ");
+            }
         }
 
 
@@ -207,6 +213,11 @@ namespace CsasEngine {
                 SubmitRenderer(vec,index);
 
 
+                break;
+            }
+            case PassNodeType::LightPass:
+            {
+                passnode=new LightPassNode();
                 break;
             }
 

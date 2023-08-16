@@ -29,6 +29,7 @@ namespace CsasEngine {
                                );
         static void Submit(MeshComponent&mesh,Material_BaseBRDF&material);
         static void Submit(MeshComponent&mesh,Material_Skybox&material);
+        static void Submit(MeshComponent&mesh,SpotLightComponent&material);
         //Material_Skybox
         static void EndScene();
         static void DrawQuad();

@@ -47,6 +47,13 @@ namespace CsasEngine {
         //
         //
     }
+    void Renderer3D::Submit(MeshComponent &mesh, SpotLightComponent &material)
+    {
+        material.position=mesh.transform.Translation;
+        uint8_t index=mesh.RenderIndex;
+        auto&vec=Render_map[index];
+        vec.push_back({&mesh,&material});
+    }
     void Renderer3D::Submit(MeshComponent &mesh, Material_Skybox &material)
     {
         //material.cube_map=Pbr_data::irradiance_map;
@@ -166,6 +173,8 @@ namespace CsasEngine {
 
 
     }
+
+
 
 
     void Renderer3D::Utils::PreComputeIBL(Ref <CubeTexture> &envTexture)

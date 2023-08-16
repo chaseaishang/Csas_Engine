@@ -49,18 +49,22 @@ namespace CsasEngine {
 
     void Scene::On3DUpdate(Camera &main_camera, glm::mat4 &cameraTransform)
     {
-        std::vector<SpotLightComponent>Spotlights;
+
         std::vector<SpotLightComponent*>SpotlightsPtr;
         std::vector<DirectionLightComponent>Direction_lights;
-        {//light
-
-            m_Registry.view<SpotLightComponent>().each(
-                    [&](auto entity, auto &spot)
+        {
+            auto view = m_Registry.view<MeshComponent,SpotLightComponent>();
+            for(auto entity: view)
             {
-                Spotlights.push_back(spot);
+                auto [mesh,spot]=view.get<MeshComponent,SpotLightComponent>(entity);
+
+                Renderer3D::Submit(mesh,spot);
+
                 SpotlightsPtr.push_back(&spot);
             }
-            );
+        }
+        {//light
+
             m_Registry.view<DirectionLightComponent>().each(
                     [&](auto entity, auto &direct)
                     {
@@ -72,37 +76,8 @@ namespace CsasEngine {
         }
         Renderer3D::BeginScene(main_camera,SpotlightsPtr);
 
-        {
-            auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>);
-            //auto group = m_Registry.group<Material_BasePBR>(entt::get<MeshComponent>,entt::get<ModelComponent>);
-            for (auto entity: group)
-            {
-                auto [material,mesh ] = group.get<Material_BasePBR, MeshComponent>(entity);
 
-                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights,Direction_lights);
-            }
-        }
-        {
-            auto view = m_Registry.view<Material_BasePBR, ModelComponent>();
-            for(auto entity: view)
-            {
-                //auto [pos, vel] = view.get<position, velocity>(entity);
-                auto [material,model]=view.get<Material_BasePBR,ModelComponent>(entity);
 
-                auto mesh=model.meshComponents[0];
-                Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights,Direction_lights);
-            }
-        }
-
-        {
-            auto group = m_Registry.group<Material_BasePrimitive>(entt::get<MeshComponent>);
-            for (auto entity: group)
-            {
-                auto [material,mesh ] = group.get<Material_BasePrimitive, MeshComponent>(entity);
-
-                Renderer3D::DrawMesh(mesh, main_camera, material);
-            }
-        }
         {
             auto view = m_Registry.view<Material_Skybox, MeshComponent>();
             for(auto entity: view)
@@ -119,17 +94,7 @@ namespace CsasEngine {
                 Renderer3D::Submit(mesh,material);
             }
         }
-        {
-            auto view = m_Registry.view<Material_Cartoon, MeshComponent>();
-            for(auto entity: view)
-            {
-                //auto [pos, vel] = view.get<position, velocity>(entity);
-                auto [material,mesh]=view.get<Material_Cartoon,MeshComponent>(entity);
 
-
-                //Renderer3D::DrawMesh(mesh, main_camera, material,Spotlights);
-            }
-        }
         Renderer3D::EndScene();
 
 

@@ -10,6 +10,8 @@ namespace CsasEngine {
     {
         CSAS_INFO("Switch to Example3");
         CSAS_PROFILE_FUNCTION();
+//          700 fps now 8/15 debug
+//        Application::Get().GetWindow().SetVSync(false);
 
         m_ActiveScene = CreateRef<Scene>();
         m_Scene = m_ActiveScene;
@@ -19,6 +21,7 @@ namespace CsasEngine {
         renderPipeline->BeginPass();
         RenderIndex FirstIndex=renderPipeline->SubmitPass(PassNodeType::Skybox);
         RenderIndex secondIndex=renderPipeline->SubmitPass(PassNodeType::BrdfPass);
+        RenderIndex thirdIndex=renderPipeline->SubmitPass(PassNodeType::LightPass);
         //renderPipeline->SubmitPass(PassNodeType::BlurPass);
         renderPipeline->EndPass();
 
@@ -32,11 +35,25 @@ namespace CsasEngine {
         lightPositions[3]={10.0f, -10.0f, 10.0f};
         for(int i=0;i<4;i++)
         {
+
             std::string name="Spotlight_"+std::to_string(i+1);
+
             SpotLights[i]=m_ActiveScene->CreateEntity(name);
-            auto&spot=SpotLights[i].AddComponent<SpotLightComponent>(lightPositions[i]);
+
+            auto&pos=SpotLights[i].AddComponent<MeshComponent>(Primitive::Cube,thirdIndex).transform.Translation;
+            pos={lightPositions[i].x,
+                      lightPositions[i].y,
+                      lightPositions[i].z
+            };
+            auto&spot=SpotLights[i].AddComponent<SpotLightComponent>();
+
+
             spot.color={300,300,300,1};
+
         }
+
+
+
         m_plane=m_ActiveScene->CreateEntity("plane");///bluesky
         m_plane.AddComponent<Material_BaseBRDF>();
         m_plane.AddComponent<MeshComponent>(Primitive::Plane,secondIndex);
