@@ -22,6 +22,7 @@ target_sources(Csas_Editor
         src/CsasEditorApp.cpp
         src/EditorLayer.cpp
         src/Panels/SceneHierarchyPanel.cpp
+        src/Panels/SceneMaterialPanel.cpp
         )
 target_include_directories(Csas_Editor
         PUBLIC

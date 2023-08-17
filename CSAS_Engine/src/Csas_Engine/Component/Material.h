@@ -114,7 +114,7 @@ namespace CsasEngine {
                     const Texture2D&BRDF_LUT
         );
         ~Material_BaseBRDF() override =default ;
-        glm::vec3 lightPositions[4];
+
 
         glm::vec3 albedo=glm::vec3(0.5f, 0.0f, 0.0f);
         float ao=1.0f;

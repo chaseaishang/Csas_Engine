@@ -8,6 +8,7 @@
 #include "entt/include/entt.hpp"
 #include "Csas_Engine/Core/Timestep.h"
 #include "glm/glm.hpp"
+#include "Node.h"
 
 namespace CsasEngine
 {
@@ -23,8 +24,10 @@ namespace CsasEngine
     public:
         Scene();
         ~Scene();
-
+        uint AddGroup(std::string);
+        const std::vector<Node> &getRoots() const;
         Entity CreateEntity(const std::string& name = std::string());
+        Entity CreateEntity(uint group_index,const std::string& name = std::string());
         void OnViewportResize(uint32_t width, uint32_t height);
         void OnUpdate(Timestep ts);
         void SetSceneType(bool TwoDScene=true){m_2DScene=TwoDScene;};
@@ -37,6 +40,10 @@ namespace CsasEngine
         entt::registry m_Registry;
         uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
         bool m_2DScene= false;
+        //for imgui show
+        std::vector<Node>roots;
+    public:
+
 
 
     };

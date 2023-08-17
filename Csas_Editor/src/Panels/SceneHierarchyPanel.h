@@ -22,6 +22,8 @@ namespace CsasEngine {
     private:
         void DrawEntityNode(Entity entity);
         void DrawComponents(Entity entity);
+        void DrawComponentsMaterial(Entity entity);
+        void DrawSceneNode(const Node&node);
     private:
         Ref<Scene> m_Context;
         Entity m_SelectionContext;

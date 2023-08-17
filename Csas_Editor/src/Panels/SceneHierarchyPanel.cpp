@@ -2,7 +2,7 @@
 // Created by chaseaishang on 23-7-14.
 //
 #include "SceneHierarchyPanel.h"
-
+#include "SceneMaterialPanel.h"
 #include "ImGui/include/imgui.h"
 #include <ImGui/include/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,16 +23,22 @@ namespace CsasEngine {
     void SceneHierarchyPanel::OnImGuiRender()
     {
         ImGui::Begin("Scene Hierarchy");
-
-        m_Context->m_Registry.each([&](auto entityID)
-                                   {
-                                       Entity entity{ entityID , m_Context.get() };
-                                       DrawEntityNode(entity);
-                                   });
+        auto&roots=m_Context->getRoots();
+        for(auto&root:roots)
+        {
+            DrawSceneNode(root);
+        }
+//        m_Context->m_Registry.each([&](auto entityID)
+//               {
+//                   Entity entity{ entityID , m_Context.get() };
+//                   DrawEntityNode(entity);
+//               });
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
             m_SelectionContext = {};
 
         ImGui::End();
+
+        //ImGui::SetNextItemOpen(true,ImGuiCond_Once);
 
         ImGui::Begin("Properties");
         if (m_SelectionContext)
@@ -42,17 +48,37 @@ namespace CsasEngine {
         ImGui::Begin("Material");
         if (m_SelectionContext)
         {
-            
+            DrawComponentsMaterial(m_SelectionContext);
         }
 
         ImGui::End();
     }
+    void SceneHierarchyPanel::DrawSceneNode(const Node &node)
+    {
+        ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_Selected  |ImGuiTreeNodeFlags_DefaultOpen;
 
+        bool opened = ImGui::TreeNodeEx(std::to_string((uint64_t) &node).c_str(), flags, "%s", node.getName().c_str());
+        if(opened)
+        {
+
+            //ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 50);
+
+            for(auto&entity:node.getEntities())
+            {
+                DrawEntityNode(entity);
+            }
+            //ImGui::PopStyleVar();
+
+
+            ImGui::TreePop();
+        }
+    }
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
         auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf ;
+
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
         if (ImGui::IsItemClicked())
         {
@@ -61,10 +87,6 @@ namespace CsasEngine {
 
         if (opened)
         {
-            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-//            bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-//            if (opened)
-//                ImGui::TreePop();
             ImGui::TreePop();
         }
 
@@ -200,36 +222,7 @@ namespace CsasEngine {
                 ImGui::TreePop();
             }
         }
-        if(entity.HasComponent<Material_BasePrimitive>())
-        {
-            if (ImGui::TreeNodeEx((void*)typeid(Material_BasePrimitive).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
-            {
-                auto& material=entity.GetComponent<Material_BasePrimitive>();
-                ImGui::Text("Material_Type    Material_BasePrimitive");
 
-               //float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-                //        ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-                //ImGui::ShowDemoWindow();
-
-                ImGui::TreePop();
-            }
-        }
-        if(entity.HasComponent<Material_BasePBR>())
-        {
-            if (ImGui::TreeNodeEx((void*)typeid(Material_BasePrimitive).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
-            {
-
-
-                auto& material=entity.GetComponent<Material_BasePBR>();
-                EditorUI::DrawMaterial_PBR(material);
-
-                //float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-                //        ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-                //ImGui::ShowDemoWindow();
-
-                ImGui::TreePop();
-            }
-        }
         if (entity.HasComponent<CameraComponent>())
         {
             if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
@@ -260,6 +253,13 @@ namespace CsasEngine {
                     ImGui::Checkbox("SpinEnale", &camera.SpinEnable);
 
                 }
+                static bool show=false;
+                ImGui::Checkbox("Show demo",&show);
+                if(show)
+                {
+                    ImGui::ShowDemoWindow(&show);
+                }
+
 
 
 
@@ -276,22 +276,7 @@ namespace CsasEngine {
                 ImGui::TreePop();
             }
         }
-        if(entity.HasComponent<SpotLightComponent>())
-        {
-            if (ImGui::TreeNodeEx((void*)typeid(SpotLightComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
-            {
 
-
-                auto& Spot=entity.GetComponent<SpotLightComponent>();
-                EditorUI::DrawSpotLight(Spot);
-
-                //float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-                //        ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-                //ImGui::ShowDemoWindow();
-
-                ImGui::TreePop();
-            }
-        }
         if(entity.HasComponent<DirectionLightComponent>())
         {
             if (ImGui::TreeNodeEx((void*)typeid(DirectionLightComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
@@ -307,5 +292,46 @@ namespace CsasEngine {
 
 
     }
+
+    void SceneHierarchyPanel::DrawComponentsMaterial(Entity entity)
+    {
+        if(entity.HasComponent<SpotLightComponent>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(SpotLightComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
+            {
+
+
+                auto& Spot=entity.GetComponent<SpotLightComponent>();
+                EditorUI::DrawSpotLight(Spot);
+
+                ImGui::TreePop();
+            }
+        }
+        if(entity.HasComponent<Material_BaseBRDF>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(Material_BaseBRDF).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
+            {
+
+                auto& material=entity.GetComponent<Material_BaseBRDF>();
+                EditorUI::DrawMaterial_BRDF(material);
+
+                ImGui::TreePop();
+            }
+        }
+        //Material_BaseBRDF
+        if(entity.HasComponent<Material_BasePBR>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(Material_BasePrimitive).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
+            {
+
+                auto& material=entity.GetComponent<Material_BasePBR>();
+                EditorUI::DrawMaterial_PBR(material);
+
+                ImGui::TreePop();
+            }
+        }
+    }
+
+
 
 }

@@ -12,7 +12,7 @@ namespace CsasEngine {
         EditorUI()=default;
         static void MenuSetting();
         static void DrawMaterial_PBR(Material_BasePBR&material);
-        static void DrawMaterial_PBR(Material_BaseBRDF&material);
+        static void DrawMaterial_BRDF(Material_BaseBRDF&material);
         static void DrawSpotLight(SpotLightComponent&spot);
         static void DrawDirect_Light(DirectionLightComponent&direct_light);
     };

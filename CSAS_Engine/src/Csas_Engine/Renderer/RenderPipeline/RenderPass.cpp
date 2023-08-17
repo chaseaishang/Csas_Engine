@@ -194,7 +194,7 @@ namespace CsasEngine {
         GlobalSpotLightsSpec::size[0]=m_spots.size();
         for(int i=0;i<GlobalSpotLightsSpec::size[0];i++)
         {
-            GlobalSpotLightsSpec::color[i]=m_spots[i]->color;
+            GlobalSpotLightsSpec::color[i]=m_spots[i]->color*m_spots[i]->intensity;
             GlobalSpotLightsSpec::position[i]=
                     GlobalCameraSpec::ViewProjMatrix[0]*
                     glm::vec4{mesh[i]->transform.Translation,1.0};

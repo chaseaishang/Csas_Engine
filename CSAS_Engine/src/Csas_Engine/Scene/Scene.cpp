@@ -2,7 +2,7 @@
 // Created by chaseaishang on 23-7-13.
 //
 #include "Csas_Engine/Csaspch.h"
-
+#include <algorithm>
 #include "Scene.h"
 #include "Csas_Engine/Component/Entity.h"
 #include "Csas_Engine/Component/AllComponent.h"
@@ -12,10 +12,13 @@
 #include "SceneCamera.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
+#include "Node.h"
 namespace CsasEngine {
 
 
-    Scene::Scene() {
+    Scene::Scene()
+    {
+        roots.emplace_back("root");
 
     }
 
@@ -30,6 +33,7 @@ namespace CsasEngine {
         Entity entity = { m_Registry.create(), this };
         auto& tag = entity.AddComponent<TagComponent>();
         tag.Tag = name.empty() ? "Entity" : name;
+        roots[0].AddEntity(entity);
         return entity;
     };
     void Scene::On2DUpdate(Camera &main_camera, glm::mat4& cameraTransform)
@@ -179,8 +183,27 @@ namespace CsasEngine {
 
     }
 
+    uint Scene::AddGroup(std::string name)
+    {
+        static int group_index=1;//0 is for root
+         roots.emplace_back(name);
+        return group_index++;
+    }
 
+    Entity Scene::CreateEntity(uint group_index, const std::string &name)
+    {
 
+        CSAS_CORE_ASSERT(group_index<roots.size(),"Error index!");
+        Entity entity = { m_Registry.create(), this };
+        auto& tag = entity.AddComponent<TagComponent>();
+        tag.Tag = name.empty() ? "Entity" : name;
+        roots[group_index].AddEntity(entity);
+        return entity;
+    }
+
+    const std::vector<Node> &Scene::getRoots() const {
+        return roots;
+    }
 
 
 }

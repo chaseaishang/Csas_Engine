@@ -69,7 +69,8 @@ namespace CsasEngine {
 
 
 
-        if(ImGui::DragFloat3("Color",glm::value_ptr(spot.color),10,0,1000));
+        ImGui::DragFloat3("Color",glm::value_ptr(spot.color),0.05,0,1);
+        ImGui::DragFloat("intensity",&spot.intensity,5,0,500);
 
 
     }
@@ -88,10 +89,16 @@ namespace CsasEngine {
             direct_light.Ls=temp.Ls;
     }
 
-    void EditorUI::DrawMaterial_PBR(Material_BaseBRDF &material)
+    void EditorUI::DrawMaterial_BRDF(Material_BaseBRDF &material)
     {
-
+       
+        ImGui::Text("Material_Type    Material_BaseBRDF");
+        ImGui::DragFloat3("albedo",glm::value_ptr(material.albedo),0.01,0,1);
+        ImGui::DragFloat("metallic",&material.metallic,0.01,0,1);
+        ImGui::DragFloat("roughness",&material.roughness,0.01,0.0001,1,"%.4f");
     }
+
+
 
 
 }

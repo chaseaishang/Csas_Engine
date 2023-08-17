@@ -142,6 +142,7 @@ namespace CsasEngine {
         m_Shader->SetMat4("model",model);
 //        uniform float metallic;
 //        uniform float roughness;
+        m_Shader->SetFloat3("albedo",albedo);
         m_Shader->SetFloat("metallic",metallic);
         m_Shader->SetFloat("roughness",roughness);
         auto with1=irradiance_map.GetWidth();

@@ -7,6 +7,7 @@
 namespace CsasEngine {
     namespace Utils::math
     {
+        glm::vec3 HSL2RGB(int h, int s, int l);
         glm::vec3 HSL2RGB(float h, float s, float l);
         glm::vec3 HSL2RGB(const glm::vec3& hsl);
 

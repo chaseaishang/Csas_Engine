@@ -3,7 +3,7 @@
 //
 
 #include "Example3.h"
-
+#include "../utils/math.h"
 #include "ImGui/include/imgui.h"
 namespace CsasEngine {
     void Example3::OnAttach()
@@ -24,7 +24,8 @@ namespace CsasEngine {
         RenderIndex thirdIndex=renderPipeline->SubmitPass(PassNodeType::LightPass);
         //renderPipeline->SubmitPass(PassNodeType::BlurPass);
         renderPipeline->EndPass();
-
+        uint sphereGroup=m_ActiveScene->AddGroup("Brdf Sphere");
+        auto lightGroup=m_ActiveScene->AddGroup("Lights");
         skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky
         skybox.AddComponent<Material_Skybox>("./assets/textures/HDR/newport_loft.hdr");
         skybox.AddComponent<MeshComponent>(Primitive::Cube,FirstIndex);
@@ -38,7 +39,7 @@ namespace CsasEngine {
 
             std::string name="Spotlight_"+std::to_string(i+1);
 
-            SpotLights[i]=m_ActiveScene->CreateEntity(name);
+            SpotLights[i]=m_ActiveScene->CreateEntity(lightGroup,name);
 
             auto&Trans=SpotLights[i].AddComponent<MeshComponent>(Primitive::Cube,thirdIndex).transform;
             auto&pos=Trans.Translation;
@@ -49,9 +50,11 @@ namespace CsasEngine {
                       lightPositions[i].z
             };
             auto&spot=SpotLights[i].AddComponent<SpotLightComponent>();
+            float ksi=0.2;
+            auto rgb=Utils::math::HSL2RGB(ksi, 0.7f + ksi * 0.3f, 0.4f + ksi * 0.2f);
 
-
-            spot.color={300,300,300,1};
+            spot.color={rgb,1};
+            spot.intensity=300;
 
         }
 
@@ -63,7 +66,8 @@ namespace CsasEngine {
         auto &plane_material=m_plane.GetComponent<Material_BaseBRDF>();
         plane_material.roughness=0.5f;
         plane_material.metallic=0.5;
-        plane_material.albedo={0.1,0.2,0.7};
+        auto rgb=Utils::math::HSL2RGB(0.2f,1.0f,0.6f);
+        plane_material.albedo={rgb};
         m_plane.GetComponent<MeshComponent>().transform.Translation={
                 0,
                 -0.6,
@@ -73,7 +77,7 @@ namespace CsasEngine {
         for(int i=0;i<9;i++)
         {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
-            m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(name);
+            m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(sphereGroup,name);
             RenderIndex index=secondIndex;
             m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Sphere,index);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();

@@ -18,6 +18,7 @@ namespace CsasEngine {
         Entity(entt::entity handle, Scene* scene);
         Entity(const Entity& other) = default;
 
+
         template<typename T, typename... Args>
         T& AddComponent(Args&&... args)
         {
@@ -58,9 +59,11 @@ namespace CsasEngine {
             return !(*this == other);
         }
     private:
-        entt::entity m_EntityHandle{ entt::null };
-        Scene* m_Scene = nullptr;
+        entt::entity       m_EntityHandle{ entt::null };
+        Scene*             m_Scene = nullptr;
+
     };
+
 
 }
 
