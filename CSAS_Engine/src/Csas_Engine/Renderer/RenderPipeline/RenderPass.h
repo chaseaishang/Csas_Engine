@@ -79,6 +79,7 @@ namespace CsasEngine
         //const
         Ref<UniformBuffer> CameraUBO;
         Ref<UniformBuffer> Spot_LightsUBO;
+        Ref<UniformBuffer> Render_InputUBO;
         CameraPtr m_camera;
         SpotLightPtrVec m_spots;
         Ref<Framebuffer> render_Target;
@@ -89,7 +90,9 @@ namespace CsasEngine
         const Texture2D*BRDF_LUT;
 
     private:
-
+        bool Shadow_Enable=true;
+        Ref<Framebuffer> DepthFBO= nullptr;
+        uint ViewPortWidth,ViewPortHeight;
     };
 
 }

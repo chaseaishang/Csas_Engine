@@ -44,11 +44,19 @@ float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
+
+#include utils/render_input.glsl
 #include utils/extension.glsl
 #include BRDF.glsl
 #include pbr/pbr_uniform.glsl
+#include pbr/pbr_shading.glsl
+
 void main()
 {
+    if(rdr_in.depth_prepass)
+    {
+        return;
+    }
     vec3 N = normalize(v_Normal);
     vec3 V = normalize(-v_Position);
 

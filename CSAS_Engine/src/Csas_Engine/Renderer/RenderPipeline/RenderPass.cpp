@@ -20,6 +20,12 @@ namespace CsasEngine {
         glm::vec4 position[4];
         int size[4];//0 is use other is just ext
     }
+    namespace GlobalRenderInput
+    {
+        uint size=48;
+        uint offset=32;
+        int depth_prepass=0;//bool has some problem
+    }
     //temp
 
     Ref<CubeTexture>hdr_texture= nullptr;
@@ -35,10 +41,16 @@ namespace CsasEngine {
         auto Spec=render_Target->GetSpecification();
 //        Spec.ColorAttachmentSize=1;
 //        Spec.Has_Depth=false;
+        ViewPortWidth=Spec.Width;
+        ViewPortHeight=Spec.Height;
         if(post_processing==nullptr)
         {
             Spec.Hdr=true;
             post_processing=Framebuffer::Create(Spec);
+
+            //DepthFBO
+
+
         }
         else
         {
@@ -53,10 +65,20 @@ namespace CsasEngine {
             // change sourceTexture
 
         }
-
+        if(DepthFBO== nullptr)
+        {
+            Spec.Height=Spec.Width=1024;
+            Spec.Has_Depth= true;
+            Spec.ColorAttachmentSize=0;
+            DepthFBO=Framebuffer::Create(Spec);
+        }
+        else
+        {
+            DepthFBO->Clear(-1);
+        }
         CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
         Spot_LightsUBO=UniformBuffer::Create(sizeof(glm::vec4)*8+sizeof(int)*4,1);
-
+        Render_InputUBO=UniformBuffer::Create(GlobalRenderInput::size,10);
 
     }
 
@@ -66,6 +88,8 @@ namespace CsasEngine {
         Spot_LightsUBO->SetData(GlobalSpotLightsSpec::color,sizeof(GlobalSpotLightsSpec::color));
         Spot_LightsUBO->SetData(GlobalSpotLightsSpec::position,sizeof(GlobalSpotLightsSpec::position),sizeof(GlobalSpotLightsSpec::color));
         Spot_LightsUBO->SetData(&GlobalSpotLightsSpec::size,sizeof(int)*4,sizeof(GlobalSpotLightsSpec::color)*2);
+
+
         this->render_Target->Bind();
         RenderCommand::Clear();
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
@@ -83,8 +107,19 @@ namespace CsasEngine {
             RenderCommand::FaceCulling(false);
         }
         RenderCommand::DepthMask(true);
+        if(Shadow_Enable)
+        {
+            DepthFBO->Bind();
+            RenderCommand::SetViewport(0,0,1024,1024);
+            int Depth_Prepass=true;
+            Render_InputUBO->SetData(&Depth_Prepass,sizeof(int),GlobalRenderInput::offset);
 
-        auto&renderWrap=renderMap[index];
+            Depth_Prepass= false;
+            RenderCommand::SetViewport(0,0,ViewPortWidth,ViewPortHeight);
+            Render_InputUBO->SetData(&Depth_Prepass,sizeof(int),GlobalRenderInput::offset);
+            render_Target->Bind();
+        }
+        auto&renderWrap=renderMap[index];//render
         renderWrap.passNode_ptr->OnExecute(&renderWrap.dataVec);
         index++;
         if(has_blur)

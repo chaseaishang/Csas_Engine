@@ -38,9 +38,13 @@ namespace CsasEngine {
             m_ColorAttachment=0;
         }
         glCreateFramebuffers(1, &m_RendererID);
-        if(size_t size=m_Specification.ColorAttachmentSize;m_Specification.Has_Depth)
+        if(size_t size=m_Specification.ColorAttachmentSize;size>0)
         {
             AddColorTexture(size);
+
+        }
+        if(m_Specification.Has_Depth)
+        {
             AddDepStTexture();
         }
 

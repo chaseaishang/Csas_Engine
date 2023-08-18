@@ -79,13 +79,17 @@ public:
             std::cerr << "ERROR: could not open the shader at: " << path << "\n" << std::endl;
             return fullSourceCode;
         }
-
+        std::string comment="//";
         std::string lineBuffer;
         while (std::getline(file, lineBuffer))
         {
             // Look for the new shader include identifier
             if (lineBuffer.find(includeIndentifier) != lineBuffer.npos)
             {
+                if(lineBuffer.find(comment)!=lineBuffer.npos)
+                {
+                    continue;
+                }
                 // Remove the include identifier, this will cause the path to remain
                 lineBuffer.erase(0, includeIndentifier.size());
 
