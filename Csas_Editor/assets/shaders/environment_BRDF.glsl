@@ -16,7 +16,7 @@ layout(location = 2)  out vec2 v_UV;
 void getEyeSpace( out vec3 norm, out vec3 position )
 {
     norm = normalize(mat3(transpose(inverse(model*Camera.View))) * a_Normal);
-    position = vec3(model *Camera.View* vec4(a_Position, 1.0));
+    position = vec3(Camera.View*model* vec4(a_Position, 1.0));
 }
 void main()
 {
@@ -41,7 +41,8 @@ uniform float ao;
 //      ao", 1.0
 //
 float DistributionGGX(vec3 N, vec3 H, float roughness);
-float GeometrySchlickGGX(float NdotV, float roughness);
+float GeometrySchlickGGXDirect(float NdotV, float roughness);
+float GeometrySchlickGGXIBL(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 
@@ -67,63 +68,43 @@ void main()
     F0 = mix(F0, albedo, metallic);
     // reflectance equation
     vec3 Lo = vec3(0.0);
+
+    Pixel px;
+    px.position=v_Position;
+    px.F0=F0;
+    px.V=V;
+    px.N=N;
+    px.roughness=roughness;
+    px.albedo=albedo;
+    px.metallic=metallic;
+    px.ao=ao;
     for(int i = 0; i < Spot_Lights.SpotLightNumber; ++i)
     {
         // calculate per-light radiance
         vec3 spot_position=vec3(Spot_Lights.position[i]);
         vec3 spot_color=vec3(Spot_Lights.color[i]);
-        vec3 L = normalize( spot_position- v_Position);
-        vec3 H = normalize(V + L);
-        float distance = length(spot_position - v_Position);
-        float attenuation = 1.0 / (distance * distance);
-        vec3 radiance =spot_color  * attenuation;
 
-        // Cook-Torrance BRDF
-        float NDF = DistributionGGX(N, H, roughness);
-        float G   = GeometrySmith(N, V, L, roughness);
-        vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
-        vec3 numerator    = NDF * G * F;
-        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
-        vec3 specular = numerator / denominator;
+        Lo +=EvaluateAPL(px,spot_position)*spot_color;
 
-        // kS is equal to Fresnel
-        vec3 kS = F;
-        // for energy conservation, the diffuse and specular light can't
-        // be above 1.0 (unless the surface emits light); to preserve this
-        // relationship the diffuse component (kD) should equal 1.0 - kS.
-        vec3 kD = vec3(1.0) - kS;
-        // multiply kD by the inverse metalness such that only non-metals
-        // have diffuse lighting, or a linear blend if partly metal (pure metals
-        // have no diffuse light).
-        kD *= 1.0 - metallic;
+        //vec3
 
-        // scale light by NdotL
-        float NdotL = max(dot(N, L), 0.0);
 
-        // add to outgoing radiance Lo
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+
+    }
+    bool DirectLightEnable=bool(Direct_Light.color.w);
+    if(DirectLightEnable)
+    {
+
+        Lo +=EvaluateADL(px,Direct_Light.direction.xyz)*Direct_Light.color.rgb;
     }
 
 
 
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
+    vec3 ambient=EvaluateIBL(px);
 
-    vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
-    vec3 kD = 1.0 - kS;
-    kD *= 1.0 - metallic;
-
-    vec3 irradiance = texture(irradiance_map, N).rgb;
-    vec3 diffuse    = irradiance * albedo;
-
-    vec3 R = normalize(reflect(-V, N));
-    const float MAX_REFLECTION_LOD = 5.0;
-    vec3 prefilteredColor = textureLod(prefilter_map, R,  roughness * MAX_REFLECTION_LOD).rgb;
-    vec2 envBRDF  = texture(BRDF_LUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
-
-    vec3 ambient = (kD * diffuse + specular) * ao;
     vec3 color = ambient + Lo;
 
     // HDR tonemapping

@@ -56,7 +56,9 @@ namespace CsasEngine {
 
         std::vector<SpotLightComponent*>SpotlightsPtr;
         std::vector<MeshComponent *> SpotMeshPtr;
-        std::vector<DirectionLightComponent>Direction_lights;
+
+        std::vector<DirectionLightComponent*>Direction_lightsPtr;
+        std::vector<MeshComponent *> DirectMeshPtr;
         {
             auto view = m_Registry.view<MeshComponent,SpotLightComponent>();
             for(auto entity: view)
@@ -71,16 +73,22 @@ namespace CsasEngine {
         }
         {//light
 
-            m_Registry.view<DirectionLightComponent>().each(
-                    [&](auto entity, auto &direct)
+            m_Registry.view<MeshComponent,DirectionLightComponent>().each(
+                    [&](auto &mesh, auto &direct)
                     {
-                        Direction_lights.push_back(direct);
+
+                        Direction_lightsPtr.push_back(&direct);
+                        DirectMeshPtr.push_back(&mesh);
 
                     }
             );
 
         }
-        Renderer3D::BeginScene(main_camera,SpotlightsPtr,SpotMeshPtr);
+        Renderer3D::BeginScene(main_camera,
+                               SpotlightsPtr,SpotMeshPtr,
+                               Direction_lightsPtr,
+                               DirectMeshPtr
+                               );
 
 
 

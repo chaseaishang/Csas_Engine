@@ -37,6 +37,7 @@ namespace CsasEngine
             case Primitive::Quad:CreatQuad(1.0);break;
             case Primitive::Torus:CreatTorus(0.5f,0.17);break;
             case Primitive::Plane:CreatPlane(1.0);break;
+            case Primitive::UnRender:break;
             case Primitive::None: CSAS_ASSERT(false,"error primitive!");
         }
     }

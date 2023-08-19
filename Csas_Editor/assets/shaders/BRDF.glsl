@@ -25,7 +25,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 //这里的k是α的重映射(Remapping)，取决于我们要用的是针对直接光照还是针对IBL光照的几何函数:
 // k direct light  (a+1)^2/8
 //
-float GeometrySchlickGGX(float NdotV, float roughness)
+float GeometrySchlickGGXIBL(float NdotV, float roughness)
 {
     float a = roughness;
     float k = (a * a) / 2.0;
@@ -35,15 +35,34 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 
     return nom / denom;
 }
+float GeometrySchlickGGXDirect(float NdotV, float roughness)
+{
+    float a = roughness;
+    float k = pow(a+1,2) / 8.0;
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
 // N normal
 // V view_Dir
 // light_dir
+float GeometrySmithIBL(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2 = GeometrySchlickGGXIBL(NdotV, roughness);
+    float ggx1 = GeometrySchlickGGXIBL(NdotL, roughness);
+    return ggx1 * ggx2;
+}
+//direct light
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
     float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+    float ggx2 = GeometrySchlickGGXDirect(NdotV, roughness);
+    float ggx1 = GeometrySchlickGGXDirect(NdotL, roughness);
     return ggx1 * ggx2;
 }
 vec3 fresnelSchlick(float cosTheta, vec3 F0)

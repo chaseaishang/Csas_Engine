@@ -10,6 +10,11 @@ layout(std140, binding = 1) uniform SL {
     int ext1;
     int ext2;
 } Spot_Lights;
+layout(std140, binding = 2) uniform DL
+{
+    vec4  color;
+    vec4  direction;
+} Direct_Light;
 
 // sampler binding points (texture units) 17-19 are reserved for PBR IBL
 layout(binding = 17) uniform samplerCube irradiance_map;

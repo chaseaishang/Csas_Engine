@@ -24,4 +24,10 @@ namespace CsasEngine {
 
 
     }
+
+    DirectionLightComponent::DirectionLightComponent(glm::vec4 color, float intensity)
+            :color(color),intensity(intensity)
+    {
+        type=MaterialType::Direct_Light;
+    }
 }

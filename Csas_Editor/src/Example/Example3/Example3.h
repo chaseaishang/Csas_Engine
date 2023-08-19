@@ -38,6 +38,7 @@ namespace CsasEngine {
 
 
         Entity SpotLights[4];
+        Entity DirectLight;
 
         Entity m_CameraEntity;
 

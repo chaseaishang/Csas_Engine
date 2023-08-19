@@ -21,7 +21,7 @@ namespace CsasEngine
         glm::vec2 UV;
     };
 
-    enum class Primitive {None,Cube,Sphere,Quad,Torus,FromModel,Plane};
+    enum class Primitive {None,Cube,Sphere,Quad,Torus,FromModel,Plane,UnRender};
     struct MeshComponent
     {
     public:

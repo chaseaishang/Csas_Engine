@@ -30,12 +30,17 @@ namespace CsasEngine {
     }
     void Renderer3D::BeginScene(Camera &camera,
                                 std::vector<SpotLightComponent *> SpotlightsPtr,
-                                std::vector<MeshComponent *> SpotMeshPtr
-
+                                std::vector<MeshComponent *> SpotMeshPtr,
+                                std::vector<DirectionLightComponent*>DirectSpot,
+                                std::vector<MeshComponent *> DirectMeshPtr
                                 )
     {
         auto m_pipeline=RenderPipeline::getInstance();
-        m_pipeline->BeginPipeline(&camera,SpotlightsPtr,SpotMeshPtr,
+        Light_Data data={
+                SpotlightsPtr,SpotMeshPtr,DirectSpot,DirectMeshPtr
+        };
+
+        m_pipeline->BeginPipeline(&camera,data,
                                   Pbr_data::irradiance_map.get(),
                                   Pbr_data::prefiltered_map.get(),
                                      Pbr_data::BRDF_LUT.get()

@@ -70,9 +70,6 @@ namespace CsasEngine {
                 auto direct_light=Direction_lights[0];
 //                direct_light.position = glm::vec3(CameraView * glm::vec4(direct_light.position, 0));
 //                m_Shader->SetFloat3("DirLights.direction", direct_light.position);
-                m_Shader->SetFloat3("DirLights.ambient", direct_light.La);
-                m_Shader->SetFloat3("DirLights.diffuse", direct_light.Ld);
-                m_Shader->SetFloat3("DirLights.specular", direct_light.Ls);
             }
             else
             {

@@ -26,5 +26,12 @@ namespace CsasEngine {
                    * rotation
                    * glm::scale(glm::mat4(1.0f), Scale);
         }
+        void Rotate(const glm::vec3& axis, float angle)
+        {
+            auto temp=glm::normalize(glm::vec4{this->Rotation,0}*
+                                               glm::rotate(glm::mat4(1),angle,axis)
+            );
+            this->Rotation=(glm::vec3(temp));
+        }
     };
 }

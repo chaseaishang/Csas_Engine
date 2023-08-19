@@ -26,7 +26,9 @@ namespace CsasEngine {
 
         static void BeginScene(Camera &camera,
                                std::vector<SpotLightComponent*>SpotlightsPtr,
-                               std::vector<MeshComponent *> SpotMeshPtr
+                               std::vector<MeshComponent *> SpotMeshPtr,
+                               std::vector<DirectionLightComponent*>DirectLight,
+                               std::vector<MeshComponent *> DirectMeshPtr
                                );
         static void Submit(MeshComponent&mesh,Material_BaseBRDF&material);
         static void Submit(MeshComponent&mesh,Material_Skybox&material);

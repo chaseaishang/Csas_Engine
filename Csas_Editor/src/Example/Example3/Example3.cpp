@@ -57,8 +57,14 @@ namespace CsasEngine {
             spot.intensity=300;
 
         }
+        DirectLight=m_ActiveScene->CreateEntity(lightGroup,"DirectLight");
+        auto&direct=DirectLight.AddComponent<MeshComponent>(Primitive::UnRender).transform;
+        direct.Rotation={0,0,2};
 
-
+        DirectLight.AddComponent<DirectionLightComponent>(
+                glm::vec4(1),
+                10
+                );
 
         m_plane=m_ActiveScene->CreateEntity("plane");///bluesky
         m_plane.AddComponent<Material_BaseBRDF>();

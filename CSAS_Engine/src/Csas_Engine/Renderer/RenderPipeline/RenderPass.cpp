@@ -2,6 +2,7 @@
 // Created by chaseaishang on 23-8-2.
 //
 #include "Csas_Engine/Csaspch.h"
+#include <glm/gtc/type_ptr.hpp>
 #include "RenderPass.h"
 #include "PassNode.h"
 #include "Csas_Engine/Component/AllComponent.h"
@@ -19,6 +20,15 @@ namespace CsasEngine {
         glm::vec4 color[4];
         glm::vec4 position[4];
         int size[4];//0 is use other is just ext
+    }
+    namespace GlobalDirectLightSpec
+    {
+        uint size=32;
+        bool enable;
+        uint offset0=0;
+        uint offset1=16;
+        glm::vec4 color;
+        glm::vec4 direction;
     }
     namespace GlobalRenderInput
     {
@@ -78,16 +88,26 @@ namespace CsasEngine {
         }
         CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
         Spot_LightsUBO=UniformBuffer::Create(sizeof(glm::vec4)*8+sizeof(int)*4,1);
+        Direct_LightsUBO=UniformBuffer::Create(GlobalDirectLightSpec::size,2);
         Render_InputUBO=UniformBuffer::Create(GlobalRenderInput::size,10);
+
 
     }
 
     void ForwardPass::ExecuteRenderer()
     {
         CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix,sizeof(GlobalCameraSpec::ViewProjMatrix));
+
         Spot_LightsUBO->SetData(GlobalSpotLightsSpec::color,sizeof(GlobalSpotLightsSpec::color));
         Spot_LightsUBO->SetData(GlobalSpotLightsSpec::position,sizeof(GlobalSpotLightsSpec::position),sizeof(GlobalSpotLightsSpec::color));
         Spot_LightsUBO->SetData(&GlobalSpotLightsSpec::size,sizeof(int)*4,sizeof(GlobalSpotLightsSpec::color)*2);
+
+
+        GlobalDirectLightSpec::color.w=GlobalDirectLightSpec::enable;
+        Direct_LightsUBO->SetData(glm::value_ptr(GlobalDirectLightSpec::color),
+                                  sizeof(glm::vec4),GlobalDirectLightSpec::offset0);
+        Direct_LightsUBO->SetData(glm::value_ptr(GlobalDirectLightSpec::direction),
+                                  sizeof(glm::vec4),GlobalDirectLightSpec::offset1);
 
 
         this->render_Target->Bind();
@@ -213,27 +233,41 @@ namespace CsasEngine {
 
     void ForwardPass::SetConstData(const Ref<Framebuffer>& render_Target,
                                    const CameraPtr& m_camera,
-                                   const SpotLightPtrVec& m_spots,
-                                   const MeshVector &mesh,
+                                   const Light_Data&lightData,
                                    const CubeTexture*irradiance_map,
                                    const CubeTexture*prefiltered_map,
                                    const Texture2D*BRDF_LUT
                                    )
     {
 
-        this->m_spots=m_spots;
+        this->m_spots=lightData.Spots;
         this->render_Target=render_Target;
         this->m_camera=m_camera;
         GlobalCameraSpec::ViewProjMatrix[0]=m_camera->GetView();
         GlobalCameraSpec::ViewProjMatrix[1]=m_camera->GetProjection();
+        //SpotLight
         GlobalSpotLightsSpec::size[0]=m_spots.size();
         for(int i=0;i<GlobalSpotLightsSpec::size[0];i++)
         {
             GlobalSpotLightsSpec::color[i]=m_spots[i]->color*m_spots[i]->intensity;
             GlobalSpotLightsSpec::position[i]=
                     GlobalCameraSpec::ViewProjMatrix[0]*
-                    glm::vec4{mesh[i]->transform.Translation,1.0};
+                    glm::vec4{lightData.Spot_meshes[i]->transform.Translation,1.0};
         }
+        //DirectLight
+        if(lightData.Directs.size()>0)
+        {
+            auto&direct=lightData.Directs[0];
+            GlobalDirectLightSpec::enable= true;
+            GlobalDirectLightSpec::color=direct->color*direct->intensity;
+            GlobalDirectLightSpec::direction=
+                    GlobalCameraSpec::ViewProjMatrix[0]*glm::vec4{lightData.Direct_meshes[0]->transform.Rotation,0};
+        }
+        else
+        {
+            GlobalDirectLightSpec::enable= false;
+        }
+
 
         this->irradiance_map=irradiance_map;
         this->prefiltered_map=prefiltered_map;

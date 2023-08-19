@@ -61,7 +61,7 @@ vec3 IntegrateBRDF(float NoV, float roughness, uint n_samples) {
 
         if (NoL > 0.0)
         {
-            float G =GeometrySmith(N,V,L,roughness);
+            float G =GeometrySmithIBL(N,V,L,roughness);
             float G_Vis = (G * VoH) / (NoH * NoV);
             float Fc = pow5(1.0 - VoH);  // Fresnel F has been factorized out of the integral
 

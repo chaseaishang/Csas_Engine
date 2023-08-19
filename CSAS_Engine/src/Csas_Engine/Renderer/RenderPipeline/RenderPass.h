@@ -57,8 +57,7 @@ namespace CsasEngine
         ForwardPass()=default;
         void SetConstData(const Ref<Framebuffer>& render_Target,
                           const CameraPtr& m_camera,
-                          const SpotLightPtrVec& m_spots,
-                          const MeshVector &mesh,
+                          const Light_Data&lightData,
                           const CubeTexture*irradiance_map,
                           const CubeTexture*prefiltered_map,
                           const Texture2D*BRDF_LUT
@@ -79,6 +78,7 @@ namespace CsasEngine
         //const
         Ref<UniformBuffer> CameraUBO;
         Ref<UniformBuffer> Spot_LightsUBO;
+        Ref<UniformBuffer> Direct_LightsUBO;
         Ref<UniformBuffer> Render_InputUBO;
         CameraPtr m_camera;
         SpotLightPtrVec m_spots;

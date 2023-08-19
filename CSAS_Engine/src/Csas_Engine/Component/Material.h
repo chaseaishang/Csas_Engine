@@ -14,13 +14,16 @@ namespace CsasEngine {
     class DirectionLightComponent;
     enum class MaterialType
     {
+
         BasePrimitive,
         BasePBR,
         Cartoon,
         BaseBRDF,
         Skybox,
         Blur,
-        Light
+        Light,
+        Direct_Light
+
     };
     struct Material
     {

@@ -77,16 +77,10 @@ namespace CsasEngine {
 
     void EditorUI::DrawDirect_Light(DirectionLightComponent &direct_light)
     {
-        DirectionLightComponent temp=direct_light;
 
-//        if(ImGui::DragFloat3("Direction",glm::value_ptr(temp.position)))
-//            direct_light.position=temp.position;
-        if(ImGui::DragFloat3("Ka",glm::value_ptr(temp.La),0.2,0,1))
-            direct_light.La=temp.La;
-        if(ImGui::DragFloat3("Kd",glm::value_ptr(temp.Ld),0.2,0,1))
-            direct_light.Ld=temp.Ld;
-        if(ImGui::DragFloat3("Ks",glm::value_ptr(temp.Ls),0.2,0,1))
-            direct_light.Ls=temp.Ls;
+        ImGui::DragFloat3("Color",glm::value_ptr(direct_light.color),0.05,0,1);
+        ImGui::DragFloat("intensity",&direct_light.intensity,5,0,500);
+
     }
 
     void EditorUI::DrawMaterial_BRDF(Material_BaseBRDF &material)

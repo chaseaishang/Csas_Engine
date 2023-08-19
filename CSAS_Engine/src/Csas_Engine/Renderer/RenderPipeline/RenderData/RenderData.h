@@ -13,6 +13,14 @@ namespace CsasEngine
     using MaterialPtrVec=std::vector<Material*>;
     using CameraPtr     =Camera*;
     using SpotLightPtrVec=std::vector<SpotLightComponent*>;
+    using DirectLightPtrVec=std::vector<DirectionLightComponent*>;
+    struct Light_Data
+    {
+        const SpotLightPtrVec Spots;
+        const MeshPtrVec Spot_meshes;
+        const DirectLightPtrVec Directs;
+        const MeshPtrVec Direct_meshes;
+    };
     struct RenderData
     {
         RenderData()=default;

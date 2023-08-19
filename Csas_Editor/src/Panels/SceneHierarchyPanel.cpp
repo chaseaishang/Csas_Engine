@@ -179,7 +179,7 @@ namespace CsasEngine {
             {
                 auto& tc = entity.GetComponent<TransformComponent>();
                 DrawVec3Control("Translation", tc.Translation);
-                glm::vec3 rotation = glm::degrees(tc.Rotation);
+                glm::vec3 rotation = tc.Rotation;
                 DrawVec3Control("Rotation", rotation);
                 tc.Rotation = glm::radians(rotation);
                 DrawVec3Control("Scale", tc.Scale, 1.0f);
@@ -211,9 +211,10 @@ namespace CsasEngine {
             {
                 auto& tc = entity.GetComponent<MeshComponent>().transform;
                 DrawVec3Control("Translation", tc.Translation);
-                glm::vec3 rotation = glm::degrees(tc.Rotation);
+                glm::vec3 rotation = tc.Rotation;
+ //               ImGui::DragFloat3("Rotation",glm::value_ptr(tc.Rotation));
                 DrawVec3Control("Rotation", rotation);
-                tc.Rotation = glm::radians(rotation);
+                tc.Rotation = rotation;
                 DrawVec3Control("Scale", tc.Scale, 1.0f);
 
 

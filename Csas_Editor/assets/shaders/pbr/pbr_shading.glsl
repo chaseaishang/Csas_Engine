@@ -20,7 +20,6 @@ vec3 EvalDiffuseLobe(const Pixel px,vec3 kD)
 {
     return kD*px.albedo*INV_PI;
 }
-
 // evaluates base material's specular BRDF lobe
 vec3 EvalSpecularLobe(const Pixel px, vec3 H,const vec3 L,out vec3 F)
 {
@@ -36,7 +35,7 @@ vec3 EvalSpecularLobe(const Pixel px, vec3 H,const vec3 L,out vec3 F)
 }
 
 // evaluates the contribution of a white analytical light source of unit intensity
-vec3 EvaluateAL(const Pixel px,const vec3 L,const vec3 radiance)
+vec3 EvaluateAL(const Pixel px,const vec3 L)
 {
     vec3 H = normalize(px.V + L);
     float NdotL = max(dot(px.N, L), 0.0);
@@ -49,18 +48,46 @@ vec3 EvaluateAL(const Pixel px,const vec3 L,const vec3 radiance)
     kD *= 1.0 - metallic;
 
     vec3 Fd = EvalDiffuseLobe(px,kD);
-    vec3 Lo = (Fd + Fr) * NdotL*radiance;
+    vec3 Lo = (Fd + Fr) * NdotL;
     return Lo;
 }
+
+// evaluates the contribution of environment IBL at the pixel
+vec3 EvaluateIBL(const Pixel px)
+{
+
+    // ambient lighting (note that the next IBL tutorial will replace
+    // this ambient lighting with environment lighting).
+
+    vec3 kS = fresnelSchlickRoughness(max(dot(px.N, px.V), 0.0), px.F0, px.roughness);
+    vec3 kD = 1.0 - kS;
+    kD *= 1.0 - px.metallic;
+
+    vec3 irradiance = texture(irradiance_map, px.N).rgb;
+    vec3 diffuse    = irradiance * px.albedo;
+
+    vec3 R = normalize(reflect(-px.V, px.N));
+    const float MAX_REFLECTION_LOD = 5.0;
+    vec3 prefilteredColor = textureLod(prefilter_map, R,  px.roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 envBRDF  = texture(BRDF_LUT, vec2(max(dot(px.N, px.V), 0.0), px.roughness)).rg;
+    vec3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
+
+    vec3 ambient = (kD * diffuse + specular) * px.ao;
+    return ambient;
+}
 // evaluates the contribution of a white point light of unit intensity
-vec3 EvaluateAPL(const Pixel px,const vec3 spot_position,const vec3 spot_color)
+vec3 EvaluateAPL(const Pixel px,const vec3 spot_position)
 {
     vec3 L = normalize( spot_position- px.position);
     float distance = length(spot_position - px.position);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance =spot_color  * attenuation;
-
-    return EvaluateAL(px,L,radiance);
+    return EvaluateAL(px,L)*attenuation;
+}
+// evaluates the contribution of a white directional light of unit intensity
+vec3 EvaluateADL(const Pixel px, const vec3 direction)
+{
+    vec3 L=normalize(direction);
+    return EvaluateAL(px,L);
 }
 
 #endif

@@ -17,8 +17,7 @@ namespace CsasEngine
 
     public:
          void BeginPipeline(CameraPtr camera,
-                            SpotLightPtrVec spots,
-                            MeshPtrVec mesh,
+                            const Light_Data data,
                             CubeTexture*irradiance_map,
                             CubeTexture*prefiltered_map,
                             Texture2D*BRDF_LUT
@@ -46,7 +45,6 @@ namespace CsasEngine
         bool Enable_blur= false;
         Ref<Framebuffer> render_Target;
         static CameraPtr m_camera;
-        static SpotLightPtrVec m_spots;
 
     private:
         static RenderPipeline*m_Instance;
