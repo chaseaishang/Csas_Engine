@@ -224,6 +224,10 @@ namespace CsasEngine {
         return 0;
     }
 
+    Texture2D *OpenGLFramebuffer::GetDepthAttachment() const {
+        return DepthAttachment.get();
+    }
+
     void Framebuffer::TransferColor(const Framebuffer& fr, uint fr_idx, const Framebuffer& to, uint to_idx)
     {
         auto&FrSpec=fr.GetSpecification();

@@ -72,6 +72,7 @@ namespace CsasEngine {
         auto &plane_material=m_plane.GetComponent<Material_BaseBRDF>();
         plane_material.roughness=0.5f;
         plane_material.metallic=0.5;
+
         auto rgb=Utils::math::HSL2RGB(0.2f,1.0f,0.6f);
         plane_material.albedo={rgb};
         m_plane.GetComponent<MeshComponent>().transform.Translation={

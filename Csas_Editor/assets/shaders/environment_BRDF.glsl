@@ -8,14 +8,16 @@ layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_UV;
 
 #include Camera.glsl
-
+#include utils/render_input.glsl
 layout(location = 0) uniform  mat4 model;
 layout(location = 0)  out vec3 v_Position;
 layout(location = 1)  out vec3 v_Normal;
 layout(location = 2)  out vec2 v_UV;
+layout(location = 3)  out vec4 v_FragPosLightSpace;
 void getEyeSpace( out vec3 norm, out vec3 position )
 {
     norm = normalize(mat3(transpose(inverse(model*Camera.View))) * a_Normal);
+    v_FragPosLightSpace=rdr_in.lightSpaceMatrix*model*vec4(a_Position, 1.0);
     position = vec3(Camera.View*model* vec4(a_Position, 1.0));
 }
 void main()
@@ -33,6 +35,7 @@ layout(location = 0)  out vec4 FragColor;
 layout(location = 0)  in vec3 v_Position;
 layout(location = 1)  in vec3 v_Normal;
 layout(location = 2)  in vec2 v_UV;
+layout(location = 3)  in vec4 v_FragPosLightSpace;
 uniform vec3  albedo;
 uniform float metallic;
 uniform float roughness;
@@ -75,6 +78,9 @@ void main()
     px.albedo=albedo;
     px.metallic=metallic;
     px.ao=ao;
+    //v_FragPosLightSpace
+    //shadow_map
+    float visibility=EvaluteVisibility(shadow_map,v_FragPosLightSpace);
     for(int i = 0; i < Spot_Lights.SpotLightNumber; ++i)
     {
         // calculate per-light radiance
@@ -93,7 +99,7 @@ void main()
     if(DirectLightEnable)
     {
 
-        Lo +=EvaluateADL(px,Direct_Light.direction.xyz)*Direct_Light.color.rgb;
+        Lo +=EvaluateADL(px,Direct_Light.direction.xyz,visibility)*Direct_Light.color.rgb;
     }
 
 

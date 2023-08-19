@@ -17,6 +17,7 @@ layout(std140, binding = 2) uniform DL
 } Direct_Light;
 
 // sampler binding points (texture units) 17-19 are reserved for PBR IBL
+layout(binding = 16) uniform sampler2D   shadow_map;
 layout(binding = 17) uniform samplerCube irradiance_map;
 layout(binding = 18) uniform samplerCube prefilter_map;
 layout(binding = 19) uniform sampler2D   BRDF_LUT;

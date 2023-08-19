@@ -32,6 +32,7 @@ namespace CsasEngine {
         virtual Texture2D* GetColorAttachment(uint32_t index) const =0;
         virtual uint32_t GetColorAttachmentRendererID() const = 0;
         virtual uint32_t GetDepthRendererID() const = 0;
+        virtual Texture2D* GetDepthAttachment() const =0;
         virtual uint32_t GetRendererID()const=0;
         virtual void AddColorTexture(size_t count)=0;
         virtual void AddDepStTexture()=0;

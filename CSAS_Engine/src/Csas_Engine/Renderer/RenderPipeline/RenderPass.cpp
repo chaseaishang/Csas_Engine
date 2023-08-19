@@ -38,9 +38,10 @@ namespace CsasEngine {
     }
     namespace GlobalRenderInput
     {
-        uint size=48;
-        uint offset=32;
-        int depth_prepass=0;//bool has some problem
+        uint size=64;
+        uint offset=64;
+        glm::mat4 lightSpaceMatrix;
+        bool shadowEnable=true;
     }
     //temp
 
@@ -110,69 +111,77 @@ namespace CsasEngine {
 
     }
 
-    void ForwardPass::ExecuteRenderer()
-    {
-        CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix,sizeof(GlobalCameraSpec::ViewProjMatrix));
+    void ForwardPass::ExecuteRenderer() {
+        CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix, sizeof(GlobalCameraSpec::ViewProjMatrix));
 
-        Spot_LightsUBO->SetData(GlobalSpotLightsSpec::color,sizeof(GlobalSpotLightsSpec::color));
-        Spot_LightsUBO->SetData(GlobalSpotLightsSpec::position,sizeof(GlobalSpotLightsSpec::position),sizeof(GlobalSpotLightsSpec::color));
-        Spot_LightsUBO->SetData(&GlobalSpotLightsSpec::size,sizeof(int)*4,sizeof(GlobalSpotLightsSpec::color)*2);
+        Spot_LightsUBO->SetData(GlobalSpotLightsSpec::color, sizeof(GlobalSpotLightsSpec::color));
+        Spot_LightsUBO->SetData(GlobalSpotLightsSpec::position, sizeof(GlobalSpotLightsSpec::position),
+                                sizeof(GlobalSpotLightsSpec::color));
+        Spot_LightsUBO->SetData(&GlobalSpotLightsSpec::size, sizeof(int) * 4, sizeof(GlobalSpotLightsSpec::color) * 2);
 
 
-        GlobalDirectLightSpec::color.w=GlobalDirectLightSpec::enable;
+        GlobalDirectLightSpec::color.w = GlobalDirectLightSpec::enable;
         Direct_LightsUBO->SetData(glm::value_ptr(GlobalDirectLightSpec::color),
-                                  sizeof(glm::vec4),GlobalDirectLightSpec::offset0);
+                                  sizeof(glm::vec4), GlobalDirectLightSpec::offset0);
         Direct_LightsUBO->SetData(glm::value_ptr(GlobalDirectLightSpec::direction),
-                                  sizeof(glm::vec4),GlobalDirectLightSpec::offset1);
+                                  sizeof(glm::vec4), GlobalDirectLightSpec::offset1);
 
 
         this->render_Target->Bind();
         RenderCommand::Clear();
-        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+        RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
         RenderCommand::DepthMask(false);
-        int index=0;
-        if(has_skybox)//@TODO temp need to remove
+        int index = 0;
+        if (has_skybox)//@TODO temp need to remove
         {
             //
             RenderCommand::FaceCulling(true, false);
-            auto &renderWrap=renderMap[0];
-            auto&data=renderWrap.skyboxdata;
-            static_cast<SkyboxPassNode*>(renderWrap.passNode_ptr)->OnExecute(&renderWrap.skyboxdata);
+            auto &renderWrap = renderMap[0];
+            auto &data = renderWrap.skyboxdata;
+            static_cast<SkyboxPassNode *>(renderWrap.passNode_ptr)->OnExecute(&renderWrap.skyboxdata);
             index++;
             //
             RenderCommand::FaceCulling(false);
         }
         RenderCommand::DepthMask(true);
-        if(Shadow_Enable)
-        {
+        if (Shadow_Enable) {
 
 
             DepthFBO->Bind();
             RenderCommand::DepthTest(true);
             DepthFBO->Clear(-1);
             //RenderCommand::Clear();
-            RenderCommand::SetViewport(0,0,1024,1024);
+            RenderCommand::SetViewport(0, 0, 1024, 1024);
 
-            auto&renderWrap=renderMap[index];//render
-            shadow_data.data_vec=renderWrap.dataVec.data_vec;
-            shadow_data.m_shader=Shadow_shader.get();
-            shadow_data.light_SpaceMatrix=GlobalDirectLightSpec::lightSpaceMatrix;
+            auto &renderWrap = renderMap[index];//render
+            shadow_data.data_vec = renderWrap.dataVec.data_vec;
+            shadow_data.m_shader = Shadow_shader.get();
+            shadow_data.light_SpaceMatrix = GlobalDirectLightSpec::lightSpaceMatrix;
             ShadowPass.OnExecute(&shadow_data);
 
-            DebugSpec::Depth=DepthFBO->GetDepthRendererID();
+            DebugSpec::Depth = DepthFBO->GetDepthRendererID();
 
-            RenderCommand::DepthTest(false);
 
-            RenderCommand::SetViewport(0,0,ViewPortWidth,ViewPortHeight);
+
+            RenderCommand::SetViewport(0, 0, ViewPortWidth, ViewPortHeight);
 
             render_Target->Bind();
         }
-        auto&renderWrap=renderMap[index];//render
-        renderWrap.passNode_ptr->OnExecute(&renderWrap.dataVec);
+        if (true) //Brdf
+        {
+            auto depth_tex=DepthFBO->GetDepthAttachment();
+            depth_tex->Bind(16);
+            Render_InputUBO->SetData(glm::value_ptr(GlobalRenderInput::lightSpaceMatrix)
+            ,sizeof(glm::mat4));
+
+
+            auto &renderWrap = renderMap[index];//render
+            renderWrap.passNode_ptr->OnExecute(&renderWrap.dataVec);
+        }
         index++;
         if(has_blur)
         {
-
+            RenderCommand::DepthTest(false);
             post_processing->Bind();
             auto&Wrap=renderMap[index];
             //
@@ -297,6 +306,8 @@ namespace CsasEngine {
                 glm::mat4 lightView = glm::lookAt(lightData.Direct_meshes[0]->transform.Rotation, glm::vec3(0.0f), glm::vec3(1.0));
                 GlobalDirectLightSpec::lightSpaceMatrix=lightProjection * lightView;
 
+                GlobalRenderInput::lightSpaceMatrix=GlobalDirectLightSpec::lightSpaceMatrix;
+                GlobalRenderInput::shadowEnable=true;
             }
 
 

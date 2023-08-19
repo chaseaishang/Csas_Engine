@@ -84,10 +84,25 @@ vec3 EvaluateAPL(const Pixel px,const vec3 spot_position)
     return EvaluateAL(px,L)*attenuation;
 }
 // evaluates the contribution of a white directional light of unit intensity
-vec3 EvaluateADL(const Pixel px, const vec3 direction)
+vec3 EvaluateADL(const Pixel px, const vec3 direction,float visibility)
 {
     vec3 L=normalize(direction);
-    return EvaluateAL(px,L);
+    return visibility*EvaluateAL(px,L);
 }
 
+float EvaluteVisibility(in sampler2D shadow_map,vec4 fragPosLightSpace)
+{
+    // 执行透视除法
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // 变换到[0,1]的范围
+    projCoords = projCoords * 0.5 + 0.5;
+    // 取得最近点的深度(使用[0,1]范围下的fragPosLight当坐标)
+    float closestDepth = texture(shadow_map, projCoords.xy).r;
+    // 取得当前片元在光源视角下的深度
+    float currentDepth = projCoords.z;
+    // 检查当前片元是否在阴影中
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+    return shadow;
+}
 #endif

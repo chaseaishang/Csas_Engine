@@ -24,6 +24,7 @@ namespace CsasEngine {
         virtual uint32_t GetColorAttachmentRendererID() const override { return m_ColorAttachment; }
         virtual uint32_t GetRendererID()const{return m_RendererID;};
         virtual uint32_t GetDepthRendererID() const;
+        virtual Texture2D* GetDepthAttachment() const;
         void AddColorTexture(size_t count)override;
         void AddDepStTexture()override;
 
