@@ -71,6 +71,8 @@ namespace CsasEngine
         //light info? ok
 
         static glm::mat4 &get_CameraView();
+
+        static uint GetDepthDebug();//@TODO remove
     private:
         BRDFPassNode brdfNode;
         bool has_skybox=false;
@@ -92,6 +94,9 @@ namespace CsasEngine
     private:
         bool Shadow_Enable=true;
         Ref<Framebuffer> DepthFBO= nullptr;
+        ShadowPassNode ShadowPass;
+        ShadowPassNode::ShadowPassData shadow_data;
+        Ref<Shader>Shadow_shader;
         uint ViewPortWidth,ViewPortHeight;
     };
 

@@ -54,10 +54,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 
 void main()
 {
-    if(rdr_in.depth_prepass)
-    {
-        return;
-    }
+
     vec3 N = normalize(v_Normal);
     vec3 V = normalize(-v_Position);
 

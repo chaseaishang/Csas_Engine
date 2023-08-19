@@ -278,18 +278,7 @@ namespace CsasEngine {
             }
         }
 
-        if(entity.HasComponent<DirectionLightComponent>())
-        {
-            if (ImGui::TreeNodeEx((void*)typeid(DirectionLightComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
-            {
 
-
-                auto& Direct=entity.GetComponent<DirectionLightComponent>();
-                EditorUI::DrawDirect_Light(Direct);
-
-                ImGui::TreePop();
-            }
-        }
 
 
     }
@@ -304,6 +293,18 @@ namespace CsasEngine {
 
                 auto& Spot=entity.GetComponent<SpotLightComponent>();
                 EditorUI::DrawSpotLight(Spot);
+
+                ImGui::TreePop();
+            }
+        }
+        if(entity.HasComponent<DirectionLightComponent>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(DirectionLightComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Material"))
+            {
+
+
+                auto& Direct=entity.GetComponent<DirectionLightComponent>();
+                EditorUI::DrawDirect_Light(Direct);
 
                 ImGui::TreePop();
             }

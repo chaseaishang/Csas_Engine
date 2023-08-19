@@ -71,7 +71,25 @@ namespace CsasEngine {
         glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 
     }
+    void OpenGLRendererAPI::DepthTest(bool Enable)
+    {
 
+
+        if (Enable )
+        {
+            glEnable(GL_DEPTH_TEST);
+            glDepthMask(GL_TRUE);
+            glDepthFunc(GL_LEQUAL);
+            glDepthRange(0.0f, 1.0f);
+
+        }
+        else
+        {
+            glDisable(GL_DEPTH_TEST);
+
+        }
+
+    }
     void OpenGLRendererAPI::DepthMask(bool Enable)
     {
         glDepthMask(Enable);
@@ -107,6 +125,8 @@ namespace CsasEngine {
         }
 
     }
+
+
 
 
 }

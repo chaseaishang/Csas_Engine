@@ -159,11 +159,11 @@ namespace CsasEngine {
 
     }
 
-    void OpenGLFramebuffer::Clear(uint8_t index) const
+    void OpenGLFramebuffer::Clear(int index) const
     {
         static GLfloat clear_color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
         static GLfloat clear_depth = 1.0f;
-        static GLint clear_stencil = 0;
+        static GLint clear_stencil = 1;
         // a framebuffer always has a depth buffer, a stencil buffer and all color buffers,
         // an empty one just doesn't have any textures attached to it, but all buffers are
         // still there. It's ok to clear a buffer even if there's no textures attached, we
@@ -176,11 +176,16 @@ namespace CsasEngine {
             glClearNamedFramebufferfv(m_RendererID, GL_COLOR, index, clear_color);
         }
             // clear the depth buffer
-        else if (index == -1) {
-            glClearNamedFramebufferfv(m_RendererID, GL_DEPTH, 0, &clear_depth);
+        else if (index == -1)
+        {
+            glClearNamedFramebufferfi(m_RendererID,GL_DEPTH_STENCIL,0,clear_depth,clear_stencil);
         }
             // clear the stencil buffer
         else if (index == -2) {
+            glClearNamedFramebufferfv(m_RendererID, GL_DEPTH, 0, &clear_depth);
+        }
+        else if(index==-3)
+        {
             glClearNamedFramebufferiv(m_RendererID, GL_STENCIL, 0, &clear_stencil);
         }
         else
@@ -188,7 +193,7 @@ namespace CsasEngine {
             CSAS_CORE_ERROR("Buffer index {0} is not valid in the framebuffer!", index);
 
         }
-
+        //GlCheckError();
 
     }
 
@@ -209,6 +214,14 @@ namespace CsasEngine {
 
         return Color_textures[index].get();
 
+    }
+
+    uint32_t OpenGLFramebuffer::GetDepthRendererID() const
+    {
+        if(DepthAttachment)
+            return DepthAttachment->GetRendererID();
+
+        return 0;
     }
 
     void Framebuffer::TransferColor(const Framebuffer& fr, uint fr_idx, const Framebuffer& to, uint to_idx)

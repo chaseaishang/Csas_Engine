@@ -22,7 +22,8 @@ namespace CsasEngine
         BrdfPass,
         Skybox,
         BlurPass,
-        LightPass
+        LightPass,
+        ShadowPass
     };
     class PassNode
     {
@@ -77,6 +78,24 @@ namespace CsasEngine
     private:
 
 
+    };
+    class ShadowPassNode:public PassNode
+    {
+    public:
+        struct ShadowPassData:public PassData
+        {
+        public:
+            ShadowPassData()=default;
+            ~ShadowPassData()=default;
+            RenderDataVec data_vec;
+            Shader *m_shader;
+            glm::mat4 light_SpaceMatrix;
+        };
+        ShadowPassNode(){type=PassNodeType::ShadowPass;}
+        ~ShadowPassNode()override=default;
+        void OnPrepare(PassData*data)override;
+
+        void OnExecute(PassData*data) override;
     };
     class BRDFPassNode:public PassNode
     {

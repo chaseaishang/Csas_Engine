@@ -219,18 +219,7 @@ namespace CsasEngine {
     {
         glBindTextureUnit(slot,m_RendererID);
     }
-    void GLClearError()
-    {
-        while (glGetError() != GL_NO_ERROR);
-    }
-    void GlCheckError()
-    {
-        auto re=glGetError();
-        if(re!=GL_NO_ERROR)
-        {
-            CSAS_CORE_ERROR("{0}",re);
-        }
-    }
+
     OpenGLCubeTexture::OpenGLCubeTexture(const std::string &path,TextureSpecification Spec)
             : m_Path(path),m_textureSpecification(Spec)
     {

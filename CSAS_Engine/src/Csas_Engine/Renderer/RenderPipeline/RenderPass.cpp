@@ -11,6 +11,11 @@
 #include "Csas_Engine/Renderer/Shader.h"
 #include "Csas_Engine/Renderer/Texture.h"
 namespace CsasEngine {
+    namespace DebugSpec
+    {
+        uint Depth= 0;
+    }
+
     namespace GlobalCameraSpec
     {
         glm::mat4 ViewProjMatrix[2];
@@ -29,6 +34,7 @@ namespace CsasEngine {
         uint offset1=16;
         glm::vec4 color;
         glm::vec4 direction;
+        glm::mat4 lightSpaceMatrix;
     }
     namespace GlobalRenderInput
     {
@@ -86,10 +92,20 @@ namespace CsasEngine {
         {
             DepthFBO->Clear(-1);
         }
-        CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
-        Spot_LightsUBO=UniformBuffer::Create(sizeof(glm::vec4)*8+sizeof(int)*4,1);
-        Direct_LightsUBO=UniformBuffer::Create(GlobalDirectLightSpec::size,2);
-        Render_InputUBO=UniformBuffer::Create(GlobalRenderInput::size,10);
+
+
+        //@TODO temp
+        static bool creat=true;
+        if(creat)
+        {
+            CameraUBO=UniformBuffer::Create(sizeof(GlobalCameraSpec::ViewProjMatrix),0);
+            Spot_LightsUBO=UniformBuffer::Create(sizeof(glm::vec4)*8+sizeof(int)*4,1);
+            Direct_LightsUBO=UniformBuffer::Create(GlobalDirectLightSpec::size,2);
+            Render_InputUBO=UniformBuffer::Create(GlobalRenderInput::size,10);
+            Shadow_shader=Shader::Create("./assets/shaders/utils/shadow.glsl");
+            creat= false;
+        }
+
 
 
     }
@@ -129,14 +145,26 @@ namespace CsasEngine {
         RenderCommand::DepthMask(true);
         if(Shadow_Enable)
         {
-            DepthFBO->Bind();
-            RenderCommand::SetViewport(0,0,1024,1024);
-            int Depth_Prepass=true;
-            Render_InputUBO->SetData(&Depth_Prepass,sizeof(int),GlobalRenderInput::offset);
 
-            Depth_Prepass= false;
+
+            DepthFBO->Bind();
+            RenderCommand::DepthTest(true);
+            DepthFBO->Clear(-1);
+            //RenderCommand::Clear();
+            RenderCommand::SetViewport(0,0,1024,1024);
+
+            auto&renderWrap=renderMap[index];//render
+            shadow_data.data_vec=renderWrap.dataVec.data_vec;
+            shadow_data.m_shader=Shadow_shader.get();
+            shadow_data.light_SpaceMatrix=GlobalDirectLightSpec::lightSpaceMatrix;
+            ShadowPass.OnExecute(&shadow_data);
+
+            DebugSpec::Depth=DepthFBO->GetDepthRendererID();
+
+            RenderCommand::DepthTest(false);
+
             RenderCommand::SetViewport(0,0,ViewPortWidth,ViewPortHeight);
-            Render_InputUBO->SetData(&Depth_Prepass,sizeof(int),GlobalRenderInput::offset);
+
             render_Target->Bind();
         }
         auto&renderWrap=renderMap[index];//render
@@ -262,6 +290,16 @@ namespace CsasEngine {
             GlobalDirectLightSpec::color=direct->color*direct->intensity;
             GlobalDirectLightSpec::direction=
                     GlobalCameraSpec::ViewProjMatrix[0]*glm::vec4{lightData.Direct_meshes[0]->transform.Rotation,0};
+            if(Shadow_Enable)
+            {
+                float near_plane = 1.0f, far_plane = 7.5f;
+                glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+                glm::mat4 lightView = glm::lookAt(lightData.Direct_meshes[0]->transform.Rotation, glm::vec3(0.0f), glm::vec3(1.0));
+                GlobalDirectLightSpec::lightSpaceMatrix=lightProjection * lightView;
+
+            }
+
+
         }
         else
         {
@@ -314,6 +352,10 @@ namespace CsasEngine {
     glm::mat4 &ForwardPass::get_CameraView()
     {
         return GlobalCameraSpec::ViewProjMatrix[0];
+    }
+
+    uint ForwardPass::GetDepthDebug() {
+        return DebugSpec::Depth;
     }
 
 
