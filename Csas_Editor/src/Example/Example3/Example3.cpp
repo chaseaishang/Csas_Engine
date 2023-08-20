@@ -86,7 +86,7 @@ namespace CsasEngine {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
             m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(sphereGroup,name);
             RenderIndex index=secondIndex;
-            m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Sphere,index);
+            m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Cube,index);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();
         }
         float spacing = 1.2;

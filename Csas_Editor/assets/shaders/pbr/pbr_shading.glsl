@@ -102,7 +102,7 @@ float EvaluteVisibility(in sampler2D shadow_map,vec4 fragPosLightSpace)
     float currentDepth = projCoords.z;
     // 检查当前片元是否在阴影中
     float bias = 0.005;
-    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-    return shadow;
+    float visibility = currentDepth - bias > closestDepth  ? 0.0 : 1.0;
+    return visibility;
 }
 #endif

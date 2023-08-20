@@ -17,14 +17,13 @@ layout(location = 3)  out vec4 v_FragPosLightSpace;
 void getEyeSpace( out vec3 norm, out vec3 position )
 {
     norm = normalize(mat3(transpose(inverse(model*Camera.View))) * a_Normal);
-    v_FragPosLightSpace=rdr_in.lightSpaceMatrix*model*vec4(a_Position, 1.0);
     position = vec3(Camera.View*model* vec4(a_Position, 1.0));
 }
 void main()
 {
     getEyeSpace(v_Normal,v_Position);
     v_UV     = a_UV;
-
+    v_FragPosLightSpace=rdr_in.lightSpaceMatrix*model*vec4(a_Position, 1.0);
     mat4 ViewProj= Camera.Projection*Camera.View;
     gl_Position = ViewProj * model * vec4(a_Position, 1.0);
 }
