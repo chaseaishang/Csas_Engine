@@ -29,5 +29,8 @@ namespace CsasEngine {
             :color(color),intensity(intensity)
     {
         type=MaterialType::Direct_Light;
+        viewFrustum={
+                -10,10,-10,10,1,7.5
+        };
     }
 }

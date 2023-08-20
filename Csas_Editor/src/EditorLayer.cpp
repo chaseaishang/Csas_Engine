@@ -168,11 +168,6 @@ namespace CsasEngine {
 
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
             m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
-            uint depID=ForwardPass::GetDepthDebug();
-            ImGui::Image(reinterpret_cast<void *>(depID), ImVec2{1024,1024}, ImVec2{0, 1},
-                         ImVec2{1, 0});
-
-
 
             uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
             ImGui::Image(reinterpret_cast<void *>(textureID), ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
@@ -181,8 +176,29 @@ namespace CsasEngine {
 
 
             ImGui::End();
+            ImGui::PopStyleVar();
         }
-        ImGui::PopStyleVar();
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
+            ImGui::Begin("Debug Window");
+
+            //  switch to the select window
+//            m_ViewportFocused = ImGui::IsWindowFocused();
+//            m_ViewportHovered = ImGui::IsWindowHovered();
+//            Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+
+
+            uint depID=ForwardPass::GetDepthDebug();
+            ImGui::Image(reinterpret_cast<void *>(depID), ImVec2{1024,1024}, ImVec2{0, 1},
+                         ImVec2{1, 0});
+
+
+
+
+            ImGui::End();
+            ImGui::PopStyleVar();
+        }
+
 
 
         ImGui::End();

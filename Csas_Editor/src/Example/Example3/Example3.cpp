@@ -42,13 +42,10 @@ namespace CsasEngine {
             SpotLights[i]=m_ActiveScene->CreateEntity(lightGroup,name);
 
             auto&Trans=SpotLights[i].AddComponent<MeshComponent>(Primitive::Cube,thirdIndex).transform;
-            auto&pos=Trans.Translation;
+            Trans.SetPosition(lightPositions[i]);
             auto&scale=Trans.Scale;
             scale={0.1,0.1,0.1};
-            pos={lightPositions[i].x,
-                      lightPositions[i].y,
-                      lightPositions[i].z
-            };
+            Trans.SetDirty();
             auto&spot=SpotLights[i].AddComponent<SpotLightComponent>();
             float ksi=0.2;
             auto rgb=Utils::math::HSL2RGB(ksi, 0.7f + ksi * 0.3f, 0.4f + ksi * 0.2f);
@@ -59,7 +56,7 @@ namespace CsasEngine {
         }
         DirectLight=m_ActiveScene->CreateEntity(lightGroup,"DirectLight");
         auto&direct=DirectLight.AddComponent<MeshComponent>(Primitive::UnRender).transform;
-        direct.Rotation={0,0,2};
+        direct.SetPosition({0,0,2});
 
         DirectLight.AddComponent<DirectionLightComponent>(
                 glm::vec4(1),
@@ -75,18 +72,19 @@ namespace CsasEngine {
 
         auto rgb=Utils::math::HSL2RGB(0.2f,1.0f,0.6f);
         plane_material.albedo={rgb};
-        m_plane.GetComponent<MeshComponent>().transform.Translation={
-                0,
-                -0.6,
-                0
-        };
+        m_plane.GetComponent<MeshComponent>().transform.SetPosition({ 0,
+                                                                      -0.6,
+                                                                      0});
+
+
         // BRDF
         for(int i=0;i<9;i++)
         {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
             m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(sphereGroup,name);
             RenderIndex index=secondIndex;
-            m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Cube,index);
+            auto&trans=m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Cube,index);
+            //trans.transform.Rotate(glm::vec3(1,0,0),45);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();
         }
         float spacing = 1.2;
@@ -102,10 +100,10 @@ namespace CsasEngine {
                 metalness=metallic;
                 auto &roughness=material.roughness;
                 roughness=glm::clamp((float)j / (float)7, 0.05f, 1.0f);
-                auto &position =m_BRDF_Sphere[index].GetComponent<MeshComponent>().transform.Translation;
-                position={(j - (3 / 2)) * spacing,
-                          0.0f,
-                          -i * spacing*2};
+                auto &trans =m_BRDF_Sphere[index].GetComponent<MeshComponent>().transform;
+                trans.SetPosition({(j - (3 / 2)) * spacing,
+                                   0.0f,
+                                   -i * spacing*2});
 
 
             }

@@ -33,7 +33,13 @@ namespace CsasEngine {
     public:
         glm::vec4 color={1,1,1,1};
         float intensity=1.0f;
+        //for shadow
+        struct View_frustum
+        {
+            float left,right,bottom,top,zNear,zFar;
 
+        };
+        View_frustum viewFrustum;
     public:
         DirectionLightComponent( glm::vec4 color={5.0f,5.0f,2.0f,1.0f},float intensity=1.0f);
         ~DirectionLightComponent()=default;
