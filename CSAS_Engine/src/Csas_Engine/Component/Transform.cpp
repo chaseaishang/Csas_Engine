@@ -18,18 +18,19 @@ namespace CsasEngine
     void TransformComponent::Rotate(const glm::vec3 &axis, float angle)
     {
         float radians = glm::radians(angle);
+        //y z x
 
         glm::vec3 v = glm::normalize(axis);
         glm::quat Q = glm::angleAxis(radians, v);  // rotation quaternion
-        this->Rotation = glm::normalize(this->Rotation * Q);
+        glm::vec3 eulers = glm::eulerAngles(Q);
+        this->Euler+=glm::degrees(eulers);
         SetDirty();
 
     }
     void TransformComponent::Rotate(const glm::vec3 &eulers)
     {
+        this->Euler=eulers;
         glm::vec3 radians = glm::radians(eulers);
-
-
         // rotation quaternion
         glm::quat QX = glm::angleAxis(radians.x, world_right);
         glm::quat QY = glm::angleAxis(radians.y, world_up);
@@ -40,6 +41,7 @@ namespace CsasEngine
 
 
         this->Rotation = glm::normalize(eye * Q);
+
         SetDirty();
 
     }
@@ -72,9 +74,8 @@ namespace CsasEngine
         // there's no harm in being explicit.
 
         glm::vec3 eulers = glm::eulerAngles(this->Rotation);
-        this->Euler[0] = glm::degrees(eulers.x);
-        this->Euler[1] = glm::degrees(eulers.y);
-        this->Euler[2] = glm::degrees(eulers.z);
+        this->Euler=glm::degrees(eulers);
+
 
 
     }
@@ -85,7 +86,21 @@ namespace CsasEngine
         {
             return;
         }
-        Rotate(this->Euler);
+        {
+            glm::vec3 radians = glm::radians(this->Euler);
+            // rotation quaternion
+            glm::quat QX = glm::angleAxis(radians.x, world_right);
+            glm::quat QY = glm::angleAxis(radians.y, world_up);
+            glm::quat QZ = glm::angleAxis(radians.z, world_forward);
+            glm::quat Q = QZ * QX * QY;  // Y->X->Z
+
+            // local space rotation: euler angles are relative to local basis vectors
+
+
+            this->Rotation = glm::normalize(eye * Q);
+        }
+        RecalculateBasis();
+
         this->Transform=glm::translate(glm::mat4(1.0f), Translation)
                        * glm::mat4_cast(this->Rotation)
                        * glm::scale(glm::mat4(1.0f), Scale);
@@ -207,7 +222,7 @@ namespace CsasEngine
 
     glm::vec3 TransformComponent::GetAndUpdateBasis(uint direction)
     {
-        RecalculateBasis();
+        Update();
         switch (direction) {
             case 0:return up;
             case 1:return forward;

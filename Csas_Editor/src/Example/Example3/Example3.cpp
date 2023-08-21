@@ -10,7 +10,8 @@ namespace CsasEngine {
     {
         CSAS_INFO("Switch to Example3");
         CSAS_PROFILE_FUNCTION();
-//          700 fps now 8/15 debug
+//          1300 fps now 8/20 debug
+//          Well As we have  refactoring the transform  .So it needn't to multi each frame.Only in dirty.
 //        Application::Get().GetWindow().SetVSync(false);
 
         m_ActiveScene = CreateRef<Scene>();
@@ -57,7 +58,7 @@ namespace CsasEngine {
         DirectLight=m_ActiveScene->CreateEntity(lightGroup,"DirectLight");
         auto&direct=DirectLight.AddComponent<MeshComponent>(Primitive::UnRender).transform;
         direct.SetPosition({0,0,2});
-
+        direct.Rotate({1,0,0},-45);
         DirectLight.AddComponent<DirectionLightComponent>(
                 glm::vec4(1),
                 10
@@ -133,6 +134,11 @@ namespace CsasEngine {
     void CsasEngine::Example3::Update(CsasEngine::Timestep ts) {
         auto &camera = m_CameraEntity.GetComponent<CameraComponent>().Camera;
         camera.Update(ts);
+
+        auto angle=(ts.GetSeconds()*10);
+
+        auto&trans=DirectLight.GetComponent<MeshComponent>().transform;
+        trans.Rotate({1,0,0},angle);
 
     }
 

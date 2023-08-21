@@ -297,15 +297,22 @@ namespace CsasEngine {
             auto&direct=lightData.Directs[0];
             GlobalDirectLightSpec::enable= true;
             GlobalDirectLightSpec::color=direct->color*direct->intensity;
-            GlobalDirectLightSpec::direction=
-                    GlobalCameraSpec::ViewProjMatrix[0]*glm::vec4{lightData.Direct_meshes[0]->transform.Translation,0};
+            auto&trans=lightData.Direct_meshes[0]->transform;
+            auto forward=trans.GetAndUpdateBasis(1);
+            GlobalDirectLightSpec::direction=glm::vec4{-forward,0};
+
+
+
             if(Shadow_Enable)
             {
                 float near_plane = 1.0f, far_plane = 7.5f;
                 glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-                glm::mat4 lightView = glm::lookAt(lightData.Direct_meshes[0]->transform.Translation,
-                                                  glm::vec3(0.0f),
-                                                  glm::vec3(0.0,1.0,0.0));
+
+                auto&position=trans.Translation;
+                auto up=trans.GetAndUpdateBasis(0);
+                glm::mat4 lightView = glm::lookAt(position,
+                                                  position+forward,
+                                                  up);
                 GlobalDirectLightSpec::lightSpaceMatrix=lightProjection * lightView;
 
                 GlobalRenderInput::lightSpaceMatrix=GlobalDirectLightSpec::lightSpaceMatrix;
