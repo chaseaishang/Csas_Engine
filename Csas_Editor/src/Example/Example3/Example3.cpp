@@ -58,7 +58,7 @@ namespace CsasEngine {
         DirectLight=m_ActiveScene->CreateEntity(lightGroup,"DirectLight");
         auto&direct=DirectLight.AddComponent<MeshComponent>(Primitive::UnRender).transform;
         direct.SetPosition({0,0,2});
-        direct.Rotate({1,0,0},-45);
+        direct.Rotate({1,0,0},-49);
         DirectLight.AddComponent<DirectionLightComponent>(
                 glm::vec4(1),
                 10
@@ -66,7 +66,8 @@ namespace CsasEngine {
 
         m_plane=m_ActiveScene->CreateEntity("plane");///bluesky
         m_plane.AddComponent<Material_BaseBRDF>();
-        m_plane.AddComponent<MeshComponent>(Primitive::Plane,secondIndex);
+        auto&trans=m_plane.AddComponent<MeshComponent>(Primitive::Plane,secondIndex).transform;
+        trans.Scale={5,5,5};
         auto &plane_material=m_plane.GetComponent<Material_BaseBRDF>();
         plane_material.roughness=0.5f;
         plane_material.metallic=0.5;
@@ -135,10 +136,10 @@ namespace CsasEngine {
         auto &camera = m_CameraEntity.GetComponent<CameraComponent>().Camera;
         camera.Update(ts);
 
-        auto angle=(ts.GetSeconds()*10);
-
-        auto&trans=DirectLight.GetComponent<MeshComponent>().transform;
-        trans.Rotate({1,0,0},angle);
+//        auto angle=(ts.GetSeconds()*10);
+//
+//        auto&trans=DirectLight.GetComponent<MeshComponent>().transform;
+//        trans.Rotate({1,0,0},angle);
 
     }
 

@@ -89,7 +89,12 @@ vec3 EvaluateADL(const Pixel px, const vec3 direction,float visibility)
     vec3 L=normalize(direction);
     return visibility*EvaluateAL(px,L);
 }
-
+vec2 poissonDisk[4] = vec2[](
+vec2( -0.94201624, -0.39906216 ),
+vec2( 0.94558609, -0.76890725 ),
+vec2( -0.094184101, -0.92938870 ),
+vec2( 0.34495938, 0.29387760 )
+);
 float EvaluteVisibility(in sampler2D shadow_map,vec4 fragPosLightSpace)
 {
     // 执行透视除法
@@ -97,12 +102,16 @@ float EvaluteVisibility(in sampler2D shadow_map,vec4 fragPosLightSpace)
     // 变换到[0,1]的范围
     projCoords = projCoords * 0.5 + 0.5;
     // 取得最近点的深度(使用[0,1]范围下的fragPosLight当坐标)
-    float closestDepth = texture(shadow_map, projCoords.xy).r;
-    // 取得当前片元在光源视角下的深度
-    float currentDepth = projCoords.z;
-    // 检查当前片元是否在阴影中
+    float visibility=1.0f;
     float bias = 0.005;
-    float visibility = currentDepth - bias > closestDepth  ? 0.0 : 1.0;
+    for (int i=0;i<4;i++)
+    {
+        if ( texture( shadow_map, projCoords.xy + poissonDisk[i]/700.0 ).z  <  projCoords.z-bias )
+        {
+            visibility-=0.2;
+        }
+    }
+
     return visibility;
 }
 #endif
