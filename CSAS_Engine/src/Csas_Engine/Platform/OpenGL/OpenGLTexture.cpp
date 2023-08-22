@@ -21,7 +21,7 @@ namespace CsasEngine {
                 case TexSpecFormat::RGBA16F:
                     return GL_RGBA16F;
                 case TexSpecFormat::DEPTH:
-                    return GL_DEPTH24_STENCIL8;
+                    return GL_DEPTH_COMPONENT32F;
                 default: CSAS_CORE_ASSERT(true,"Error TexSpecFormat");
             }
             return 0;
@@ -140,10 +140,10 @@ namespace CsasEngine {
     :m_textureSpecification(Spec)
     {
         m_InternalFormat=Utils::TextureSpec2Opengl(Spec.format);
-        if(m_InternalFormat==GL_DEPTH24_STENCIL8)
+        if(m_InternalFormat==GL_DEPTH_COMPONENT32F)
         {
             glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-            glTextureParameteri(m_RendererID, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+            glTextureParameteri(m_RendererID, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32F);
             glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -151,7 +151,7 @@ namespace CsasEngine {
 
             glTextureStorage2D(m_RendererID,
                                Spec.size,
-                               GL_DEPTH24_STENCIL8,
+                               GL_DEPTH_COMPONENT32F,
                                Spec.width, Spec.height);
             return;
         }

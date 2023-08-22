@@ -98,7 +98,7 @@ void main()
     if(DirectLightEnable)
     {
         vec3 L=normalize(Direct_Light.direction.xyz);
-        float visibility=PCF(px,L,shadow_map,v_FragPosLightSpace);
+        float visibility=PCSS(px,L,shadow_map,v_FragPosLightSpace);
 
         Lo +=EvaluateADL(px,L,visibility)*Direct_Light.color.rgb;
     }

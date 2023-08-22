@@ -6,6 +6,15 @@
 layout(std140, binding = 10) uniform RendererInput {
     mat4 lightSpaceMatrix;
 } rdr_in;
-
+struct Pixel {
+    vec3 position;
+    vec3 F0;
+    vec3 N;
+    vec3 V;
+    vec3  albedo;
+    float metallic;
+    float roughness;
+    float ao;
+};
 
 #endif

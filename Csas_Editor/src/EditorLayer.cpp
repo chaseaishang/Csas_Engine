@@ -140,6 +140,7 @@ namespace CsasEngine {
 
         EditorUI::MenuSetting();
         m_SceneHierarchyPanel.OnImGuiRender();
+        m_example->OnImGuiRender();
         {
             ImGui::Begin("Stats");
 

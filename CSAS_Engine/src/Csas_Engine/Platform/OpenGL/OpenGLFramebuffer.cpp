@@ -118,7 +118,8 @@ namespace CsasEngine {
 
         }
         // enable multiple render targets
-        if (size_t n = Color_textures.size(); n > 0) {
+        if (size_t n = Color_textures.size(); n > 0)
+        {
             GLenum* attachments = new GLenum[n];
 
             for (GLenum i = 0; i < n; i++) {
@@ -154,7 +155,7 @@ namespace CsasEngine {
            CSAS_CORE_ERROR("Unable to attach an immutable depth stencil texture...");
             return;
         }
-        glNamedFramebufferTexture(m_RendererID, GL_DEPTH_STENCIL_ATTACHMENT, DepthAttachment->GetRendererID(), 0);
+        glNamedFramebufferTexture(m_RendererID, GL_DEPTH_ATTACHMENT, DepthAttachment->GetRendererID(), 0);
         CSAS_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
     }

@@ -1,19 +1,10 @@
 #ifndef PBR_SHADING_H
 #define PBR_SHADING_H
-
+#include ../utils/render_input.glsl
 #include pbr_uniform.glsl
-#include ../utils/sampling.glsl
+#include ../utils/PCSS.glsl
 
-struct Pixel {
-    vec3 position;
-    vec3 F0;
-    vec3 N;
-    vec3 V;
-    vec3  albedo;
-    float metallic;
-    float roughness;
-    float ao;
-};
+
 
 // evaluates base material's diffuse BRDF lobe
 vec3 EvalDiffuseLobe(const Pixel px,vec3 kD)
@@ -98,48 +89,9 @@ vec3 EvaluateADL(const Pixel px, const vec3 L,float visibility)
    if the resolution of the shadow map is high, the min/max bias values can be reduced
    N and L must be normalized, and N must be geometric normal, not from the normal map
 */
-float ComputeDepthBias(const vec3 L, const vec3 N)
-{
-    const float max_bias = 0.05;
-    const float min_bias = 0.005;
-    return max(max_bias * (1.0 - dot(N, L)), min_bias);
-}
 
 
-float PCF(const Pixel px,const vec3 L,in sampler2D shadowMap,vec4 coords )
-{
 
-    // 执行透视除法
-    vec3 projCoords = coords.xyz / coords.w;
-    // 变换到[0,1]的范围
-    projCoords = projCoords * 0.5 + 0.5;
-    // 采样
-    poissonDiskSamples(projCoords.xy);
-    // uniformDiskSamples(coords.xy);
 
-    // shadow map 的大小, 越大滤波的范围越小
-    float textureSize = 1024.0;
-    // 滤波的步长
-    float filterStride = 5.0;
-    // 滤波窗口的范围
-    float filterRange = 1.0 / textureSize * filterStride;
-    // 有多少点不在阴影里
-    int noShadowCount = 0;
-    //float bias =0.5*(1.0 - dot(px.N, L))*(1+ceil(filterRange))*20/2048;
-    float bias=ComputeDepthBias(L,px.N);
-    for( int i = 0; i < NUM_SAMPLES; i ++ )
-    {
-        vec2 sampleCoord = poissonDisk[i] * filterRange + projCoords.xy;
-        float closestDepth = texture( shadow_map,sampleCoord).r;
-        float currentDepth = projCoords.z;
-        if(currentDepth < closestDepth + bias)
-        {
-            noShadowCount += 1;
-        }
-    }
-
-    float shadow = float(noShadowCount) / float(NUM_SAMPLES);
-    return shadow;
-}
 
 #endif

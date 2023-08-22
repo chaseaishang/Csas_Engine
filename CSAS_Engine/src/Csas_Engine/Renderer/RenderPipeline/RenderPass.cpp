@@ -149,7 +149,7 @@ namespace CsasEngine {
 
             DepthFBO->Bind();
             RenderCommand::DepthTest(true);
-            DepthFBO->Clear(-1);
+            DepthFBO->Clear(-2);
             //RenderCommand::Clear();
             RenderCommand::SetViewport(0, 0, 1024, 1024);
 
@@ -305,8 +305,8 @@ namespace CsasEngine {
 
             if(Shadow_Enable)
             {
-                float near_plane = 1.0f, far_plane = 7.5f;
-                glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+                float near_plane = 0.1f, far_plane = 7.0f;
+                glm::mat4 lightProjection = glm::ortho(-6.0f, 6.0f, -6.0f, 6.0f, near_plane, far_plane);
 
                 auto&position=trans.Translation;
                 auto up=trans.GetAndUpdateBasis(0);

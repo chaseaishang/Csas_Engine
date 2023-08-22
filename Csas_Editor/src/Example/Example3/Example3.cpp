@@ -57,10 +57,10 @@ namespace CsasEngine {
         }
         DirectLight=m_ActiveScene->CreateEntity(lightGroup,"DirectLight");
         auto&direct=DirectLight.AddComponent<MeshComponent>(Primitive::UnRender).transform;
-        direct.Translate({0,0,2},TransformComponent::Space::World);
+        direct.Translate({0,0,3},TransformComponent::Space::World);
         direct.Rotate({1,0,0},-49,TransformComponent::Space::World);
         DirectLight.AddComponent<DirectionLightComponent>(
-                glm::vec4(1),
+                glm::vec4(0.0f, 0.43f, 1.0f,1.0),
                 10
                 );
 
@@ -85,7 +85,7 @@ namespace CsasEngine {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
             m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(sphereGroup,name);
             RenderIndex index=secondIndex;
-            auto&trans=m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Cube,index);
+            auto&trans=m_BRDF_Sphere[i].AddComponent<MeshComponent>(Primitive::Sphere,index);
             //trans.transform.Rotate(glm::vec3(1,0,0),45);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();
         }
@@ -136,15 +136,29 @@ namespace CsasEngine {
         auto &camera = m_CameraEntity.GetComponent<CameraComponent>().Camera;
         camera.Update(ts);
 
-        auto angle=(ts.GetSeconds()*10);
 
-        auto&trans=DirectLight.GetComponent<MeshComponent>().transform;
-        trans.Rotate({0,1,0},-angle,TransformComponent::Space::World);
 
     }
 
-    void CsasEngine::Example3::OnImGuiRender() {
+    void CsasEngine::Example3::OnImGuiRender()
+    {
+        ImGui::Begin("Debug");
+        if(ImGui::Button("RotateX"))
+        {
+            auto angle=(30);
 
+            auto&trans=DirectLight.GetComponent<MeshComponent>().transform;
+            trans.Rotate({1,0,0},-angle,TransformComponent::Space::World);
+        }
+        if(ImGui::Button("RotateY"))
+        {
+            auto angle=(30);
+
+            auto&trans=DirectLight.GetComponent<MeshComponent>().transform;
+            trans.Rotate({0,1,0},-angle,TransformComponent::Space::World);
+        }
+
+        ImGui::End();
 
     }
 
