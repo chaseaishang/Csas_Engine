@@ -79,7 +79,7 @@ void main()
     px.ao=ao;
     //v_FragPosLightSpace
     //shadow_map
-    float visibility=EvaluteVisibility(shadow_map,v_FragPosLightSpace);
+
     for(int i = 0; i < Spot_Lights.SpotLightNumber; ++i)
     {
         // calculate per-light radiance
@@ -97,8 +97,10 @@ void main()
     bool DirectLightEnable=bool(Direct_Light.color.w);
     if(DirectLightEnable)
     {
+        vec3 L=normalize(Direct_Light.direction.xyz);
+        float visibility=PCF(px,L,shadow_map,v_FragPosLightSpace);
 
-        Lo +=EvaluateADL(px,Direct_Light.direction.xyz,visibility)*Direct_Light.color.rgb;
+        Lo +=EvaluateADL(px,L,visibility)*Direct_Light.color.rgb;
     }
 
 

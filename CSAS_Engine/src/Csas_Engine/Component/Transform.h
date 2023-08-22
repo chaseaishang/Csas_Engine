@@ -36,7 +36,8 @@ namespace CsasEngine {
         glm::mat4 GetTransform();
         glm::vec3 GetAndUpdateBasis(uint direction=0);
         void SetPosition(glm::vec3 position);
-        void Rotate(const glm::vec3& axis, float angle);
+        void Translate(const glm::vec3& vector, Space space=Space::Local);
+        void Rotate(const glm::vec3& axis, float angle,Space space=Space::Local);
         void Rotate(const glm::vec3& eulers);
 
         bool OnImGuiRender();

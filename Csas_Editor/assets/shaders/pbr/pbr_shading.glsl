@@ -1,8 +1,8 @@
 #ifndef PBR_SHADING_H
 #define PBR_SHADING_H
 
-//#include pbr_uniform.glsl
-
+#include pbr_uniform.glsl
+#include ../utils/sampling.glsl
 
 struct Pixel {
     vec3 position;
@@ -84,34 +84,62 @@ vec3 EvaluateAPL(const Pixel px,const vec3 spot_position)
     return EvaluateAL(px,L)*attenuation;
 }
 // evaluates the contribution of a white directional light of unit intensity
-vec3 EvaluateADL(const Pixel px, const vec3 direction,float visibility)
+vec3 EvaluateADL(const Pixel px, const vec3 L,float visibility)
 {
-    vec3 L=normalize(direction);
+
     return visibility*EvaluateAL(px,L);
 }
-vec2 poissonDisk[4] = vec2[](
-vec2( -0.94201624, -0.39906216 ),
-vec2( 0.94558609, -0.76890725 ),
-vec2( -0.094184101, -0.92938870 ),
-vec2( 0.34495938, 0.29387760 )
-);
-float EvaluteVisibility(in sampler2D shadow_map,vec4 fragPosLightSpace)
+
+////////////////////////////////////// shadow map
+
+
+/* computes the bias term that is used to offset the shadow map and remove shadow acne
+   we need more bias when NoL is small, less when NoL is large (perpendicular surfaces)
+   if the resolution of the shadow map is high, the min/max bias values can be reduced
+   N and L must be normalized, and N must be geometric normal, not from the normal map
+*/
+float ComputeDepthBias(const vec3 L, const vec3 N)
 {
+    const float max_bias = 0.05;
+    const float min_bias = 0.005;
+    return max(max_bias * (1.0 - dot(N, L)), min_bias);
+}
+
+
+float PCF(const Pixel px,const vec3 L,in sampler2D shadowMap,vec4 coords )
+{
+
     // 执行透视除法
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    vec3 projCoords = coords.xyz / coords.w;
     // 变换到[0,1]的范围
     projCoords = projCoords * 0.5 + 0.5;
-    // 取得最近点的深度(使用[0,1]范围下的fragPosLight当坐标)
-    float visibility=1.0f;
-    float bias = 0.005;
-    for (int i=0;i<4;i++)
+    // 采样
+    poissonDiskSamples(projCoords.xy);
+    // uniformDiskSamples(coords.xy);
+
+    // shadow map 的大小, 越大滤波的范围越小
+    float textureSize = 1024.0;
+    // 滤波的步长
+    float filterStride = 5.0;
+    // 滤波窗口的范围
+    float filterRange = 1.0 / textureSize * filterStride;
+    // 有多少点不在阴影里
+    int noShadowCount = 0;
+    //float bias =0.5*(1.0 - dot(px.N, L))*(1+ceil(filterRange))*20/2048;
+    float bias=ComputeDepthBias(L,px.N);
+    for( int i = 0; i < NUM_SAMPLES; i ++ )
     {
-        if ( texture( shadow_map, projCoords.xy + poissonDisk[i]/700.0 ).z  <  projCoords.z-bias )
+        vec2 sampleCoord = poissonDisk[i] * filterRange + projCoords.xy;
+        float closestDepth = texture( shadow_map,sampleCoord).r;
+        float currentDepth = projCoords.z;
+        if(currentDepth < closestDepth + bias)
         {
-            visibility-=0.2;
+            noShadowCount += 1;
         }
     }
 
-    return visibility;
+    float shadow = float(noShadowCount) / float(NUM_SAMPLES);
+    return shadow;
 }
+
 #endif

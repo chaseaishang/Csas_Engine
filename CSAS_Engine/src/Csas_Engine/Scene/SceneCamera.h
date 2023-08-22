@@ -46,7 +46,7 @@ namespace CsasEngine {
         void Move(Direction direction, float deltatime, bool snap);//TODO Using CameraSystem To Replace
     public:
         //for camera  Temp
-        bool SpinEnable=false;
+        bool SpinEnable= true;
     private:
         ProjectionType m_ProjectionType = ProjectionType::Perspective;
 //for 3D

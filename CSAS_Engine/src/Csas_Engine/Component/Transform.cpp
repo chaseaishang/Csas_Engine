@@ -15,16 +15,28 @@ namespace CsasEngine
     static constexpr glm::vec3 world_up      { 0.0f, 1.0f, 0.0f };  // +y axis
     static constexpr glm::vec3 world_forward { 0.0f, 0.0f,-1.0f };  // -z axis
 
-    void TransformComponent::Rotate(const glm::vec3 &axis, float angle)
+    //Update at once
+    void TransformComponent::Rotate(const glm::vec3 &axis, float angle,Space space)
     {
         float radians = glm::radians(angle);
-        //y z x
-
         glm::vec3 v = glm::normalize(axis);
+
+        glm::mat4 R = glm::rotate(glm::mat4(1),radians, v);     // rotation matrix4x4
         glm::quat Q = glm::angleAxis(radians, v);  // rotation quaternion
-        glm::vec3 eulers = glm::eulerAngles(Q);
-        this->Euler+=glm::degrees(eulers);
-        SetDirty();
+
+        // local space rotation: expect v in local space, e.g. right = vec3(1, 0, 0)
+        if (space == Space::Local)
+        {
+            this->Transform = this->Transform * R;
+            this->Rotation = glm::normalize(this->Rotation * Q);
+        }// world space rotation: expect v in world space, may introduce translation
+        else {
+            this->Transform = R * this->Transform;
+            this->Rotation = glm::normalize(Q * this->Rotation);
+            this->Translation = glm::vec3(this->Transform[3]);
+        }
+        RecalculateBasis();
+        RecalculateEuler();
 
     }
     void TransformComponent::Rotate(const glm::vec3 &eulers)
@@ -235,6 +247,21 @@ namespace CsasEngine
     {
         this->Translation=position;
         SetDirty();
+    }
+
+    void TransformComponent::Translate(const glm::vec3 &vector, TransformComponent::Space space)
+    {
+        // local space translation: expect vector in local space coordinates
+        if (space == Space::Local) {
+            glm::vec3 world_v = this->Rotation * vector;
+            this->Translation += world_v;
+            this->Transform[3] = glm::vec4(Translation, 1.0f);
+        }
+            // world space translation: position is directly updated by the vector
+        else {
+            this->Translation += vector;
+            this->Transform[3] = glm::vec4(Translation, 1.0f);
+        }
     }
 
 }
