@@ -21,18 +21,18 @@ namespace CsasEngine {
 
 
         auto Cube = m_ActiveScene->CreateEntity("Green Cube");
-        Cube.AddComponent<MeshComponent>(Primitive::Cube);
+        Cube.AddComponent<MeshComponent<Vertex>>(Primitive::Cube);
         Cube.AddComponent<Material_BasePBR>();
         m_Cube = Cube;
 
 
 
         m_Sphere=m_ActiveScene->CreateEntity("Sphere");
-        m_Sphere.AddComponent<MeshComponent>(Primitive::Sphere);
+        m_Sphere.AddComponent<MeshComponent<Vertex>>(Primitive::Sphere);
         m_Sphere.AddComponent<Material_BasePBR>();
 
         m_Torus=m_ActiveScene->CreateEntity("Torus");
-        m_Torus.AddComponent<MeshComponent>(Primitive::Torus);
+        m_Torus.AddComponent<MeshComponent<Vertex>>(Primitive::Torus);
         m_Torus.AddComponent<Material_BasePBR>();
 
         m_teapot=m_ActiveScene->CreateEntity("teapot");
@@ -40,11 +40,11 @@ namespace CsasEngine {
         m_teapot.AddComponent<Material_BasePBR>();
         //Cartoon
         Cartoon_torus=m_ActiveScene->CreateEntity("Cartoon_torus");
-        Cartoon_torus.AddComponent<MeshComponent>(Primitive::Torus);
+        Cartoon_torus.AddComponent<MeshComponent<Vertex>>(Primitive::Torus);
         Cartoon_torus.AddComponent<Material_Cartoon>();
 
         Cartoon__Sphere=m_ActiveScene->CreateEntity("Cartoon__Sphere");
-        Cartoon__Sphere.AddComponent<MeshComponent>(Primitive::Sphere);
+        Cartoon__Sphere.AddComponent<MeshComponent<Vertex>>(Primitive::Sphere);
         Cartoon__Sphere.AddComponent<Material_Cartoon>();
 
 

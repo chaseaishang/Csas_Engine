@@ -7,5 +7,6 @@ target_sources(CSAS_Renderer
         PassNode.cpp
         RenderPass.cpp
         RenderPipeline.cpp
+        ParticlePass/ParticlePassNode.cpp
         )
 #${RENDERER_PIPELINE_DIR_LIB_SRCS}

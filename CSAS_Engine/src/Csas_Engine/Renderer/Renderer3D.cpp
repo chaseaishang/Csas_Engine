@@ -30,9 +30,9 @@ namespace CsasEngine {
     }
     void Renderer3D::BeginScene(Camera &camera,
                                 std::vector<SpotLightComponent *> SpotlightsPtr,
-                                std::vector<MeshComponent *> SpotMeshPtr,
+                                std::vector<MeshComponent<Vertex> *> SpotMeshPtr,
                                 std::vector<DirectionLightComponent*>DirectSpot,
-                                std::vector<MeshComponent *> DirectMeshPtr
+                                std::vector<MeshComponent<Vertex> *> DirectMeshPtr
                                 )
     {
         auto m_pipeline=RenderPipeline::getInstance();
@@ -46,7 +46,7 @@ namespace CsasEngine {
                                      Pbr_data::BRDF_LUT.get()
         );
     }
-    void Renderer3D::Submit(MeshComponent&mesh,Material_BaseBRDF&material)
+    void Renderer3D::Submit(MeshComponent<Vertex>&mesh,Material_BaseBRDF&material)
     {
 
         uint8_t index=mesh.RenderIndex;
@@ -56,13 +56,13 @@ namespace CsasEngine {
         //
         //
     }
-    void Renderer3D::Submit(MeshComponent &mesh, SpotLightComponent &material)
+    void Renderer3D::Submit(MeshComponent<Vertex> &mesh, SpotLightComponent &material)
     {
         uint8_t index=mesh.RenderIndex;
         auto&vec=Render_map[index];
         vec.push_back({&mesh,&material});
     }
-    void Renderer3D::Submit(MeshComponent &mesh, Material_Skybox &material)
+    void Renderer3D::Submit(MeshComponent<Vertex> &mesh, Material_Skybox &material)
     {
         //material.cube_map=Pbr_data::irradiance_map;
         uint8_t index=mesh.RenderIndex;
@@ -141,12 +141,12 @@ namespace CsasEngine {
 
 
 
-    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BasePrimitive &material)
+    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera, Material_BasePrimitive &material)
     {
 
     }
 
-    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera,
+    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera,
                               Material_BasePBR &material,
                               std::vector<SpotLightComponent>&Spotlights,
                               std::vector<DirectionLightComponent>&Direction_lights)
@@ -154,13 +154,13 @@ namespace CsasEngine {
 
     }
 
-    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_Cartoon &material,
+    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera, Material_Cartoon &material,
                               std::vector<SpotLightComponent> &Spotlights)
     {
 
     }
 
-    void Renderer3D::DrawMesh(MeshComponent &mesh, const Camera &camera, Material_BaseBRDF &material,
+    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera, Material_BaseBRDF &material,
                               std::vector<SpotLightComponent>&Spotlights)
     {
 

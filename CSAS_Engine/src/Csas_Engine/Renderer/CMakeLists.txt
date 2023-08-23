@@ -17,6 +17,7 @@ target_include_directories(CSAS_Renderer
         PUBLIC
         RenderPipeline
         RenderPipeline/RenderData/
+        RenderPipeline/ParticlePass/
         INTERFACE
         .
         PRIVATE

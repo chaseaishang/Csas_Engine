@@ -26,25 +26,25 @@ namespace CsasEngine {
 
         static void BeginScene(Camera &camera,
                                std::vector<SpotLightComponent*>SpotlightsPtr,
-                               std::vector<MeshComponent *> SpotMeshPtr,
+                               std::vector<MeshComponent<Vertex> *> SpotMeshPtr,
                                std::vector<DirectionLightComponent*>DirectLight,
-                               std::vector<MeshComponent *> DirectMeshPtr
+                               std::vector<MeshComponent<Vertex> *> DirectMeshPtr
                                );
-        static void Submit(MeshComponent&mesh,Material_BaseBRDF&material);
-        static void Submit(MeshComponent&mesh,Material_Skybox&material);
-        static void Submit(MeshComponent&mesh,SpotLightComponent&material);
+        static void Submit(MeshComponent<Vertex>&mesh,Material_BaseBRDF&material);
+        static void Submit(MeshComponent<Vertex>&mesh,Material_Skybox&material);
+        static void Submit(MeshComponent<Vertex>&mesh,SpotLightComponent&material);
         //Material_Skybox
         static void EndScene();
         static void DrawQuad();
-        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePrimitive&material);
-        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BasePBR&material,
+        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_BasePrimitive&material);
+        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_BasePBR&material,
                              std::vector<SpotLightComponent>&Spotlights,
                              std::vector<DirectionLightComponent>&Direction_lights
                              );
-        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_Cartoon&material,
+        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_Cartoon&material,
                              std::vector<SpotLightComponent>&Spotlights
         );
-        static void DrawMesh(MeshComponent&mesh,const Camera &camera,Material_BaseBRDF&material,
+        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_BaseBRDF&material,
                              std::vector<SpotLightComponent>&Spotlights);
 
         // Primitives

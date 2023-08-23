@@ -31,7 +31,7 @@ namespace CsasEngine
         void processNode(aiNode *node, const aiScene *scene);
     public:
         std::vector<MeshData>meshes;
-        std::vector<MeshComponent>meshComponents;
+        std::vector<MeshComponent<Vertex>>meshComponents;
         void processMeshComponent();
     };
 }

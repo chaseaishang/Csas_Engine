@@ -11,7 +11,8 @@ namespace CsasEngine
 {
 
     struct Material_BaseBRDF;
-    struct MeshComponent;
+    template<>
+    struct MeshComponent<Vertex>;
 
     class RenderPass
     {
@@ -50,7 +51,7 @@ namespace CsasEngine
         };
         using RenderPassMap=std::unordered_map<RenderIndex,RenderWrap>;
 
-        using MeshVector=std::vector<MeshComponent*>;
+        using MeshVector=std::vector<MeshComponent<Vertex>*>;
         using MaterialVector=std::vector<Material_BaseBRDF*>;
 
 

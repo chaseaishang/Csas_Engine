@@ -6,6 +6,8 @@
 #include "Csas_Engine/Renderer/Buffer.h"
 #include "Csas_Engine/Renderer/Shader.h"
 #include "glm/glm.hpp"
+#include "ParticleMesh.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -26,7 +28,8 @@ namespace CsasEngine
         static const uint32_t OneSphereVertices =  n_verts ;
         static const uint32_t OneSphereIndices  =  n_tris * 3;
     }
-    MeshComponent::MeshComponent(Primitive primitive,uint8_t RenderIndex)
+
+    MeshComponent<Vertex>::MeshComponent(Primitive primitive,uint8_t RenderIndex)
     {
         m_primitive=primitive;
         this->RenderIndex=RenderIndex;
@@ -39,15 +42,16 @@ namespace CsasEngine
             case Primitive::Plane:CreatPlane(1.0);break;
             case Primitive::UnRender:break;
             case Primitive::None: CSAS_ASSERT(false,"error primitive!");
+            default:CSAS_ASSERT(false,"error primitive!");
         }
     }
-    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,BufferLayout&layout,uint8_t RenderIndex)
+    MeshComponent<Vertex>::MeshComponent(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,BufferLayout&layout,uint8_t RenderIndex)
     {
         m_primitive=Primitive::FromModel;
         this->RenderIndex=RenderIndex;
         CreateBuffers(vertices,indices,layout);
     }
-    void MeshComponent::CreatSphere(float radius)
+    void MeshComponent<Vertex>::CreatSphere(float radius)
     {
 
         constexpr float PI = SphereSpec::PI;
@@ -122,7 +126,7 @@ namespace CsasEngine
         static const uint32_t OneCubeIndices  =  36;
 
     }
-    void MeshComponent::CreatCube(float size)
+    void MeshComponent<Vertex>::CreatCube(float size)
     {
 
         constexpr int n_vertices = CubeSpec::OneCubeVertices;  // we only need 24 vertices to triangulate the 6 faces
@@ -191,7 +195,7 @@ namespace CsasEngine
 
     }
 
-    void MeshComponent::CreateBuffers(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices,BufferLayout &layout)
+    void MeshComponent<Vertex>::CreateBuffers(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices,BufferLayout &layout)
     {
         m_VAO=VertexArray::Create();
 
@@ -203,7 +207,7 @@ namespace CsasEngine
         m_VAO->SetIndexBuffer(m_IBO);
     }
 
-    void MeshComponent::Update()
+    void MeshComponent<Vertex>::Update()
     {
         m_VBO->SetData(m_vertices.data(),sizeof(Vertex)*m_vertices.size());
 
@@ -215,7 +219,7 @@ namespace CsasEngine
         static const uint32_t OneQuadIndices  =  6;
 
     }
-    void MeshComponent::CreatQuad(float size)
+    void MeshComponent<Vertex>::CreatQuad(float size)
     {
         constexpr int n_vertices = QuadSpec::OneQuadVertices;
         constexpr int stride = 4;  // 2 + 2
@@ -255,7 +259,7 @@ namespace CsasEngine
     }
 
 
-    void MeshComponent::CreatTorus(float R, float r)
+    void MeshComponent<Vertex>::CreatTorus(float R, float r)
     {
 
         // default LOD = 60x60 faces, step size = 6 degrees
@@ -338,7 +342,7 @@ namespace CsasEngine
         static const uint32_t OnePlaneIndices  =  6;
 
     }
-    void MeshComponent::CreatPlane(float size) {
+    void MeshComponent<Vertex>::CreatPlane(float size) {
 
         std::vector<Vertex> &vertices=m_vertices;
         vertices.reserve(PlaneSpec::OnePlaneVertices);
@@ -385,7 +389,7 @@ namespace CsasEngine
 
     }
 
-    MeshComponent::MeshComponent(const MeshComponent &mesh)
+    MeshComponent<Vertex>::MeshComponent(const MeshComponent &mesh)
     {
         this->m_VAO=mesh.m_VAO;
         this->m_VBO=mesh.m_VBO;
@@ -396,6 +400,8 @@ namespace CsasEngine
         m_indices=mesh.m_indices;
         this->RenderIndex=mesh.RenderIndex;
     }
+
+
 
 
 }

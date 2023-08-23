@@ -19,7 +19,7 @@ namespace CsasEngine {
         virtual void Unbind() const override;
 
         virtual void SetData(const void* data, uint32_t size) override;
-
+        virtual uint32_t GetRenderID()const{return m_RendererID;}
         virtual const BufferLayout& GetLayout() const override { return m_Layout; }
         virtual void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
     private:
@@ -32,7 +32,7 @@ namespace CsasEngine {
     public:
         OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
         virtual ~OpenGLIndexBuffer();
-
+        virtual uint32_t GetRenderID()const{return m_RendererID;}
         virtual void Bind() const;
         virtual void Unbind() const;
 

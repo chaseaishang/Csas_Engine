@@ -55,15 +55,15 @@ namespace CsasEngine {
     {
 
         std::vector<SpotLightComponent*>SpotlightsPtr;
-        std::vector<MeshComponent *> SpotMeshPtr;
+        std::vector<MeshComponent<Vertex> *> SpotMeshPtr;
 
         std::vector<DirectionLightComponent*>Direction_lightsPtr;
-        std::vector<MeshComponent *> DirectMeshPtr;
+        std::vector<MeshComponent<Vertex> *> DirectMeshPtr;
         {
-            auto view = m_Registry.view<MeshComponent,SpotLightComponent>();
+            auto view = m_Registry.view<MeshComponent<Vertex>,SpotLightComponent>();
             for(auto entity: view)
             {
-                auto [mesh,spot]=view.get<MeshComponent,SpotLightComponent>(entity);
+                auto [mesh,spot]=view.get<MeshComponent<Vertex>,SpotLightComponent>(entity);
 
                 Renderer3D::Submit(mesh,spot);
 
@@ -73,7 +73,7 @@ namespace CsasEngine {
         }
         {//light
 
-            m_Registry.view<MeshComponent,DirectionLightComponent>().each(
+            m_Registry.view<MeshComponent<Vertex>,DirectionLightComponent>().each(
                     [&](auto &mesh, auto &direct)
                     {
 
@@ -93,18 +93,18 @@ namespace CsasEngine {
 
 
         {
-            auto view = m_Registry.view<Material_Skybox, MeshComponent>();
+            auto view = m_Registry.view<Material_Skybox, MeshComponent<Vertex>>();
             for(auto entity: view)
             {
-                auto [material,mesh]=view.get<Material_Skybox,MeshComponent>(entity);
+                auto [material,mesh]=view.get<Material_Skybox,MeshComponent<Vertex>>(entity);
                 Renderer3D::Submit(mesh,material);
             }
         }
         {
-            auto view = m_Registry.view<Material_BaseBRDF, MeshComponent>();
+            auto view = m_Registry.view<Material_BaseBRDF, MeshComponent<Vertex>>();
             for(auto entity: view)
             {
-                auto [material,mesh]=view.get<Material_BaseBRDF,MeshComponent>(entity);
+                auto [material,mesh]=view.get<Material_BaseBRDF,MeshComponent<Vertex>>(entity);
                 Renderer3D::Submit(mesh,material);
             }
         }

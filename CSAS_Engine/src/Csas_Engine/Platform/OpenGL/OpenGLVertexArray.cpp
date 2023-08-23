@@ -76,6 +76,7 @@ namespace CsasEngine {
         vertexBuffer->Bind();
 
         const auto& layout = vertexBuffer->GetLayout();
+        auto vbo_ID=vertexBuffer->GetRenderID();
         for (const auto& element : layout)
         {
             switch (element.Type)
@@ -90,30 +91,58 @@ namespace CsasEngine {
                 case ShaderDataType::Int4:
                 case ShaderDataType::Bool:
                 {
-                    glEnableVertexAttribArray(m_VertexBufferIndex);
-                    glVertexAttribPointer(m_VertexBufferIndex,
-                                          element.GetComponentCount(),
-                                          ShaderDataTypeToOpenGLBaseType(element.Type),
-                                          element.Normalized ? GL_TRUE : GL_FALSE,
-                                          layout.GetStride(),
-                                          (const void*)element.Offset);
+                    glEnableVertexArrayAttrib(m_RendererID,m_VertexBufferIndex);
+
+                    glVertexArrayAttribFormat(m_RendererID,
+                                              m_VertexBufferIndex,
+                                              element.GetComponentCount(),
+                                              ShaderDataTypeToOpenGLBaseType(element.Type),
+                                              element.Normalized ? GL_TRUE : GL_FALSE,
+                                              element.Offset);
+
+                    glVertexArrayAttribBinding(m_RendererID,
+                                               m_VertexBufferIndex,m_BindingIndex);
+
+//                    glVertexAttribPointer(m_VertexBufferIndex,
+//                                          element.GetComponentCount(),
+//                                          ShaderDataTypeToOpenGLBaseType(element.Type),
+//                                          element.Normalized ? GL_TRUE : GL_FALSE,
+//                                          layout.GetStride(),
+//                                          (const void*)element.Offset);
                     m_VertexBufferIndex++;
                     break;
                 }
                 case ShaderDataType::Mat3:
                 case ShaderDataType::Mat4:
                 {
+                    CSAS_CORE_ASSERT(true,"We didn't refactoring this haha!");
                     uint8_t count = element.GetComponentCount();
                     for (uint8_t i = 0; i < count; i++)
                     {
-                        glEnableVertexAttribArray(m_VertexBufferIndex);
-                        glVertexAttribPointer(m_VertexBufferIndex,
-                                              count,
-                                              ShaderDataTypeToOpenGLBaseType(element.Type),
-                                              element.Normalized ? GL_TRUE : GL_FALSE,
-                                              layout.GetStride(),
-                                              (const void*)(element.Offset + sizeof(float) * count * i));
-                        glVertexAttribDivisor(m_VertexBufferIndex, 1);
+                        glEnableVertexArrayAttrib(m_RendererID,m_VertexBufferIndex);
+
+                        glVertexArrayVertexBuffer(m_RendererID,
+                                                  m_VertexBufferIndex,
+                                                  vbo_ID,
+                                                  element.Offset+ sizeof(float) * count * i,
+                                                  layout.GetStride());
+
+                        glVertexArrayAttribFormat(m_RendererID,
+                                                  m_VertexBufferIndex,  count,
+                                                  ShaderDataTypeToOpenGLBaseType(element.Type),
+                                                  element.Normalized ? GL_TRUE : GL_FALSE,
+                                                  element.Offset + sizeof(float) * count * i);
+
+                        glVertexArrayAttribBinding(m_RendererID,
+                                                   m_VertexBufferIndex,m_VertexBufferIndex);
+
+//                        glVertexAttribPointer(m_VertexBufferIndex,
+//                                              count,
+//                                              ShaderDataTypeToOpenGLBaseType(element.Type),
+//                                              element.Normalized ? GL_TRUE : GL_FALSE,
+//                                              layout.GetStride(),
+//                                              (const void*)(element.Offset + sizeof(float) * count * i));
+                        //glVertexAttribDivisor(m_VertexBufferIndex, 1);
                         m_VertexBufferIndex++;
                     }
                     break;
@@ -123,16 +152,21 @@ namespace CsasEngine {
             }
         }
 
+        glVertexArrayVertexBuffer(m_RendererID,
+                                  m_BindingIndex,
+                                  vbo_ID,
+                                  0,
+                                  layout.GetStride());
 
         m_VertexBuffers.push_back(vertexBuffer);
+        m_BindingIndex++;
     }
 
     void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
     {
         CSAS_PROFILE_FUNCTION();
-        //glVertexArrayElementBuffer(m_RendererID,indexBuffer.get())
-        glBindVertexArray(m_RendererID);
-        indexBuffer->Bind();
+        glVertexArrayElementBuffer(m_RendererID,indexBuffer->GetRenderID());
+
 
         m_IndexBuffer = indexBuffer;
     }

@@ -21,8 +21,33 @@ namespace CsasEngine
         glm::vec2 UV;
     };
 
-    enum class Primitive {None,Cube,Sphere,Quad,Torus,FromModel,Plane,UnRender};
+    enum class Primitive {None,
+            Cube,Sphere,Quad,Torus,FromModel,Plane,
+            UnRender,
+            Particle
+
+
+    };
+    //class VertexType
+    template<class VertexType=Vertex>
     struct MeshComponent
+    {
+    public:
+        friend class Renderer3D;
+
+        enum Primitive m_primitive{Primitive::None};
+        uint8_t RenderIndex=0;
+        TransformComponent transform{glm::vec3(0)};
+        std::vector<VertexType> m_vertices;
+        std::vector<uint32_t> m_indices;
+    public:
+        Ref<VertexArray> m_VAO;
+        Ref<VertexBuffer>m_VBO;
+        Ref<IndexBuffer>m_IBO;
+
+    };
+    template<>
+    struct MeshComponent<Vertex>
     {
     public:
         friend class Renderer3D;

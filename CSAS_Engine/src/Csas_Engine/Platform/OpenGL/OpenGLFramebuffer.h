@@ -14,6 +14,12 @@ namespace CsasEngine {
         virtual ~OpenGLFramebuffer();
 
         void Invalidate();
+        /**
+         * @brief clean the buffer In FrameBuffer
+         * @param index -1 Depth_stencil -2 Depth
+         *        index>0 the colorAttachment
+         *        Be careful We don't Check If it execute correct and If it has depthAttachment or others.
+         */
         void Clear(int index)const override;
         void ClearAll() override;
         virtual void Bind() override;

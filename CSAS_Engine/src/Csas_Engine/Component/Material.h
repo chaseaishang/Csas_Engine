@@ -22,7 +22,8 @@ namespace CsasEngine {
         Skybox,
         Blur,
         Light,
-        Direct_Light
+        Direct_Light,
+        Particle
 
     };
     struct Material

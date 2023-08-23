@@ -6,6 +6,7 @@
 #include "Camera3D.h"
 #include "Components.h"
 #include "Mesh.h"
+#include "ParticleMesh.h"
 #include "Material.h"
 #include "Model.h"
 #include "light.h"

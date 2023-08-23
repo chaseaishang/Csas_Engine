@@ -16,14 +16,15 @@ namespace CsasEngine
     class UniformBuffer;
     struct Material_BaseBRDF;
     struct SpotLightComponent;
-    struct MeshComponent;
+
     enum class PassNodeType
     {
         BrdfPass,
         Skybox,
         BlurPass,
         LightPass,
-        ShadowPass
+        ShadowPass,
+        ParticlePass
     };
     class PassNode
     {
@@ -53,9 +54,6 @@ namespace CsasEngine
         void OnPrepare(PassData*data)override;
 
         void OnExecute(PassData*data) override;
-    private:
-
-
     };
     class BlurPassNode:public PassNode
     {

@@ -75,7 +75,7 @@ namespace CsasEngine {
 
 
             }
-            meshComponents.push_back(MeshComponent(mesh.m_vertices,mesh.m_indices,layout,this->RenderIndex));
+            meshComponents.push_back(MeshComponent<Vertex>(mesh.m_vertices,mesh.m_indices,layout,this->RenderIndex));
 
         }
 
