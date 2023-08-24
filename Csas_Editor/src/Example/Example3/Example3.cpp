@@ -31,7 +31,7 @@ namespace CsasEngine {
         auto lightGroup=m_ActiveScene->AddGroup("Lights");
         skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky
         skybox.AddComponent<Material_Skybox>("./assets/textures/HDR/newport_loft.hdr");
-        skybox.AddComponent<MeshComponent<Vertex>>(Primitive::Cube,FirstIndex);
+        skybox.AddComponent<MeshComponent_Vertex>(Primitive::Cube,FirstIndex);
         glm::vec3 lightPositions[4];
         lightPositions[0]={-10.0f,  10.0f, 10.0f};
         lightPositions[1]={ 10.0f,  10.0f, 10.0f};
@@ -44,7 +44,7 @@ namespace CsasEngine {
 
             SpotLights[i]=m_ActiveScene->CreateEntity(lightGroup,name);
 
-            auto&Trans=SpotLights[i].AddComponent<MeshComponent<Vertex>>(Primitive::Cube,thirdIndex).transform;
+            auto&Trans=SpotLights[i].AddComponent<MeshComponent_Vertex>(Primitive::Cube,thirdIndex).transform;
             Trans.SetPosition(lightPositions[i]);
             auto&scale=Trans.Scale;
             scale={0.1,0.1,0.1};
@@ -58,7 +58,7 @@ namespace CsasEngine {
 
         }
         DirectLight=m_ActiveScene->CreateEntity(lightGroup,"DirectLight");
-        auto&direct=DirectLight.AddComponent<MeshComponent<Vertex>>(Primitive::UnRender).transform;
+        auto&direct=DirectLight.AddComponent<MeshComponent_Vertex>(Primitive::UnRender).transform;
         direct.Translate({0,0,3},TransformComponent::Space::World);
         direct.Rotate({1,0,0},-49,TransformComponent::Space::World);
         DirectLight.AddComponent<DirectionLightComponent>(
@@ -68,7 +68,7 @@ namespace CsasEngine {
 
         m_plane=m_ActiveScene->CreateEntity("plane");///bluesky
         m_plane.AddComponent<Material_BaseBRDF>();
-        auto&trans=m_plane.AddComponent<MeshComponent<Vertex>>(Primitive::Plane,secondIndex).transform;
+        auto&trans=m_plane.AddComponent<MeshComponent_Vertex>(Primitive::Plane,secondIndex).transform;
         trans.Scale={5,5,5};
         auto &plane_material=m_plane.GetComponent<Material_BaseBRDF>();
         plane_material.roughness=0.5f;
@@ -76,7 +76,7 @@ namespace CsasEngine {
 
         auto rgb=Utils::math::HSL2RGB(0.2f,1.0f,0.6f);
         plane_material.albedo={rgb};
-        m_plane.GetComponent<MeshComponent<Vertex>>().transform.SetPosition({ 0,
+        m_plane.GetComponent<MeshComponent_Vertex>().transform.SetPosition({ 0,
                                                                       -0.6,
                                                                       0});
 
@@ -87,7 +87,7 @@ namespace CsasEngine {
             std::string name="BRDF_Sphere_"+std::to_string(i+1);
             m_BRDF_Sphere[i]=m_ActiveScene->CreateEntity(sphereGroup,name);
             RenderIndex index=secondIndex;
-            auto&trans=m_BRDF_Sphere[i].AddComponent<MeshComponent<Vertex>>(Primitive::Sphere,index);
+            auto&trans=m_BRDF_Sphere[i].AddComponent<MeshComponent_Vertex>(Primitive::Sphere,index);
             //trans.transform.Rotate(glm::vec3(1,0,0),45);
             m_BRDF_Sphere[i].AddComponent<Material_BaseBRDF>();
         }
@@ -104,7 +104,7 @@ namespace CsasEngine {
                 metalness=metallic;
                 auto &roughness=material.roughness;
                 roughness=glm::clamp((float)j / (float)7, 0.05f, 1.0f);
-                auto &trans =m_BRDF_Sphere[index].GetComponent<MeshComponent<Vertex>>().transform;
+                auto &trans =m_BRDF_Sphere[index].GetComponent<MeshComponent_Vertex>().transform;
                 trans.SetPosition({(j - (3 / 2)) * spacing,
                                    0.0f,
                                    -i * spacing*2});
@@ -112,9 +112,9 @@ namespace CsasEngine {
 
             }
         }
-        m_particle=m_ActiveScene->CreateEntity("Particle");
-        auto&particles=m_particle.AddComponent<Particles>(100);
-        m_particle.AddComponent<MeshComponent<ParticleVertex>>(particles);
+//        m_particle=m_ActiveScene->CreateEntity("Particle");
+//        auto&particles=m_particle.AddComponent<Particles>(100);
+//        m_particle.AddComponent<MeshComponent_ParticleVertex>(particles);
 
 
         //Camera
@@ -151,14 +151,14 @@ namespace CsasEngine {
         {
             auto angle=(30);
 
-            auto&trans=DirectLight.GetComponent<MeshComponent<Vertex>>().transform;
+            auto&trans=DirectLight.GetComponent<MeshComponent_Vertex>().transform;
             trans.Rotate({1,0,0},-angle,TransformComponent::Space::World);
         }
         if(ImGui::Button("RotateY"))
         {
             auto angle=(30);
 
-            auto&trans=DirectLight.GetComponent<MeshComponent<Vertex>>().transform;
+            auto&trans=DirectLight.GetComponent<MeshComponent_Vertex>().transform;
             trans.Rotate({0,1,0},-angle,TransformComponent::Space::World);
         }
 

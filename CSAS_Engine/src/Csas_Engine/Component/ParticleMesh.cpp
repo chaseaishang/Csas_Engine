@@ -46,18 +46,19 @@ namespace CsasEngine
 
         template float RandomGenerator();
     }
-    MeshComponent<ParticleVertex>::MeshComponent(const Particles&particles,Primitive primitive,uint8_t RenderIndex)
+    MeshComponent_ParticleVertex::MeshComponent_ParticleVertex(const Particles&particles,Primitive primitive,uint8_t RenderIndex)
     {
         m_primitive=primitive;
         this->RenderIndex=RenderIndex;
         switch (primitive)
         {
             case Primitive::Particle:CreatParticle(particles);break;
+
             default:CSAS_ASSERT(false,"error primitive!");
 
         }
     }
-    void MeshComponent<ParticleVertex>::CreatParticle(const Particles&particles)
+    void MeshComponent_ParticleVertex::CreatParticle(const Particles&particles)
     {
         using namespace Utils::math;
         std::vector<ParticleVertex> &vertices=m_vertices;
@@ -100,7 +101,7 @@ namespace CsasEngine
 
 
     }
-    MeshComponent<ParticleVertex>::MeshComponent(const MeshComponent &mesh)
+    MeshComponent_ParticleVertex::MeshComponent_ParticleVertex(const MeshComponent_ParticleVertex &mesh)
     {
         this->m_VAO=mesh.m_VAO;
         this->m_VBO=mesh.m_VBO;

@@ -24,9 +24,9 @@ namespace CsasEngine {
     }
     void Renderer3D::BeginScene(Camera &camera,
                                 std::vector<SpotLightComponent *> SpotlightsPtr,
-                                std::vector<MeshComponent<Vertex> *> SpotMeshPtr,
+                                std::vector<MeshComponent *> SpotMeshPtr,
                                 std::vector<DirectionLightComponent*>DirectSpot,
-                                std::vector<MeshComponent<Vertex> *> DirectMeshPtr
+                                std::vector<MeshComponent *> DirectMeshPtr
                                 )
     {
         auto m_pipeline=RenderPipeline::getInstance();
@@ -40,7 +40,7 @@ namespace CsasEngine {
                                      Pbr_data::BRDF_LUT.get()
         );
     }
-    void Renderer3D::Submit(MeshComponent<Vertex>&mesh,Material_BaseBRDF&material)
+    void Renderer3D::Submit(MeshComponent_Vertex&mesh,Material_BaseBRDF&material)
     {
 
         uint8_t index=mesh.RenderIndex;
@@ -49,13 +49,13 @@ namespace CsasEngine {
 
     }
 
-    void Renderer3D::Submit(MeshComponent<Vertex> &mesh, SpotLightComponent &material)
+    void Renderer3D::Submit(MeshComponent_Vertex &mesh, SpotLightComponent &material)
     {
         uint8_t index=mesh.RenderIndex;
         auto&vec=Render_map[index];
         vec.push_back({&mesh,&material});
     }
-    void Renderer3D::Submit(MeshComponent<Vertex> &mesh, Material_Skybox &material)
+    void Renderer3D::Submit(MeshComponent_Vertex &mesh, Material_Skybox &material)
     {
         //material.cube_map=Pbr_data::irradiance_map;
         uint8_t index=mesh.RenderIndex;
@@ -64,7 +64,7 @@ namespace CsasEngine {
 
 
     }
-    void Renderer3D::Submit(MeshComponent<ParticleVertex>&mesh,Particles&material)
+    void Renderer3D::Submit(MeshComponent_ParticleVertex&mesh,Particles&material)
     {
         uint8_t index=mesh.RenderIndex;
         auto&vec=Render_map[index];

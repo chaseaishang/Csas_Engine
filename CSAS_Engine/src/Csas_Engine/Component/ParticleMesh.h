@@ -14,22 +14,19 @@ namespace CsasEngine
         glm::vec3 velocity;
         float     time;
     };
-    template<>
-    struct MeshComponent<ParticleVertex>
+
+    struct MeshComponent_ParticleVertex:public MeshComponent
     {
     public:
         friend class Renderer3D;
 
-        enum Primitive m_primitive{Primitive::None};
-        uint8_t RenderIndex=0;
-        TransformComponent transform{glm::vec3(0)};
         std::vector<ParticleVertex> m_vertices;
         void Update();
-        MeshComponent(const MeshComponent&mesh);
-        MeshComponent()=default;
-        MeshComponent(const Particles&particles,Primitive primitive=Primitive::None,uint8_t RenderIndex=0);
+        MeshComponent_ParticleVertex(const MeshComponent_ParticleVertex&mesh);
+        MeshComponent_ParticleVertex()=default;
+        MeshComponent_ParticleVertex(const Particles&particles,Primitive primitive=Primitive::None,uint8_t RenderIndex=0);
 
-        ~MeshComponent()=default;
+        ~MeshComponent_ParticleVertex()=default;
 
     public:
         Ref<VertexArray> m_VAO;

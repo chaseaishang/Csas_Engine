@@ -55,15 +55,15 @@ namespace CsasEngine {
     {
 
         std::vector<SpotLightComponent*>SpotlightsPtr;
-        std::vector<MeshComponent<Vertex> *> SpotMeshPtr;
+        std::vector<MeshComponent *> SpotMeshPtr;
 
         std::vector<DirectionLightComponent*>Direction_lightsPtr;
-        std::vector<MeshComponent<Vertex> *> DirectMeshPtr;
+        std::vector<MeshComponent *> DirectMeshPtr;
         {
-            auto view = m_Registry.view<MeshComponent<Vertex>,SpotLightComponent>();
+            auto view = m_Registry.view<MeshComponent_Vertex,SpotLightComponent>();
             for(auto entity: view)
             {
-                auto [mesh,spot]=view.get<MeshComponent<Vertex>,SpotLightComponent>(entity);
+                auto [mesh,spot]=view.get<MeshComponent_Vertex,SpotLightComponent>(entity);
 
                 Renderer3D::Submit(mesh,spot);
 
@@ -73,7 +73,7 @@ namespace CsasEngine {
         }
         {//light
 
-            m_Registry.view<MeshComponent<Vertex>,DirectionLightComponent>().each(
+            m_Registry.view<MeshComponent_Vertex,DirectionLightComponent>().each(
                     [&](auto &mesh, auto &direct)
                     {
 
@@ -93,27 +93,27 @@ namespace CsasEngine {
 
 
         {
-            auto view = m_Registry.view<Material_Skybox, MeshComponent<Vertex>>();
+            auto view = m_Registry.view<Material_Skybox, MeshComponent_Vertex>();
             for(auto entity: view)
             {
-                auto [material,mesh]=view.get<Material_Skybox,MeshComponent<Vertex>>(entity);
+                auto [material,mesh]=view.get<Material_Skybox,MeshComponent_Vertex>(entity);
                 Renderer3D::Submit(mesh,material);
             }
         }
         {
-            auto view = m_Registry.view<Material_BaseBRDF, MeshComponent<Vertex>>();
+            auto view = m_Registry.view<Material_BaseBRDF, MeshComponent_Vertex>();
             for(auto entity: view)
             {
-                auto [material,mesh]=view.get<Material_BaseBRDF,MeshComponent<Vertex>>(entity);
+                auto [material,mesh]=view.get<Material_BaseBRDF,MeshComponent_Vertex>(entity);
                 Renderer3D::Submit(mesh,material);
             }
         }
         //Particle
         {
-            auto view = m_Registry.view<Particles, MeshComponent<ParticleVertex>>();
+            auto view = m_Registry.view<Particles, MeshComponent_ParticleVertex>();
             for(auto entity: view)
             {
-                auto [material,mesh]=view.get<Particles,MeshComponent<ParticleVertex>>(entity);
+                auto [material,mesh]=view.get<Particles,MeshComponent_ParticleVertex>(entity);
                 Renderer3D::Submit(mesh,material);
             }
         }

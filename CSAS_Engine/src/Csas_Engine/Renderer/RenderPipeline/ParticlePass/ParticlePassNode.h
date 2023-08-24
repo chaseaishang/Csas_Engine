@@ -13,7 +13,7 @@ namespace CsasEngine {
 
             ParticlePassData()=default;
             ~ParticlePassData()=default;
-            ParticleRenderDataVec data;
+            RenderDataVec data;
         };
 
         ParticlePassNode(){type=PassNodeType::ParticlePass;}

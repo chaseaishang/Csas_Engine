@@ -32,9 +32,11 @@ namespace CsasEngine
 
         for(auto &[mesh,material]:ptr->data_vec)
         {
-            auto &vao=mesh->m_VAO;
+            auto meshVertex=static_cast<MeshComponent_Vertex*>(mesh);
+            auto &vao=meshVertex->m_VAO;
+
             auto transform=mesh->transform.GetTransform();
-            mesh->Update();
+            meshVertex->Update();
             vao->Bind();
             static_cast<Material_BaseBRDF*>(material)->Update(transform,ForwardPass::get_CameraView(),
                                                               *ptr->irradiance_map,
@@ -74,9 +76,11 @@ namespace CsasEngine
         auto&mesh=ptr->data.meshPtr;
         auto*material=static_cast<Material_Skybox*>( ptr->data.materialPtr);
 
-        auto &vao=mesh->m_VAO;
+
+        auto meshVertex=static_cast<MeshComponent_Vertex*>(mesh);
+        auto &vao=meshVertex->m_VAO;
         auto transform=mesh->transform.GetTransform();
-        mesh->Update();
+        meshVertex->Update();
         vao->Bind();
         material->Update(transform);
         RenderCommand::DrawIndexed(vao);
@@ -111,9 +115,10 @@ namespace CsasEngine
         auto ptr=static_cast<LightPassData*>(data);
         for(auto &[mesh,material]:ptr->data_vec)
         {
-            auto &vao=mesh->m_VAO;
+            auto meshVertex=static_cast<MeshComponent_Vertex*>(mesh);
+            auto &vao=meshVertex->m_VAO;
             auto transform=mesh->transform.GetTransform();
-            mesh->Update();
+            meshVertex->Update();
             vao->Bind();
             static_cast<SpotLightComponent*>(material)->Update(transform);
 
@@ -135,9 +140,10 @@ namespace CsasEngine
         auto&light_Matrix=ptr->light_SpaceMatrix;
         for(auto &[mesh,material]:ptr->data_vec)
         {
-            auto &vao=mesh->m_VAO;
+            auto meshVertex=static_cast<MeshComponent_Vertex*>(mesh);
+            auto &vao=meshVertex->m_VAO;
             auto transform=mesh->transform.GetTransform();
-            mesh->Update();
+            meshVertex->Update();
             vao->Bind();
             shader->Bind();
             shader->SetMat4("model",transform);

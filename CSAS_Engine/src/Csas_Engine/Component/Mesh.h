@@ -29,41 +29,31 @@ namespace CsasEngine
 
     };
     //class VertexType
-    template<class VertexType=Vertex>
+
     struct MeshComponent
     {
     public:
         friend class Renderer3D;
-
         enum Primitive m_primitive{Primitive::None};
         uint8_t RenderIndex=0;
         TransformComponent transform{glm::vec3(0)};
-        std::vector<VertexType> m_vertices;
-        std::vector<uint32_t> m_indices;
-    public:
-        Ref<VertexArray> m_VAO;
-        Ref<VertexBuffer>m_VBO;
-        Ref<IndexBuffer>m_IBO;
 
     };
-    template<>
-    struct MeshComponent<Vertex>
+
+    struct MeshComponent_Vertex:public MeshComponent
     {
     public:
         friend class Renderer3D;
 
-        enum Primitive m_primitive{Primitive::None};
-        uint8_t RenderIndex=0;
-        TransformComponent transform{glm::vec3(0)};
         std::vector<Vertex> m_vertices;
         std::vector<uint32_t> m_indices;
 
         void Update();
-        MeshComponent(const MeshComponent&mesh);
-        MeshComponent()=default;
-        MeshComponent(Primitive primitive=Primitive::None,uint8_t RenderIndex=0);
-        MeshComponent(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices,BufferLayout&layout,uint8_t RenderIndex);
-        ~MeshComponent()=default;
+        MeshComponent_Vertex(const MeshComponent_Vertex&mesh);
+        MeshComponent_Vertex()=default;
+        MeshComponent_Vertex(Primitive primitive=Primitive::None,uint8_t RenderIndex=0);
+        MeshComponent_Vertex(std::vector<Vertex> &vertices,std::vector<uint32_t> &indices,BufferLayout&layout,uint8_t RenderIndex);
+        ~MeshComponent_Vertex()=default;
 
     public:
         Ref<VertexArray> m_VAO;

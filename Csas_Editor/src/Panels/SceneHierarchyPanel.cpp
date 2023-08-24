@@ -200,11 +200,11 @@ namespace CsasEngine {
                 ImGui::TreePop();
             }
         }
-        if(entity.HasComponent<MeshComponent<Vertex>>())
+        if(entity.HasComponent<MeshComponent_Vertex>())
         {
-            if (ImGui::TreeNodeEx((void*)typeid(MeshComponent<Vertex>).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+            if (ImGui::TreeNodeEx((void*)typeid(MeshComponent_Vertex).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
             {
-                auto& tc = entity.GetComponent<MeshComponent<Vertex>>().transform;
+                auto& tc = entity.GetComponent<MeshComponent_Vertex>().transform;
 
                 tc.OnImGuiRender();
 

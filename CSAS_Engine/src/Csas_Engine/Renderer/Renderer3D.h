@@ -28,14 +28,14 @@ namespace CsasEngine
 
         static void BeginScene(Camera &camera,
                                std::vector<SpotLightComponent*>SpotlightsPtr,
-                               std::vector<MeshComponent<Vertex> *> SpotMeshPtr,
+                               std::vector<MeshComponent*> SpotMeshPtr,
                                std::vector<DirectionLightComponent*>DirectLight,
-                               std::vector<MeshComponent<Vertex> *> DirectMeshPtr
+                               std::vector<MeshComponent*> DirectMeshPtr
                                );
-        static void Submit(MeshComponent<Vertex>&mesh,        Material_BaseBRDF&material);
-        static void Submit(MeshComponent<Vertex>&mesh,        Material_Skybox&material);
-        static void Submit(MeshComponent<Vertex>&mesh,        SpotLightComponent&material);
-        static void Submit(MeshComponent<ParticleVertex>&mesh,Particles&material);
+        static void Submit(MeshComponent_Vertex&mesh,        Material_BaseBRDF&material);
+        static void Submit(MeshComponent_Vertex&mesh,        Material_Skybox&material);
+        static void Submit(MeshComponent_Vertex&mesh,        SpotLightComponent&material);
+        static void Submit(MeshComponent_ParticleVertex&mesh,Particles&material);
 
         //Material_Skybox
         static void EndScene();

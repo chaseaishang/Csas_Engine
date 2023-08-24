@@ -190,12 +190,12 @@ namespace CsasEngine {
             post_processing->Unbind();
             Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
         }
-        if(auto&Wrap=renderMap[index];true)//Light pass
-        {
-            Wrap.passNode_ptr->OnExecute(&Wrap.lightPassData);
-
-            index++;
-        }
+//        if(auto&Wrap=renderMap[index];true)//Light pass
+//        {
+//            Wrap.passNode_ptr->OnExecute(&Wrap.lightPassData);
+//
+//            index++;
+//        }
 
 
 

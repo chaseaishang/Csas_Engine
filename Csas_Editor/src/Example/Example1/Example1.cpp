@@ -9,31 +9,7 @@ void CsasEngine::Example1::OnAttach()
 {
     CSAS_INFO("Switch to Example1");
     CSAS_PROFILE_FUNCTION();
-    m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
-    m_ActiveScene = CreateRef<Scene>();
-    m_Scene=m_ActiveScene;
-    // Entity
-
-    auto Cube=m_ActiveScene->CreateEntity("Green Cube");
-    Cube.AddComponent<MeshComponent<Vertex>>(Primitive::Cube);
-    Cube.AddComponent<Material_BasePrimitive>();
-    m_Cube=Cube;
-
-    m_Quad=m_ActiveScene->CreateEntity("Quad");
-    m_Quad.AddComponent<MeshComponent<Vertex>>(Primitive::Quad);
-    m_Quad.AddComponent<Material_BasePrimitive>();
-    //Camera
-    m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-
-
-    auto&cc=m_CameraEntity.AddComponent<CameraComponent>(glm::vec3 {0,0,3});
-    cc.Primary= true;
-    cc.Camera.SetProjectionType(SceneCamera::ProjectionType::Perspective);
-    float mousex=Input::GetMouseX();
-    float mousey=Input::GetMouseY();
-    cc.Camera.SetMousePosition(mousex,mousey);
-    cc.Camera.SetCamera3D(&cc);
 
 
 }
