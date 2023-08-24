@@ -7,6 +7,7 @@
 #include "Components.h"
 #include "Mesh.h"
 #include "ParticleMesh.h"
+#include "Particle.h"
 #include "Material.h"
 #include "Model.h"
 #include "light.h"

@@ -10,13 +10,7 @@
 #include "./RenderPipeline/RenderPipeline.h"
 #include "RenderPipeline/RenderData/RenderData.h"
 #include "Csas_Engine/Renderer/Texture.h"
-//Temp TODO remove
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-
-#include "glm/gtx/string_cast.hpp"
 namespace CsasEngine {
     static bool Debug= false;
 
@@ -52,10 +46,9 @@ namespace CsasEngine {
         uint8_t index=mesh.RenderIndex;
         auto&vec=Render_map[index];
         vec.push_back({&mesh,&material});
-        //      index->vector
-        //
-        //
+
     }
+
     void Renderer3D::Submit(MeshComponent<Vertex> &mesh, SpotLightComponent &material)
     {
         uint8_t index=mesh.RenderIndex;
@@ -70,6 +63,12 @@ namespace CsasEngine {
         vec.push_back({&mesh,&material});
 
 
+    }
+    void Renderer3D::Submit(MeshComponent<ParticleVertex>&mesh,Particles&material)
+    {
+        uint8_t index=mesh.RenderIndex;
+        auto&vec=Render_map[index];
+        //vec.push_back({&mesh,&material});
     }
     void Renderer3D::EndScene()
     {
@@ -138,33 +137,6 @@ namespace CsasEngine {
     }
 
 
-
-
-
-    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera, Material_BasePrimitive &material)
-    {
-
-    }
-
-    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera,
-                              Material_BasePBR &material,
-                              std::vector<SpotLightComponent>&Spotlights,
-                              std::vector<DirectionLightComponent>&Direction_lights)
-    {
-
-    }
-
-    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera, Material_Cartoon &material,
-                              std::vector<SpotLightComponent> &Spotlights)
-    {
-
-    }
-
-    void Renderer3D::DrawMesh(MeshComponent<Vertex> &mesh, const Camera &camera, Material_BaseBRDF &material,
-                              std::vector<SpotLightComponent>&Spotlights)
-    {
-
-    }
     Ref<VertexArray> Renderer3D::dummy_vao= nullptr;
     void Renderer3D::DrawQuad()
     {

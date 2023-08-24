@@ -34,7 +34,7 @@ namespace CsasEngine {
         Entity m_plane;
         Entity m_BRDF_Sphere[9];
 
-
+        Entity m_particle;
 
 
         Entity SpotLights[4];

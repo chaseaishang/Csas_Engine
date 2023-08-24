@@ -10,13 +10,15 @@
 //
 //
 #pragma once
-
 #include "Camera.h"
 #include "Csas_Engine/Component/Mesh.h"
+#include "Csas_Engine/Component/ParticleMesh.h"
+#include "Csas_Engine/Component/Particle.h"
 #include "UniformBuffer.h"
 #include "Csas_Engine/Component/Material.h"
 #include "Csas_Engine/Component/light.h"
-namespace CsasEngine {
+namespace CsasEngine
+{
 
     class Renderer3D {
     public:
@@ -30,22 +32,15 @@ namespace CsasEngine {
                                std::vector<DirectionLightComponent*>DirectLight,
                                std::vector<MeshComponent<Vertex> *> DirectMeshPtr
                                );
-        static void Submit(MeshComponent<Vertex>&mesh,Material_BaseBRDF&material);
-        static void Submit(MeshComponent<Vertex>&mesh,Material_Skybox&material);
-        static void Submit(MeshComponent<Vertex>&mesh,SpotLightComponent&material);
+        static void Submit(MeshComponent<Vertex>&mesh,        Material_BaseBRDF&material);
+        static void Submit(MeshComponent<Vertex>&mesh,        Material_Skybox&material);
+        static void Submit(MeshComponent<Vertex>&mesh,        SpotLightComponent&material);
+        static void Submit(MeshComponent<ParticleVertex>&mesh,Particles&material);
+
         //Material_Skybox
         static void EndScene();
         static void DrawQuad();
-        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_BasePrimitive&material);
-        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_BasePBR&material,
-                             std::vector<SpotLightComponent>&Spotlights,
-                             std::vector<DirectionLightComponent>&Direction_lights
-                             );
-        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_Cartoon&material,
-                             std::vector<SpotLightComponent>&Spotlights
-        );
-        static void DrawMesh(MeshComponent<Vertex>&mesh,const Camera &camera,Material_BaseBRDF&material,
-                             std::vector<SpotLightComponent>&Spotlights);
+
 
         // Primitives
 

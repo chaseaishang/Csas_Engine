@@ -5,7 +5,7 @@
 #include "Particle.h"
 namespace CsasEngine
 {
-    Particles::Particles()
+    Particles::Particles(uint count)
     {
         type=MaterialType::Particle;
 

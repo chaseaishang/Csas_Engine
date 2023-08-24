@@ -10,7 +10,8 @@ namespace CsasEngine
     struct Particles :public Material
     {
     public:
-        Particles();
+        Particles(uint count=100);
+        ~Particles() override =default ;
     public:
         uint n_particles;
 

@@ -108,7 +108,15 @@ namespace CsasEngine {
                 Renderer3D::Submit(mesh,material);
             }
         }
-
+        //Particle
+        {
+            auto view = m_Registry.view<Particles, MeshComponent<ParticleVertex>>();
+            for(auto entity: view)
+            {
+                auto [material,mesh]=view.get<Particles,MeshComponent<ParticleVertex>>(entity);
+                Renderer3D::Submit(mesh,material);
+            }
+        }
         Renderer3D::EndScene();
 
 

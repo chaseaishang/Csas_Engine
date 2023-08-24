@@ -23,8 +23,10 @@ namespace CsasEngine {
         RenderIndex FirstIndex=renderPipeline->SubmitPass(PassNodeType::Skybox);
         RenderIndex secondIndex=renderPipeline->SubmitPass(PassNodeType::BrdfPass);
         RenderIndex thirdIndex=renderPipeline->SubmitPass(PassNodeType::LightPass);
+        RenderIndex fourthIndex=renderPipeline->SubmitPass(PassNodeType::ParticlePass);
         //renderPipeline->SubmitPass(PassNodeType::BlurPass);
         renderPipeline->EndPass();
+        //m_particle
         uint sphereGroup=m_ActiveScene->AddGroup("Brdf Sphere");
         auto lightGroup=m_ActiveScene->AddGroup("Lights");
         skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky
@@ -110,7 +112,9 @@ namespace CsasEngine {
 
             }
         }
-
+        m_particle=m_ActiveScene->CreateEntity("Particle");
+        auto&particles=m_particle.AddComponent<Particles>(100);
+        m_particle.AddComponent<MeshComponent<ParticleVertex>>(particles);
 
 
         //Camera
