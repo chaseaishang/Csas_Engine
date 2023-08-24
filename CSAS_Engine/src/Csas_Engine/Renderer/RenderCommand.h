@@ -27,6 +27,10 @@ namespace CsasEngine {
         {
             s_RendererAPI->DepthMask(Enable);
         }
+        inline static void SetBlend(bool Enable,BlendFun fun=BlendFun::ONE_MINUS_SRC_ALPHA)
+        {
+            s_RendererAPI->SetBlend(Enable,fun);
+        }
         inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
         {
             s_RendererAPI->SetViewport(x, y, width, height);
@@ -45,9 +49,17 @@ namespace CsasEngine {
         {
             s_RendererAPI->DrawArrays(vertexArray);
         }
+        inline static void DrawPoints(const Ref<VertexArray>& vertexArray,uint32_t count=0)
+        {
+            s_RendererAPI->DrawPoints(vertexArray,count);
+        }
         inline static void DrawIndexed(const Ref<VertexArray>& vertexArray,uint32_t count = 0)
         {
             s_RendererAPI->DrawIndexed(vertexArray,count);
+        }
+        inline static void SetPointSize(float size=1.0f)
+        {
+            s_RendererAPI->SetPointSize(size);
         }
     private:
         static Scope<RendererAPI> s_RendererAPI;

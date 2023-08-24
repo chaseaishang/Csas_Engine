@@ -62,7 +62,7 @@ namespace CsasEngine
     {
         using namespace Utils::math;
         std::vector<ParticleVertex> &vertices=m_vertices;
-        vertices.resize(particles.n_particles);
+        vertices.reserve(particles.n_particles);
         int number=particles.n_particles;
         glm::vec3 v(0.0f);
         float velocity, theta, phi;
@@ -109,5 +109,10 @@ namespace CsasEngine
         transform=mesh.transform;
         m_vertices=mesh.m_vertices;
         this->RenderIndex=mesh.RenderIndex;
+    }
+
+    void MeshComponent_ParticleVertex::Update()
+    {
+
     }
 }

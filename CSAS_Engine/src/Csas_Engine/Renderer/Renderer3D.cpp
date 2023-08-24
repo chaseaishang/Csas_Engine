@@ -68,7 +68,7 @@ namespace CsasEngine {
     {
         uint8_t index=mesh.RenderIndex;
         auto&vec=Render_map[index];
-        //vec.push_back({&mesh,&material});
+        vec.push_back({&mesh,&material});
     }
     void Renderer3D::EndScene()
     {

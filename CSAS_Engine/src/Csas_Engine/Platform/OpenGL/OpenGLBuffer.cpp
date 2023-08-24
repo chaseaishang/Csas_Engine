@@ -45,15 +45,11 @@ namespace CsasEngine {
     void OpenGLVertexBuffer::Unbind() const
     {
         CSAS_PROFILE_FUNCTION();
-
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-        //glNamedBufferSubData
         glNamedBufferSubData(this->m_RendererID,0,size,data);
-        //glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
     }
 
 

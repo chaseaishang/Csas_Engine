@@ -126,7 +126,36 @@ namespace CsasEngine {
 
     }
 
+    void OpenGLRendererAPI::SetPointSize(float size)
+    {
+        glPointSize(size);
+    }
 
+    void OpenGLRendererAPI::DrawPoints(const Ref <VertexArray> &vertexArray, uint32_t count)
+    {
+        glDrawArrays(GL_POINTS, 0, count);
+    }
+
+    void OpenGLRendererAPI::SetBlend(bool Enable, BlendFun fun)
+    {
+        if(Enable)
+        {
+            glEnable(GL_BLEND);
+            uint dfactor;
+            switch (fun)
+            {
+                case BlendFun::ONE_MINUS_SRC_ALPHA:dfactor=GL_ONE_MINUS_SRC_ALPHA;break;
+
+            }
+            glBlendFunc(GL_SRC_ALPHA, dfactor);
+
+        } else
+        {
+            glDisable(GL_BLEND);
+        }
+
+
+    }
 
 
 }

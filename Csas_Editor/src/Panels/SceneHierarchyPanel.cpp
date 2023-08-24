@@ -214,7 +214,17 @@ namespace CsasEngine {
                 ImGui::TreePop();
             }
         }
+        if(entity.HasComponent<MeshComponent_ParticleVertex>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(MeshComponent_ParticleVertex).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+            {
+                auto& tc = entity.GetComponent<MeshComponent_ParticleVertex>().transform;
 
+                tc.OnImGuiRender();
+
+                ImGui::TreePop();
+            }
+        }
         if (entity.HasComponent<CameraComponent>())
         {
             if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))

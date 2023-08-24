@@ -23,7 +23,7 @@ namespace CsasEngine
         virtual ~Application();
 
         void OnEvent(Event& e);
-
+        float GetTime(){return m_LastFrameTime;}
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
         ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }

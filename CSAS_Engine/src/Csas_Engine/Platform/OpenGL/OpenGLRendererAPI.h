@@ -11,15 +11,18 @@ namespace CsasEngine {
     class OpenGLRendererAPI : public RendererAPI
     {
     public:
-        virtual void Init() override;
-        virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+        void Init() override;
+        void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
         void FaceCulling(bool Enable,bool back=true)override;
-        virtual void SetClearColor(const glm::vec4& color) override;
-        virtual void Clear() override;
+        void SetClearColor(const glm::vec4& color) override;
+        void Clear() override;
         void DrawArrays(const Ref<VertexArray>& vertexArray)override;
-        virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount=0)override;
+        void DrawPoints(const Ref<VertexArray>& vertexArray,uint32_t count)override;
+        void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount=0)override;
+        void SetPointSize(float size)override;
         void DepthMask(bool Enable)override;
         void DepthTest(bool Enable)override;
+        void SetBlend(bool Enable,BlendFun fun=BlendFun::ONE_MINUS_SRC_ALPHA)override;
 
     };
 

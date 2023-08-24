@@ -145,11 +145,8 @@ namespace CsasEngine {
             ImGui::Begin("Stats");
 
             auto stats = Renderer3D::GetStats();
-            ImGui::Text("Renderer3D Stats:");
-            ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-            ImGui::Text("Quads: %d", stats.CubeCount);
-            ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-            ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+            auto time=Application::Get().GetTime();
+            ImGui::Text("Now Time ave %.3f s",time );
             ImGui::Separator();
             ImGui::Text("Time ave %.3f ms/frame", 1000.0f / ImGui::GetIO().Framerate);
             ImGui::Text("(%.1f FPS)", ImGui::GetIO().Framerate);
@@ -159,26 +156,7 @@ namespace CsasEngine {
             ImGui::End();
         }
 
-        {
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
-            ImGui::Begin("Viewport");
 
-            m_ViewportFocused = ImGui::IsWindowFocused();
-            m_ViewportHovered = ImGui::IsWindowHovered();
-            Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
-
-            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-            m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
-
-            uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-            ImGui::Image(reinterpret_cast<void *>(textureID), ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
-                         ImVec2{1, 0});
-
-
-
-            ImGui::End();
-            ImGui::PopStyleVar();
-        }
         {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
             ImGui::Begin("Debug Window");
@@ -193,6 +171,26 @@ namespace CsasEngine {
             ImGui::Image(reinterpret_cast<void *>(depID), ImVec2{1024,1024}, ImVec2{0, 1},
                          ImVec2{1, 0});
 
+
+
+
+            ImGui::End();
+            ImGui::PopStyleVar();
+        }
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
+            ImGui::Begin("Viewport");
+
+            m_ViewportFocused = ImGui::IsWindowFocused();
+            m_ViewportHovered = ImGui::IsWindowHovered();
+            Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+
+            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+            m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
+
+            uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+            ImGui::Image(reinterpret_cast<void *>(textureID), ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
+                         ImVec2{1, 0});
 
 
 

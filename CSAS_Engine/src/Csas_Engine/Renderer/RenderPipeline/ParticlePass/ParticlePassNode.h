@@ -17,7 +17,7 @@ namespace CsasEngine {
         };
 
         ParticlePassNode(){type=PassNodeType::ParticlePass;}
-        ~ParticlePassNode()override;
+        ~ParticlePassNode()override=default;
         void OnPrepare(PassData*data)override;
 
         void OnExecute(PassData*data) override;

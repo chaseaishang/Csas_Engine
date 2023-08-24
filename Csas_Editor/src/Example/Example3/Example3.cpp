@@ -12,7 +12,7 @@ namespace CsasEngine {
         CSAS_PROFILE_FUNCTION();
 //          1300 fps now 8/20 debug
 //          Well As we have  refactoring the transform  .So it needn't to multi each frame.Only in dirty.
-        Application::Get().GetWindow().SetVSync(false);
+//        Application::Get().GetWindow().SetVSync(false);
 
         m_ActiveScene = CreateRef<Scene>();
         m_Scene = m_ActiveScene;
@@ -112,10 +112,14 @@ namespace CsasEngine {
 
             }
         }
-//        m_particle=m_ActiveScene->CreateEntity("Particle");
-//        auto&particles=m_particle.AddComponent<Particles>(100);
-//        m_particle.AddComponent<MeshComponent_ParticleVertex>(particles);
-
+        m_particle=m_ActiveScene->CreateEntity("Particle");
+        m_particle.AddComponent<Particles>(100,glm::vec3{0.05,0.05,0.05f},10);
+        auto&particles=m_particle.GetComponent<Particles>();
+        auto count=particles.n_particles;
+        auto&Particle_trans=m_particle.AddComponent<MeshComponent_ParticleVertex>(particles,
+                                                              Primitive::Particle,
+                                                              fourthIndex).transform;
+        Particle_trans.SetPosition(glm::vec3{0,-0.5,0.9});
 
         //Camera
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");

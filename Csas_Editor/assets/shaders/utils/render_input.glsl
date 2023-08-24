@@ -5,6 +5,7 @@
 // uniform blocks >= 10 are reserved for internal use only
 layout(std140, binding = 10) uniform RendererInput {
     mat4 lightSpaceMatrix;
+    float now_time;
 } rdr_in;
 struct Pixel {
     vec3 position;

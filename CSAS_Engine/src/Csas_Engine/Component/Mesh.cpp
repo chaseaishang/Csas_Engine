@@ -44,6 +44,7 @@ namespace CsasEngine
             case Primitive::None: CSAS_ASSERT(false,"error primitive!");
             default:CSAS_ASSERT(false,"error primitive!");
         }
+
     }
     MeshComponent_Vertex::MeshComponent_Vertex(std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,BufferLayout&layout,uint8_t RenderIndex)
     {
@@ -205,11 +206,12 @@ namespace CsasEngine
         m_VBO->SetData(vertices.data(),sizeof(Vertex)*vertices.size());
         m_IBO=IndexBuffer::Create((uint32_t*)indices.data(),indices.size());
         m_VAO->SetIndexBuffer(m_IBO);
+
+        m_VBO->SetData(m_vertices.data(),sizeof(Vertex)*m_vertices.size());
     }
 
     void MeshComponent_Vertex::Update()
     {
-        m_VBO->SetData(m_vertices.data(),sizeof(Vertex)*m_vertices.size());
 
     }
     namespace QuadSpec

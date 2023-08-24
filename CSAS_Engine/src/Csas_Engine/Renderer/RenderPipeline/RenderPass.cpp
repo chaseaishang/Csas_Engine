@@ -3,6 +3,7 @@
 //
 #include "Csas_Engine/Csaspch.h"
 #include <glm/gtc/type_ptr.hpp>
+#include "Csas_Engine/Core/Application.h"
 #include "RenderPass.h"
 #include "PassNode.h"
 #include "Csas_Engine/Component/AllComponent.h"
@@ -38,10 +39,13 @@ namespace CsasEngine {
     }
     namespace GlobalRenderInput
     {
-        uint size=64;
+        uint size=80;
         uint offset=64;
         glm::mat4 lightSpaceMatrix;
-        bool shadowEnable=true;
+        float now_time;
+        float delta_time;
+        float ext0;
+        float ext1;
     }
     //temp
 
@@ -107,17 +111,21 @@ namespace CsasEngine {
             creat= false;
         }
 
-
-
+        RenderCommand::DepthTest(true);
+        RenderCommand::SetPointSize(1.0f);
     }
 
-    void ForwardPass::ExecuteRenderer() {
+    void ForwardPass::ExecuteRenderer()
+    {
         CameraUBO->SetData(GlobalCameraSpec::ViewProjMatrix, sizeof(GlobalCameraSpec::ViewProjMatrix));
 
         Spot_LightsUBO->SetData(GlobalSpotLightsSpec::color, sizeof(GlobalSpotLightsSpec::color));
         Spot_LightsUBO->SetData(GlobalSpotLightsSpec::position, sizeof(GlobalSpotLightsSpec::position),
                                 sizeof(GlobalSpotLightsSpec::color));
         Spot_LightsUBO->SetData(&GlobalSpotLightsSpec::size, sizeof(int) * 4, sizeof(GlobalSpotLightsSpec::color) * 2);
+
+        auto time=Application::Get().GetTime();
+        Render_InputUBO->SetData(&time,sizeof(float),GlobalRenderInput::offset);
 
 
         GlobalDirectLightSpec::color.w = GlobalDirectLightSpec::enable;
@@ -177,8 +185,8 @@ namespace CsasEngine {
 
             auto &renderWrap = renderMap[index];//render
             renderWrap.passNode_ptr->OnExecute(&renderWrap.dataVec);
+            index++;
         }
-        index++;
         if(has_blur)
         {
             RenderCommand::DepthTest(false);
@@ -190,12 +198,22 @@ namespace CsasEngine {
             post_processing->Unbind();
             Framebuffer::TransferColor(*post_processing,0,*render_Target,0);
         }
-//        if(auto&Wrap=renderMap[index];true)//Light pass
-//        {
-//            Wrap.passNode_ptr->OnExecute(&Wrap.lightPassData);
-//
-//            index++;
-//        }
+        if(auto&Wrap=renderMap[index];true)//Light pass
+        {
+            Wrap.passNode_ptr->OnExecute(&Wrap.lightPassData);
+
+            index++;
+        }
+        if(auto&Wrap=renderMap[index];true)
+        {
+            RenderCommand::DepthTest(false);
+            RenderCommand::SetPointSize(10.0f);
+            RenderCommand::SetBlend(true,BlendFun::ONE_MINUS_SRC_ALPHA);
+            Wrap.passNode_ptr->OnExecute(&this->particlePassData);
+            index++;
+
+        }
+
 
 
 
@@ -257,6 +275,13 @@ namespace CsasEngine {
                 Lightdata.data_vec=std::move(data);
                 break;
             }
+            case PassNodeType::ParticlePass:
+            {
+                auto&datavec=this->particlePassData;
+                datavec.data=std::move(data);
+                break;
+
+            }
             default:
             {
                 CSAS_CORE_ASSERT(true,"Unknown RenderPass! ");
@@ -316,7 +341,7 @@ namespace CsasEngine {
                 GlobalDirectLightSpec::lightSpaceMatrix=lightProjection * lightView;
 
                 GlobalRenderInput::lightSpaceMatrix=GlobalDirectLightSpec::lightSpaceMatrix;
-                GlobalRenderInput::shadowEnable=true;
+
             }
 
 
@@ -362,6 +387,11 @@ namespace CsasEngine {
             case PassNodeType::LightPass:
             {
                 passnode=new LightPassNode();
+                break;
+            }
+            case PassNodeType::ParticlePass:
+            {
+                passnode=new ParticlePassNode();
                 break;
             }
 

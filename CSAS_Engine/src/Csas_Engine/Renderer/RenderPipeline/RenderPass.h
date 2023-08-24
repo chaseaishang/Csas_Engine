@@ -7,6 +7,7 @@
 #include <Csas_Engine/Renderer/RenderPipeline/RenderData/RenderData.h>
 #include "PassNode.h"
 #include "Csas_Engine/Renderer/Framebuffer.h"
+#include "ParticlePass/ParticlePassNode.h"
 namespace CsasEngine
 {
 
@@ -98,6 +99,8 @@ namespace CsasEngine
         ShadowPassNode::ShadowPassData shadow_data;
         Ref<Shader>Shadow_shader;
         uint ViewPortWidth,ViewPortHeight;
+        //particles
+        ParticlePassNode::ParticlePassData particlePassData;
     };
 
 }

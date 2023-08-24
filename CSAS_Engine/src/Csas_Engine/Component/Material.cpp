@@ -137,14 +137,11 @@ namespace CsasEngine {
     {
         m_Shader->Bind();
         m_Shader->SetMat4("model",model);
-//        uniform float metallic;
-//        uniform float roughness;
+
         m_Shader->SetFloat3("albedo",albedo);
         m_Shader->SetFloat("metallic",metallic);
         m_Shader->SetFloat("roughness",roughness);
-        auto with1=irradiance_map.GetWidth();
-        auto with2=prefiltered_map.GetWidth();
-        auto width3=BRDF_LUT.GetWidth();
+
         irradiance_map.Bind(17);
         prefiltered_map.Bind(18);
         BRDF_LUT.Bind(19);
