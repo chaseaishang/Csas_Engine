@@ -38,7 +38,23 @@ namespace CsasEngine {
         {
             return m_Scene->m_Registry.has<T>(m_EntityHandle);
         }
+        template<typename... Comp>
+        decltype(auto) GetComponents()const
+        {
+            if constexpr(sizeof...(Comp) == 0)
+            {
+                CSAS_ASSERT(true,"More argument");
 
+            }
+            else if constexpr(sizeof...(Comp) == 1)
+            {
+                CSAS_WARN("Why don't you just use GetComponent");
+                return GetComponent<Comp...>();
+            }
+            CSAS_ASSERT(m_Scene->m_Registry.has<Comp...>(m_EntityHandle),"");
+
+            return  m_Scene->m_Registry.get<Comp...>(m_EntityHandle);;
+        }
         template<typename T>
         void RemoveComponent()
         {

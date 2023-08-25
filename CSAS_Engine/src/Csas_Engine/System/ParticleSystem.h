@@ -15,14 +15,19 @@
 
 namespace CsasEngine
 {
+    class Particles;
+    class MeshComponent_ParticleVertex;
     class ParticleSystem:public BaseSystem
     {
+        friend class Scene;
     public:
         bool looping=false;
+        bool stop= false;
         float now_time;
     public:
         ParticleSystem();
-        void Update()override;
+        void SyncUpdate()override{};
+        void Update(MeshComponent_ParticleVertex&mesh,Particles&particle,float now_time);
         //void Mount(Entity&entity);
 
     };

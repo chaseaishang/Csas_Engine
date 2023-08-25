@@ -4,6 +4,7 @@
 #include "Csas_Engine/Csaspch.h"
 #include <algorithm>
 #include <Csas_Engine/System/ParticleSystem.h>
+#include <Csas_Engine/Core/Application.h>
 #include "Scene.h"
 #include "Csas_Engine/Component/Entity.h"
 #include "Csas_Engine/Component/AllComponent.h"
@@ -111,11 +112,9 @@ namespace CsasEngine {
         }
         //Particle
         {
-            auto view = m_Registry.view<Particles, MeshComponent_ParticleVertex>();
-            for(auto entity: view)
+            for(auto&sys:this->ParticleSystems)
             {
-                auto [material,mesh]=view.get<Particles,MeshComponent_ParticleVertex>(entity);
-                Renderer3D::Submit(mesh,material);
+                sys.SyncUpdate();
             }
         }
         Renderer3D::EndScene();
@@ -127,23 +126,28 @@ namespace CsasEngine {
     }
 
     void Scene::OnUpdate(Timestep ts) {
+        auto time=Application::Get().GetTime();
         // logic scripts
         {
+            for(auto&sys:this->ParticleSystems)
+            {
+                auto&entities=sys.m_entity;
+                for(auto&entity:entities)
+                {
+                    //auto&particle=entity.GetComponent<Particles>();
+                    auto [mesh,particle]=entity.GetComponents<MeshComponent_ParticleVertex,Particles>();
+                    sys.Update(mesh,particle,time);
+                }
+
+
+
+            }
 
 
 
 
 
 
-            m_Registry.view<ParticleSystem>().each(
-                    [=](auto entity, auto& particle_sys)
-          {//how to do
-
-//              nsc.Instance = nsc.InstantiateScript();
-//              nsc.Instance->m_Entity = Entity{ entity, this };
-//
-//              nsc.Instance->OnCreate();
-          });
 
         }
         // Render 2D

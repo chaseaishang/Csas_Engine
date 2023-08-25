@@ -101,6 +101,7 @@ namespace CsasEngine
         uint ViewPortWidth,ViewPortHeight;
         //particles
         ParticlePassNode::ParticlePassData particlePassData;
+
     };
 
 }

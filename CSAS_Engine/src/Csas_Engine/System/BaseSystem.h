@@ -13,7 +13,7 @@ namespace CsasEngine {
         BaseSystem()=default;
         void Mount(Entity&entity);
         const std::vector<Entity> getEntities()const{return m_entity;}
-        virtual void Update()=0;
+        virtual void SyncUpdate()=0;
     protected:
         std::vector<Entity>m_entity;
         std::string m_Name;

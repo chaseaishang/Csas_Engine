@@ -113,6 +113,7 @@ namespace CsasEngine {
 
         RenderCommand::DepthTest(true);
         RenderCommand::SetPointSize(1.0f);
+
     }
 
     void ForwardPass::ExecuteRenderer()
@@ -204,15 +205,18 @@ namespace CsasEngine {
 
             index++;
         }
-        if(auto&Wrap=renderMap[index];true)
-        {
-            RenderCommand::DepthTest(false);
-            RenderCommand::SetPointSize(10.0f);
-            RenderCommand::SetBlend(true,BlendFun::ONE_MINUS_SRC_ALPHA);
-            Wrap.passNode_ptr->OnExecute(&this->particlePassData);
-            index++;
 
-        }
+
+
+            if (auto &Wrap = renderMap[index];true) {
+                RenderCommand::DepthTest(false);
+                RenderCommand::SetPointSize(10.0f);
+                RenderCommand::SetBlend(true, BlendFun::ONE_MINUS_SRC_ALPHA);
+                Wrap.passNode_ptr->OnExecute(&this->particlePassData);
+                index++;
+
+            }
+
 
 
 
@@ -279,6 +283,8 @@ namespace CsasEngine {
             {
                 auto&datavec=this->particlePassData;
                 datavec.data=std::move(data);
+
+
                 break;
 
             }
