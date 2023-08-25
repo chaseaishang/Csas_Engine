@@ -7,6 +7,7 @@
 #include <ImGui/include/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "Csas_Engine/Component/AllComponent.h"
+#include "Csas_Engine/System/AllSystem.h"
 #include "../UI/EditorUI.h"
 namespace CsasEngine {
 
@@ -24,15 +25,16 @@ namespace CsasEngine {
     {
         ImGui::Begin("Scene Hierarchy");
         auto&roots=m_Context->getRoots();
+        auto&ParticleSys=m_Context->getParticleSys();
         for(auto&root:roots)
         {
             DrawSceneNode(root);
         }
-//        m_Context->m_Registry.each([&](auto entityID)
-//               {
-//                   Entity entity{ entityID , m_Context.get() };
-//                   DrawEntityNode(entity);
-//               });
+        for(auto&sys:ParticleSys)
+        {
+            DrawParticleSystem(sys);
+        }
+
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
             m_SelectionContext = {};
 
@@ -56,20 +58,20 @@ namespace CsasEngine {
     void SceneHierarchyPanel::DrawSceneNode(const Node &node)
     {
         ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_Selected  |ImGuiTreeNodeFlags_DefaultOpen;
+        const auto&vec=node.GetChildren();
 
         bool opened = ImGui::TreeNodeEx(std::to_string((uint64_t) &node).c_str(), flags, "%s", node.getName().c_str());
+
         if(opened)
         {
-
-            //ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 50);
-
             for(auto&entity:node.getEntities())
             {
                 DrawEntityNode(entity);
             }
-            //ImGui::PopStyleVar();
-
-
+            for(auto&root:vec)
+            {
+                DrawSceneNode(root);
+            }
             ImGui::TreePop();
         }
     }
@@ -173,17 +175,6 @@ namespace CsasEngine {
             }
         }
 
-        if (entity.HasComponent<TransformComponent>())
-        {
-            if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
-            {
-                auto& tc = entity.GetComponent<TransformComponent>();
-                DrawVec3Control("Translation", tc.Translation);
-                DrawVec3Control("Scale", tc.Scale, 1.0f);
-
-                ImGui::TreePop();
-            }
-        }
         if(entity.HasComponent<ModelComponent>())
         {
             if (ImGui::TreeNodeEx((void*)typeid(ModelComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
@@ -269,15 +260,7 @@ namespace CsasEngine {
                 ImGui::TreePop();
             }
         }
-        if (entity.HasComponent<SpriteRendererComponent>())
-        {
-            if (ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
-            {
-                auto& src = entity.GetComponent<SpriteRendererComponent>();
-                ImGui::ColorEdit4("Color", glm::value_ptr(src.Color));
-                ImGui::TreePop();
-            }
-        }
+
 
 
 
@@ -335,6 +318,21 @@ namespace CsasEngine {
         }
     }
 
+    void SceneHierarchyPanel::DrawParticleSystem(const ParticleSystem &sys)
+    {
+        ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_Selected  |ImGuiTreeNodeFlags_DefaultOpen;
+
+        bool opened = ImGui::TreeNodeEx(std::to_string((uint64_t) &sys).c_str(), flags, "%s", sys.getName().c_str());
+
+        if(opened)
+        {
+            for(auto&entity:sys.getEntities())
+            {
+                DrawEntityNode(entity);
+            }
+            ImGui::TreePop();
+        }
+    }
 
 
 }

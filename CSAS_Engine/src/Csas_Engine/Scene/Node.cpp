@@ -12,7 +12,7 @@ namespace CsasEngine
 
     }
 
-    const std::vector<Node *> &Node::GetChildren() const
+    const std::vector<Node> &Node::GetChildren() const
     {
         return m_children;
     }
@@ -30,6 +30,12 @@ namespace CsasEngine
 
     const std::string &Node::getName() const {
         return m_name;
+    }
+
+    void Node::AddChild(Node &node)
+    {
+        m_children.push_back(node);
+
     }
 
 

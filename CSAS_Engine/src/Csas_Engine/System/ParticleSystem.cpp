@@ -6,4 +6,13 @@
 namespace CsasEngine
 {
 
+    ParticleSystem::ParticleSystem()
+        :BaseSystem("ParticleSystem")
+    {
+
+    }
+
+    void ParticleSystem::Update() {
+
+    }
 }

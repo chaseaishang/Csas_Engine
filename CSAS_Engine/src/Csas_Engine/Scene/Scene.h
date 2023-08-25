@@ -16,18 +16,24 @@ namespace CsasEngine
     class RenderPipeline;
     class Camera;
     class Entity;
+    class SystemEntity;
+    class ParticleSystem;
 
     class Scene
     {
     friend class Entity;
+    friend class SystemEntity;
     friend class SceneHierarchyPanel;
     public:
         Scene();
         ~Scene();
         uint AddGroup(std::string);
         const std::vector<Node> &getRoots() const;
+        const std::vector<ParticleSystem> &getParticleSys() const;
         Entity CreateEntity(const std::string& name = std::string());
         Entity CreateEntity(uint group_index,const std::string& name = std::string());
+        Entity CreateEntityForSys(const std::string& name = std::string());
+        ParticleSystem& CreateParticleSystem();
         void OnViewportResize(uint32_t width, uint32_t height);
         void OnUpdate(Timestep ts);
         void SetSceneType(bool TwoDScene=true){m_2DScene=TwoDScene;};
@@ -42,6 +48,8 @@ namespace CsasEngine
         bool m_2DScene= false;
         //for imgui show
         std::vector<Node>roots;
+        std::vector<ParticleSystem>ParticleSystems;
+
     public:
 
 

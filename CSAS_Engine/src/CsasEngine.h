@@ -21,6 +21,7 @@
 #include "Csas_Engine/Component/AllComponent.h"
 #include "Csas_Engine/Component/Entity.h"
 #include "Csas_Engine/Component/ScriptableEntity.h"
+#include "Csas_Engine/System/AllSystem.h"
 // ---Renderer------------------------
 #include "Csas_Engine/Renderer/Renderer.h"
 #include "Csas_Engine/Renderer/Renderer2D.h"

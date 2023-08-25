@@ -29,6 +29,7 @@ namespace CsasEngine {
         //m_particle
         uint sphereGroup=m_ActiveScene->AddGroup("Brdf Sphere");
         auto lightGroup=m_ActiveScene->AddGroup("Lights");
+        auto SystemGroup=m_ActiveScene->AddGroup("Systems");
         skybox=m_ActiveScene->CreateEntity("Skybox");///bluesky
         skybox.AddComponent<Material_Skybox>("./assets/textures/HDR/newport_loft.hdr");
         skybox.AddComponent<MeshComponent_Vertex>(Primitive::Cube,FirstIndex);
@@ -112,7 +113,7 @@ namespace CsasEngine {
 
             }
         }
-        m_particle=m_ActiveScene->CreateEntity("Particle");
+        m_particle=m_ActiveScene->CreateEntityForSys("Particle");
         m_particle.AddComponent<Particles>(100,glm::vec3{0.05,0.05,0.05f},10);
         auto&particles=m_particle.GetComponent<Particles>();
         auto count=particles.n_particles;
@@ -120,6 +121,12 @@ namespace CsasEngine {
                                                               Primitive::Particle,
                                                               fourthIndex).transform;
         Particle_trans.SetPosition(glm::vec3{0,-0.5,0.9});
+
+        {
+            auto&sys=m_ActiveScene->CreateParticleSystem();
+            sys.Mount(m_particle);
+        }
+
 
         //Camera
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");

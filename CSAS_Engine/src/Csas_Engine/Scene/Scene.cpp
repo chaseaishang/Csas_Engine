@@ -3,6 +3,7 @@
 //
 #include "Csas_Engine/Csaspch.h"
 #include <algorithm>
+#include <Csas_Engine/System/ParticleSystem.h>
 #include "Scene.h"
 #include "Csas_Engine/Component/Entity.h"
 #include "Csas_Engine/Component/AllComponent.h"
@@ -126,7 +127,7 @@ namespace CsasEngine {
     }
 
     void Scene::OnUpdate(Timestep ts) {
-        // Update scripts
+        // logic scripts
         {
 
 
@@ -134,18 +135,14 @@ namespace CsasEngine {
 
 
 
-            m_Registry.view<NativeScriptComponent>().each(
-                    [=](auto entity, auto& nsc)
-          {
-              if (!nsc.Instance)
-              {
-                  nsc.Instance = nsc.InstantiateScript();
-                  nsc.Instance->m_Entity = Entity{ entity, this };
+            m_Registry.view<ParticleSystem>().each(
+                    [=](auto entity, auto& particle_sys)
+          {//how to do
 
-                  nsc.Instance->OnCreate();
-              }
-
-              nsc.Instance->OnUpdate(ts);
+//              nsc.Instance = nsc.InstantiateScript();
+//              nsc.Instance->m_Entity = Entity{ entity, this };
+//
+//              nsc.Instance->OnCreate();
           });
 
         }
@@ -219,6 +216,26 @@ namespace CsasEngine {
 
     const std::vector<Node> &Scene::getRoots() const {
         return roots;
+    }
+
+    ParticleSystem& Scene::CreateParticleSystem()
+    {
+        this->ParticleSystems.push_back(ParticleSystem());
+        return ParticleSystems.back();
+    }
+
+    Entity Scene::CreateEntityForSys(const std::string &name)
+    {
+
+        Entity entity = { m_Registry.create(), this };
+        auto& tag = entity.AddComponent<TagComponent>();
+        tag.Tag = name.empty() ? "Entity" : name;
+
+        return entity;
+    }
+
+    const std::vector<ParticleSystem> &Scene::getParticleSys() const {
+        return this->ParticleSystems;
     }
 
 
