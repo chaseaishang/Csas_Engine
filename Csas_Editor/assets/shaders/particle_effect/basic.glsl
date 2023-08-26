@@ -19,7 +19,7 @@ void main()
     Transp = 0.0;
     float Time=rdr_in.now_time;
     // Particle doesn't exist until the start time
-    if(Time<ParticleLifetime)
+    if(Time>StartTime)
     {
         float t = Time - StartTime;
 

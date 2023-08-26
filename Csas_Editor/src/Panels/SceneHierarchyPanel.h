@@ -9,7 +9,7 @@
 #include "Csas_Engine/Component/Entity.h"
 
 namespace CsasEngine {
-
+    class BaseSystem;
     class SceneHierarchyPanel
     {
     public:
@@ -24,10 +24,11 @@ namespace CsasEngine {
         void DrawComponents(Entity entity);
         void DrawComponentsMaterial(Entity entity);
         void DrawSceneNode(const Node&node);
-        void DrawParticleSystem(const ParticleSystem&node);
+        void DrawParticleSystem(ParticleSystem&node);
     private:
         Ref<Scene> m_Context;
         Entity m_SelectionContext;
+        BaseSystem*m_SelectionSystem= nullptr;
     };
 
 }

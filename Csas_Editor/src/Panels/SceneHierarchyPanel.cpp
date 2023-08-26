@@ -36,7 +36,10 @@ namespace CsasEngine {
         }
 
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+        {
             m_SelectionContext = {};
+            m_SelectionSystem = nullptr;
+        }
 
         ImGui::End();
 
@@ -45,7 +48,8 @@ namespace CsasEngine {
         ImGui::Begin("Properties");
         if (m_SelectionContext)
             DrawComponents(m_SelectionContext);
-
+        if(m_SelectionSystem)
+            m_SelectionSystem->OnImGui();
         ImGui::End();
         ImGui::Begin("Material");
         if (m_SelectionContext)
@@ -318,12 +322,15 @@ namespace CsasEngine {
         }
     }
 
-    void SceneHierarchyPanel::DrawParticleSystem(const ParticleSystem &sys)
+    void SceneHierarchyPanel::DrawParticleSystem(ParticleSystem &sys)
     {
         ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_Selected  |ImGuiTreeNodeFlags_DefaultOpen;
 
         bool opened = ImGui::TreeNodeEx(std::to_string((uint64_t) &sys).c_str(), flags, "%s", sys.getName().c_str());
-
+        if (ImGui::IsItemClicked())
+        {
+            m_SelectionSystem=&sys;
+        }
         if(opened)
         {
             for(auto&entity:sys.getEntities())

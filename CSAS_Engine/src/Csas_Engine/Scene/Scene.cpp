@@ -238,7 +238,7 @@ namespace CsasEngine {
         return entity;
     }
 
-    const std::vector<ParticleSystem> &Scene::getParticleSys() const {
+     std::vector<ParticleSystem> &Scene::getParticleSys() {
         return this->ParticleSystems;
     }
 

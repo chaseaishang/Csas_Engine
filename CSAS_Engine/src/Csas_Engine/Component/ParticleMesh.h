@@ -4,7 +4,7 @@
 
 #pragma once
 #include "Mesh.h"
-
+#include "Csas_Engine/Core/ObjectPool.h"
 
 namespace CsasEngine
 {
@@ -14,17 +14,23 @@ namespace CsasEngine
         glm::vec3 velocity;
         float     time;
     };
-
+    struct Particle_Data
+    {
+        glm::vec3 velocity;
+        float     time;
+        bool      Active;
+    };
     struct MeshComponent_ParticleVertex:public MeshComponent
     {
     public:
         friend class Renderer3D;
+        friend class ParticleSystem;
 
-        std::vector<ParticleVertex> m_vertices;
+        void AddParticle(const float now_time,const uint count=10);
         void Update();
         MeshComponent_ParticleVertex(const MeshComponent_ParticleVertex&mesh);
         MeshComponent_ParticleVertex()=default;
-        MeshComponent_ParticleVertex(const Particles&particles,Primitive primitive=Primitive::None,uint8_t RenderIndex=0);
+        MeshComponent_ParticleVertex(const uint count,const uint max_count,Primitive primitive=Primitive::None,uint8_t RenderIndex=0);
 
         ~MeshComponent_ParticleVertex()=default;
 
@@ -32,6 +38,12 @@ namespace CsasEngine
         Ref<VertexArray> m_VAO;
         Ref<VertexBuffer>m_VBO;
     private:
-        void CreatParticle(const Particles&particles);
+        uint max_count;
+        uint Live_count=100;
+        std::vector<ParticleVertex> m_vertices;
+        std::list<std::shared_ptr<Particle_Data>>m_Particle;
+        // share ptr
+        void CreatParticle(const uint count,uint max_cout);
+        void UpdatePool(float time,float live_time);
     };
 }

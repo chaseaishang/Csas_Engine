@@ -15,6 +15,7 @@ namespace CsasEngine
         void Update(glm::mat4 & model);
     public:
         uint n_particles;
+
         glm::vec3 Gravity=glm::vec3{0.0,-0.05,0.0};
         float ParticleLifetime; // Max particle lifetime
 

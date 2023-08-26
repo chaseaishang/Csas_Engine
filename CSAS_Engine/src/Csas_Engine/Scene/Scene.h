@@ -29,7 +29,7 @@ namespace CsasEngine
         ~Scene();
         uint AddGroup(std::string);
         const std::vector<Node> &getRoots() const;
-        const std::vector<ParticleSystem> &getParticleSys() const;
+        std::vector<ParticleSystem> &getParticleSys();
         Entity CreateEntity(const std::string& name = std::string());
         Entity CreateEntity(uint group_index,const std::string& name = std::string());
         Entity CreateEntityForSys(const std::string& name = std::string());

@@ -31,7 +31,7 @@ target_sources(CSAS_Component
 target_link_libraries(CSAS_Component
         PRIVATE
         assimp::assimp
-
+        CSAS_Utils
         )
 #Tiny_Obj_Loader
 

@@ -14,6 +14,7 @@ namespace CsasEngine {
         void Mount(Entity&entity);
         const std::vector<Entity> getEntities()const{return m_entity;}
         virtual void SyncUpdate()=0;
+        virtual void OnImGui(){};
     protected:
         std::vector<Entity>m_entity;
         std::string m_Name;
