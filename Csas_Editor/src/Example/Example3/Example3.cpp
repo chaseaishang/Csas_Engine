@@ -114,10 +114,10 @@ namespace CsasEngine {
             }
         }
         m_particle=m_ActiveScene->CreateEntityForSys("Particle");
-        m_particle.AddComponent<Particles>(50,glm::vec3{0.05,0.05,0.05f},10);
+        m_particle.AddComponent<Particles>(glm::vec3{0.05,0.05,0.05f},10);
         auto&particles=m_particle.GetComponent<Particles>();
 
-        auto&Particle_trans=m_particle.AddComponent<MeshComponent_ParticleVertex>(50,100,
+        auto&Particle_trans=m_particle.AddComponent<MeshComponent_ParticleVertex>(50,500,
                                                               Primitive::Particle,
                                                               fourthIndex).transform;
         Particle_trans.SetPosition(glm::vec3{0,-0.5,0.9});

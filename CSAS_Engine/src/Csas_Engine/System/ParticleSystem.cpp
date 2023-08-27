@@ -19,14 +19,17 @@ namespace CsasEngine
     void ParticleSystem::Update(MeshComponent_ParticleVertex&mesh,Particles&particle,float now_time)
     {
 
-        mesh.UpdatePool(now_time,ParticlelifeTime);
+
         if(emit)
         {
             //find and creat more
             //set
-            mesh.AddParticle(now_time,10);
+            mesh.UpdatePool(now_time,ParticlelifeTime);
+            auto live=mesh.AddParticle(now_time,10);
+
             emit= false;
         }
+        particle.live_count=mesh.Live_count;
         Renderer3D::Submit(mesh,particle);
     }
 

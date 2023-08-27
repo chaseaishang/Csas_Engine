@@ -24,7 +24,7 @@ namespace CsasEngine
     }
 
     auto& PaticlePool
-    =SharedObjectPool<Particle_Data,100>::GetInstance(ParticleInitializer,ParticleReleaser);
+    =SharedObjectPool<Particle_Data,500>::GetInstance(ParticleInitializer,ParticleReleaser);
     MeshComponent_ParticleVertex::MeshComponent_ParticleVertex(const uint count,const uint max_count,Primitive primitive,uint8_t RenderIndex)
     {
         m_primitive=primitive;
@@ -75,7 +75,7 @@ namespace CsasEngine
                 };
         m_VAO=VertexArray::Create();
         this->Live_count=vertices.size();
-        m_VBO=VertexBuffer::Create(vertices.size()*sizeof(ParticleVertex));
+        m_VBO=VertexBuffer::Create(this->max_count*sizeof(ParticleVertex));
         m_VBO->SetLayout(layout);
         m_VAO->AddVertexBuffer(m_VBO);
         m_VBO->SetData(vertices.data(),sizeof(ParticleVertex)*vertices.size());
@@ -99,7 +99,7 @@ namespace CsasEngine
     {
 
     }
-    void MeshComponent_ParticleVertex::AddParticle(const float now_time,const uint count)
+    uint MeshComponent_ParticleVertex::AddParticle(const float now_time,const uint count)
     {
         using namespace Utils::math;
         uint can_add=max_count-Live_count;
@@ -113,20 +113,19 @@ namespace CsasEngine
             add_count=count;
         }
         std::vector<ParticleVertex> &vertices=m_vertices;
-        vertices.clear();
-        vertices.reserve(m_Particle.size()+add_count);
-        if(m_Particle.size()>0)
+        Live_count+=add_count;
+        vertices.reserve(Live_count);
+
+        for(auto&particle:m_Particle)
         {
-            for(auto&particle:m_Particle)
-            {
-                vertices.emplace_back(ParticleVertex{particle->velocity,particle->time});
-            }
+            vertices.push_back(ParticleVertex{particle->velocity,particle->time});
         }
+
 
 
         glm::vec3 v(0.0f);
         float velocity, theta, phi;
-        float time = now_time, rate = 0.00075f;
+        float time = now_time, rate = 1/10;//10 live time
         for( uint32_t i = 0; i<add_count; i++ )
         {
 // Pick the direction of the velocity
@@ -139,7 +138,7 @@ namespace CsasEngine
             velocity = glm::mix(1.25f,1.5f,RandomGenerator<float>());
             v = v * velocity;
             {
-                vertices.emplace_back(ParticleVertex{v,time});
+                vertices.push_back(ParticleVertex{v,time});
                 auto particle=PaticlePool.Get();
                 *particle={v,time, true};
                 m_Particle.push_back(particle);
@@ -147,6 +146,9 @@ namespace CsasEngine
             }
         }
         m_VBO->SetData(m_vertices.data(),sizeof(ParticleVertex)*m_vertices.size());
+        CSAS_CORE_INFO("Particle_send count{0}",m_vertices.size());
+        m_vertices.clear();
+        return Live_count;
     }
     void MeshComponent_ParticleVertex::UpdatePool(float now_time,float Particle_livetime)
     {
@@ -161,15 +163,8 @@ namespace CsasEngine
              return false;
          }
         );
-//        for(auto&particle:m_Particle)
-//        {
-//            if(particle->Active)
-//            {
-//                //return data->time+Particle_livetime>now_time;
-//                bool true_dele= particle->time+Particle_livetime<now_time;
-//            }
-//        }
         Live_count=m_Particle.size();
+        CSAS_CORE_INFO("Particle_live count{0}",Live_count);
 
 
     }

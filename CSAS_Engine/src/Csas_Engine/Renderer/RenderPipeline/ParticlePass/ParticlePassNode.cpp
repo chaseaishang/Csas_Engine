@@ -24,7 +24,7 @@ void CsasEngine::ParticlePassNode::OnExecute(CsasEngine::PassData *data)
         meshVertex->Update();
         vao->Bind();
         static_cast<Particles*>(material)->Update(transform);
-        auto number=static_cast<Particles*>(material)->n_particles;
+        uint number=static_cast<Particles*>(material)->live_count;
         RenderCommand::DrawPoints(vao,number);
     }
 

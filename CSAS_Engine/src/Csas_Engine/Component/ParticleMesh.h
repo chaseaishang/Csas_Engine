@@ -25,8 +25,8 @@ namespace CsasEngine
     public:
         friend class Renderer3D;
         friend class ParticleSystem;
-
-        void AddParticle(const float now_time,const uint count=10);
+        //return live number
+        uint AddParticle(const float now_time,const uint count=10);
         void Update();
         MeshComponent_ParticleVertex(const MeshComponent_ParticleVertex&mesh);
         MeshComponent_ParticleVertex()=default;
