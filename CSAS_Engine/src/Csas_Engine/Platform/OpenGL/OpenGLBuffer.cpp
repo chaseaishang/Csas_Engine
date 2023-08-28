@@ -90,5 +90,27 @@ namespace CsasEngine {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
+///////////////////////
+///////////////////////     OpenGLShaderStorageBuffer             //////////////////////////////////
+///////////////////////
+    OpenGLShaderStorageBuffer::OpenGLShaderStorageBuffer(uint32_t size,AccessModel access)
+    {
+        uint flag;
 
+        glCreateBuffers(1,&m_RendererID);
+        target=GL_SHADER_STORAGE_BUFFER;
+        glNamedBufferStorage(m_RendererID, size, nullptr, GL_DYNAMIC_STORAGE_BIT); // TODO: investigate usage hint
+        //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding, m_RendererID);
+
+    }
+
+    OpenGLShaderStorageBuffer::~OpenGLShaderStorageBuffer()
+    {
+        glDeleteBuffers(1, &m_RendererID);
+    }
+
+    void OpenGLShaderStorageBuffer::Bind(uint index) const
+    {
+        glBindBufferBase(target,index,m_RendererID);
+    }
 }

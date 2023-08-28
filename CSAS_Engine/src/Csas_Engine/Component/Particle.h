@@ -7,6 +7,7 @@
 #include "glm/glm.hpp"
 namespace CsasEngine
 {
+    class ShaderStorageBuffer;
     struct Particles :public Material
     {
     public:
@@ -15,7 +16,7 @@ namespace CsasEngine
         void Update(glm::mat4 & model);
     public:
         uint live_count=0;
-
+        Ref<ShaderStorageBuffer> Particle_ColorSSBO;
         glm::vec3 Gravity=glm::vec3{0.0,-0.05,0.0};
         float ParticleLifetime; // Max particle lifetime
 

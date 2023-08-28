@@ -12,6 +12,11 @@ layout(location = 0) uniform  mat4 model;
 
 uniform vec3 Gravity = vec3(0.0,-0.05,0.0); // world coords
 uniform float ParticleLifetime; // Max particle lifetime
+layout(std430, binding = 0) buffer ParticleData_t
+{
+    vec4 color;
+}
+ParticleData;
 void main()
 {
     // Assume the initial position is (0,0,0).
@@ -33,7 +38,7 @@ void main()
         }
 
     }
-
+    ParticleData.color=vec4(1,Transp,Transp,Transp*Transp);
     gl_Position = Camera.Projection*Camera.View*model * vec4(pos, 1.0);
 
 
@@ -41,13 +46,18 @@ void main()
 
 #type fragment
 #version 450 core
+layout(std430, binding = 0) buffer ParticleData_t
+{
+    vec4 color;
+}
+ParticleData;
 in float Transp;
 layout ( location = 0 ) out vec4 FragColor;
 void main()
 {
     vec3 color=vec3(1,Transp,Transp);
 
-    FragColor = vec4(color,Transp);
+    FragColor = ParticleData.color;
     //FragColor.a *= Transp;
 
 }

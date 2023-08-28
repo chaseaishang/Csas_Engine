@@ -8,6 +8,10 @@ namespace CsasEngine {
     {
         None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool,Sampler2D
     };
+    enum class AccessModel:char
+    {
+        Static_Draw,Dynamic_Draw,
+    };
 
     static uint32_t ShaderDataTypeSize(ShaderDataType type)
     {
@@ -130,6 +134,18 @@ namespace CsasEngine {
         virtual uint32_t GetCount() const = 0;
         virtual uint32_t GetRenderID()const=0;
         static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
+    };
+    class ShaderStorageBuffer
+    {
+    public:
+        virtual ~ShaderStorageBuffer() = default;
+
+        virtual void Bind(uint index) const = 0;
+
+        virtual uint32_t GetRenderID()const=0;
+        static Ref<ShaderStorageBuffer> Create(uint32_t size,AccessModel access);
+        //OpenGLShaderStorageBuffer
+
     };
 
 
