@@ -41,6 +41,7 @@ namespace CsasEngine {
     {
         uint size=80;
         uint offset=64;
+        uint offset1=68;
         glm::mat4 lightSpaceMatrix;
         float now_time;
         float delta_time;
@@ -126,7 +127,9 @@ namespace CsasEngine {
         Spot_LightsUBO->SetData(&GlobalSpotLightsSpec::size, sizeof(int) * 4, sizeof(GlobalSpotLightsSpec::color) * 2);
 
         auto time=Application::Get().GetTime();
+        auto deltatime=Application::Get().GetDeltaTime();
         Render_InputUBO->SetData(&time,sizeof(float),GlobalRenderInput::offset);
+        Render_InputUBO->SetData(&deltatime,sizeof(float),GlobalRenderInput::offset1);
 
 
         GlobalDirectLightSpec::color.w = GlobalDirectLightSpec::enable;

@@ -33,6 +33,10 @@ namespace CsasEngine
         void SyncUpdate()override{};
         void Update(MeshComponent_ParticleVertex&mesh,Particles&particle,float now_time);
         //void Mount(Entity&entity);
-
+    private:
+        void UpdateLogic(Particles&particle,
+                         const glm::vec3& position,
+                         const uint emit_count);
+        void Gpu_emit(const Particles&particle,const glm::vec3& position) ;
     };
 }

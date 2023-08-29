@@ -338,7 +338,7 @@ namespace CsasEngine {
         uint height=texture.GetHeight();
         shader.Dispatch(wight/32,height/32,6);
         GlCheckError();
-        shader.SyncWait(GL_ALL_BARRIER_BITS);
+        shader.SyncWait(ComputeShader::ComputeSync::ALL_FIN);
         GlCheckError();
         m_RendererID=cubeTexture.m_RendererID;
         cubeTexture.m_RendererID=0;
@@ -431,7 +431,7 @@ namespace CsasEngine {
         {
             //cubeTexture
             irradiance_shader.Dispatch(irradiance_map_width/32,irradiance_map_width/32,6);
-            irradiance_shader.SyncWait(GL_ALL_BARRIER_BITS);
+            irradiance_shader.SyncWait(ComputeShader::ComputeSync::ALL_FIN);
             irradiance_map->UnBindILS(0);
             GlCheckError();
         }
@@ -448,7 +448,7 @@ namespace CsasEngine {
             prefiltered_map->BindILS(level, 1, GL_WRITE_ONLY);
             prefiltered_shader.SetFloat("roughness", roughness);
             prefiltered_shader.Dispatch(n_groups, n_groups, 6);
-            prefiltered_shader.SyncWait(GL_ALL_BARRIER_BITS);
+            prefiltered_shader.SyncWait(ComputeShader::ComputeSync::ALL_FIN);
 
         }
         prefiltered_map->UnBindILS(1);
@@ -458,7 +458,7 @@ namespace CsasEngine {
         GlCheckError();
         if (precompute_BRDF_shader.Bind(); true) {
             precompute_BRDF_shader.Dispatch(preBRDF_width / 32, preBRDF_width / 32, 1);
-            precompute_BRDF_shader.SyncWait(GL_ALL_BARRIER_BITS);
+            precompute_BRDF_shader.SyncWait(ComputeShader::ComputeSync::ALL_FIN);
             BRDF_LUT->UnBindILS(2);
             GlCheckError();
 

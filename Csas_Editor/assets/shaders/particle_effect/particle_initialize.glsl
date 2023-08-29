@@ -5,20 +5,18 @@
 
 
 
-
-
 layout(local_size_x = 32, local_size_y = 1, local_size_z = 1) in;
 // ------------------------------------------------------------------
 // UNIFORMS ---------------------------------------------------------
 // ------------------------------------------------------------------
 
-layout(std430, binding = 0) buffer ParticleDeadIndices_t
+layout(std430, binding = 0) buffer ParticleDeadIndices
 {
     uint indices[];
 }
 DeadIndices;
 
-layout(std430, binding = 1) buffer ParticleCounters_t
+layout(std430, binding = 1) buffer ParticleCounters
 {
     uint dead_count;
     uint alive_count[2];
@@ -27,15 +25,12 @@ layout(std430, binding = 1) buffer ParticleCounters_t
 }
 Counters;
 
-uniform int u_MaxParticles;//1000
-
-
-
+uniform uint u_MaxParticles;//1000
 
 
 void main()
 {
-    uint index = gl_GlobalInvocationID.x;
+    uint index = uint(gl_GlobalInvocationID.x);
 
     if (index == 0)
     {

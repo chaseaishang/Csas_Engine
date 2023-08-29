@@ -6,6 +6,7 @@
 layout(std140, binding = 10) uniform RendererInput {
     mat4 lightSpaceMatrix;
     float now_time;
+    float delta_time;
 } rdr_in;
 struct Pixel {
     vec3 position;

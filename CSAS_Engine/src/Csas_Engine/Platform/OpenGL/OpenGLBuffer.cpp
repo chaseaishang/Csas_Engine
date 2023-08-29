@@ -96,7 +96,7 @@ namespace CsasEngine {
     OpenGLShaderStorageBuffer::OpenGLShaderStorageBuffer(uint32_t size,AccessModel access)
     {
         uint flag;
-
+//GL_DYNAMIC_STORAGE_BIT
         glCreateBuffers(1,&m_RendererID);
         target=GL_SHADER_STORAGE_BUFFER;
         glNamedBufferStorage(m_RendererID, size, nullptr, GL_DYNAMIC_STORAGE_BIT); // TODO: investigate usage hint

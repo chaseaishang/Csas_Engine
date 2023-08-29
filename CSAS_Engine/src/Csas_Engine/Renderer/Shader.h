@@ -15,17 +15,25 @@
  *
  *
  * */
-namespace CsasEngine {
-
+namespace CsasEngine
+{
+    namespace ComputeShader {
+        enum class ComputeSync:uint
+        {
+            SSBO_FIN,ALL_FIN
+        };
+    }
     class Shader
     {
     public:
+
         enum class Shader_Type{Vertex,Fragment,Computer};
         virtual ~Shader() = default;
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
         virtual void UseSubroutines(const std::string& name, Shader_Type type) = 0;
         virtual void SetInt(const std::string& name, int value) = 0;
+        virtual void SetuInt(const std::string& name, uint value) = 0;
         virtual void SetIntArray(const std::string& name, int* values, uint32_t count) = 0;
         virtual void SetBoolean(const std::string& name, bool value) = 0;
         virtual void SetFloat(const std::string& name, float value) = 0;
@@ -39,7 +47,7 @@ namespace CsasEngine {
         static Ref<Shader> Create(const std::string& filepath);
         static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
         virtual void Dispatch(uint nx, uint ny, uint nz = 1) const=0;
-        virtual void SyncWait(uint barriers) const=0;
+        virtual void SyncWait(ComputeShader::ComputeSync barriers) const=0;
 
     };
 

@@ -24,6 +24,7 @@ namespace CsasEngine
 
         void OnEvent(Event& e);
         float GetTime(){return m_LastFrameTime;}
+        float GetDeltaTime(){return m_delta_Time;}
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
         ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
@@ -41,6 +42,7 @@ namespace CsasEngine
         bool m_Minimized = false;
         LayerStack m_LayerStack;
         float m_LastFrameTime = 0.0f;
+        float m_delta_Time = 0.0f;
     private:
         static Application* s_Instance;
         friend int ::main(int argc, char** argv);

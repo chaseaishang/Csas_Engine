@@ -469,7 +469,11 @@ namespace CsasEngine
 
         UploadUniformInt(name, value);
     }
-
+    void OpenGLShader::SetuInt(const std::string &name, uint value)
+    {
+        GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        glProgramUniform1ui(m_RendererID,location,value);
+    }
     void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count)
     {
         UploadUniformIntArray(name, values, count);
@@ -592,11 +596,19 @@ namespace CsasEngine
         glDispatchCompute(nx, ny, nz);
     }
 
-    void OpenGLShader::SyncWait(uint barriers) const
+    void OpenGLShader::SyncWait(ComputeShader::ComputeSync barriers) const
     {
-        glMemoryBarrier(barriers);  // sync to ensure all writes are complete
+        GLbitfield flag;
+        switch (barriers)
+        {
+            case ComputeShader::ComputeSync::SSBO_FIN:flag=GL_SHADER_STORAGE_BARRIER_BIT;
+            default:flag= GL_ALL_BARRIER_BITS;
+        }
+        glMemoryBarrier(flag);  // sync to ensure all writes are complete
 
     }
+
+
 
 
 }

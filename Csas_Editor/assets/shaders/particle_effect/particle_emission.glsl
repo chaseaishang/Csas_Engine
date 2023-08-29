@@ -31,13 +31,13 @@ layout(std430, binding = 0) buffer ParticleData_t
 }
 ParticleData;
 
-layout(std430, binding = 1) buffer ParticleDeadIndices_t
+layout(std430, binding = 1) buffer ParticleDeadIndices
 {
     uint indices[];
 }
 DeadIndices;
 
-layout(std430, binding = 2) buffer ParticleAlivePreSimIndices_t
+layout(std430, binding = 2) buffer ParticleAlivePreSimIndices
 {
     uint indices[];
 }
@@ -64,7 +64,8 @@ uint pop_dead_index()
 
 void push_alive_index(uint index)
 {
-    uint insert_idx                        = atomicAdd(Counters.alive_count[u_PreSimIdx], 1);
+    uint insert_idx                        = atomicAdd(Counters.alive_count[u_PreSimIdx], 1);// back old
+    //                                                              0 +1       return 0 then turn to 1
     AliveIndicesPreSim.indices[insert_idx] = index;
 }
 
