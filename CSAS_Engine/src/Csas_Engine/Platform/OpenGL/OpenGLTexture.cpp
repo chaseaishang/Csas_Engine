@@ -324,7 +324,7 @@ namespace CsasEngine {
     {
         GLClearError();
         OpenGLTexture2D texture(path,m_textureSpecification);
-        OpenGLShader shader("./assets/shaders/utils/equirect2cube.glsl");
+        OpenGLComputeShader shader("./assets/shaders/utils/equirect2cube.glsl");
         texture.Bind(0);
         m_textureSpecification.height=512;
         m_textureSpecification.width=512;
@@ -413,17 +413,17 @@ namespace CsasEngine {
         spec.size=1;
         spec.format=TextureSpecification::Format::RGBA16F;
         Ref<OpenGLCubeTexture> irradiance_map= CreateRef<OpenGLCubeTexture>(spec);
-        OpenGLShader irradiance_shader("./assets/shaders/utils/irradiance_map.glsl");
+        OpenGLComputeShader irradiance_shader("./assets/shaders/utils/irradiance_map.glsl");
 
         spec.height=spec.width=prefiltered_width;
         spec.size=6;
         Ref<OpenGLCubeTexture> prefiltered_map= CreateRef<OpenGLCubeTexture>(spec);
-        OpenGLShader prefiltered_shader("./assets/shaders/utils/prefilter_envmap.glsl");
+        OpenGLComputeShader prefiltered_shader("./assets/shaders/utils/prefilter_envmap.glsl");
 
         spec.height=spec.width=preBRDF_width;
         spec.size=1;
         Ref<OpenGLTexture2D> BRDF_LUT= CreateRef<OpenGLTexture2D>(spec);
-        OpenGLShader precompute_BRDF_shader("./assets/shaders/utils/precompute_brdf.glsl");
+        OpenGLComputeShader precompute_BRDF_shader("./assets/shaders/utils/precompute_brdf.glsl");
 
         this->Bind(0);
         irradiance_map->BindILS(0,0,GL_WRITE_ONLY);

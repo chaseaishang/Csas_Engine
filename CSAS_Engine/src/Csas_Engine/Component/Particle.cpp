@@ -27,6 +27,12 @@ namespace CsasEngine
             ParticleData= ShaderStorageBuffer::Create(
                     sizeof(float )*16*max_GPUParticle,
                     AccessModel::Dynamic_Draw);
+            EmissionDispatchArgs= ShaderStorageBuffer::Create(
+                    sizeof(uint )*4,
+                    AccessModel::Dynamic_Draw);
+            SimulationDispatchArgs= ShaderStorageBuffer::Create(
+                    sizeof(uint )*4,
+                    AccessModel::Dynamic_Draw);
             ParticleAlivePreSimIndices[0]= ShaderStorageBuffer::Create(
                     sizeof(uint)*max_GPUParticle,
                     AccessModel::Dynamic_Draw);
@@ -34,10 +40,12 @@ namespace CsasEngine
                     sizeof(uint)*max_GPUParticle,
                     AccessModel::Dynamic_Draw);
             //ParticleAlivePreSimIndices
-            particle_init=Shader::Create("./assets/shaders/particle_effect/particle_initialize.glsl");
+            particle_init=ComputeShader::Create("./assets/shaders/particle_effect/particle_initialize.glsl");
 
-            particle_kickoff=Shader::Create("./assets/shaders/particle_effect/particle_update_kickoff.glsl");
-            particle_emission=Shader::Create("./assets/shaders/particle_effect/particle_emission.glsl");
+            particle_kickoff=ComputeShader::Create("./assets/shaders/particle_effect/particle_update_kickoff.glsl");
+            particle_emission=ComputeShader::Create("./assets/shaders/particle_effect/particle_emission.glsl");
+            particle_simulation=ComputeShader::Create("./assets/shaders/particle_effect/particle_simulation.glsl");
+            GPU_render=Shader::Create("./assets/shaders/particle_effect/gpu_basic.glsl");
         }
         {//init gpu particle
             particle_init->Bind();
@@ -54,6 +62,37 @@ namespace CsasEngine
     {
         m_Shader->Bind();
         m_Shader->SetMat4("model",model);
+
+    }
+
+    void Particles::UpdateGpu_particle(glm::mat4 &model)
+    {
+        {
+            particle_simulation->Bind();
+            ParticleData->Bind(0);
+            ParticleDeadIndices->Bind(1);
+            ParticleAlivePreSimIndices[m_preIndex]->Bind(2);
+            ParticleAlivePreSimIndices[m_postIndex]->Bind(3);
+            ParticleCounter->Bind(4);
+            particle_simulation->SetInt("u_PreSimIdx", m_preIndex);
+            particle_simulation->SetInt("u_PostSimIdx", m_postIndex);
+            SimulationDispatchArgs->BindForCShader();
+            particle_simulation->DispatchComputeIndirect(0);
+            particle_simulation->SyncWait(ComputeShader::ComputeSync::ALL_FIN);
+        }
+        {
+            GPU_render->Bind();
+            particle_simulation->SetInt("u_PreSimIdx", m_preIndex);
+            particle_simulation->SetInt("u_PostSimIdx", m_postIndex);
+            ParticleData->Bind(0);
+            ParticleAlivePreSimIndices[m_postIndex]->Bind(3);
+            GPU_render->SetMat4("model",model);
+
+        }
+
+        //finally do ping pong
+        m_preIndex  = m_preIndex == 0 ? 1 : 0;
+        m_postIndex = m_postIndex == 0 ? 1 : 0;
 
     }
 }

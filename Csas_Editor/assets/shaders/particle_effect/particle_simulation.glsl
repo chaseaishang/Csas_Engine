@@ -58,7 +58,7 @@ layout(std430, binding = 4) buffer ParticleCounters_t
 }
 Counters;
 
-//time
+
 uniform int   u_PreSimIdx;
 uniform int   u_PostSimIdx;
 
@@ -72,13 +72,8 @@ void push_dead_index(uint index)
     DeadIndices.indices[insert_idx] = index;
 }
 
-uint pop_dead_index()
-{
-    uint index = atomicAdd(Counters.dead_count, -1);
-    return DeadIndices.indices[index - 1];
-}
 
-void push_alive_index(uint index)
+void push_alive_index(uint index)//999
 {
     uint insert_idx                         = atomicAdd(Counters.alive_count[u_PostSimIdx], 1);
     AliveIndicesPostSim.indices[insert_idx] = index;
@@ -101,7 +96,7 @@ void main()
     if (index < Counters.simulation_count)
     {
         // Consume an Alive particle index
-        uint particle_index = pop_alive_index();
+        uint particle_index = pop_alive_index();//999
 
         Particle particle = ParticleData.particles[particle_index];
 
@@ -117,7 +112,7 @@ void main()
             particle.lifetime.x += rdr_in.delta_time;
 
             particle.position.xyz += particle.velocity.xyz * rdr_in.delta_time;
-
+            particle.color=vec4(2);
             ParticleData.particles[particle_index] = particle;
 
             // Append index back into AliveIndices list

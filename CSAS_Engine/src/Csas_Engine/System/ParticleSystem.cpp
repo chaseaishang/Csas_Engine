@@ -6,6 +6,7 @@
 #include <Particle.h>
 #include "ParticleSystem.h"
 #include "Csas_Engine/Renderer/Renderer3D.h"
+#include "Csas_Engine/Utils/math.h"
 #include "Csas_Engine/Renderer/Shader.h"
 #include "Csas_Engine/Renderer/Buffer.h"
 #include "ImGui/include/imgui.h"
@@ -21,21 +22,20 @@ namespace CsasEngine
     void ParticleSystem::Update(MeshComponent_ParticleVertex&mesh,Particles&particle,float now_time)
     {
         auto positon=mesh.transform.Translation;
-
+        uint gpu_count=0;
         if(emit)
         {
             //find and creat more
             //set
             mesh.UpdatePool(now_time,ParticlelifeTime);
             auto live=mesh.AddParticle(now_time,10);
-            UpdateLogic(particle,positon,10);
+            gpu_count=50;
+
             emit= false;
-            mesh.gpu_Live_count+=10;
+
         }
-        else
-        {
-            UpdateLogic(particle,positon,0);
-        }
+        UpdateLogic(particle,positon,gpu_count);
+
 
         particle.live_count=mesh.Live_count;
         Renderer3D::Submit(mesh,particle);
@@ -57,39 +57,53 @@ namespace CsasEngine
         auto&kickoffshader=particle.particle_kickoff;
         kickoffshader->Bind();
 
-        kickoffshader->SetInt("u_ParticlesPerFrame",emit_count);
+        kickoffshader->SetuInt("u_ParticlesPerFrame",emit_count);
         kickoffshader->SetInt("u_PreSimIdx",m_pre_sim_idx);
         kickoffshader->SetInt("u_PostSimIdx",m_post_sim_idx);
-        particle.ParticleCounter->Bind(1);
+        particle.ParticleCounter->Bind(0);
+        particle.EmissionDispatchArgs->Bind(1);
+        particle.SimulationDispatchArgs->Bind(2);
         kickoffshader->Dispatch(1,1,1);
         kickoffshader->SyncWait(ComputeShader::ComputeSync::SSBO_FIN);
-        {
+
 
             float lifetime=10.0f;
             //position
-            glm::vec3 velocity=glm::vec3 {0,0.05,0};
+            float velocity=0;
+            glm::vec3 v;
+            {
+                using namespace Utils::math;
+                auto theta = glm::mix(0.0f, glm::pi<float>()/ 6.0f, RandomGenerator<float>());
+                auto phi = glm::mix(0.0f, glm::pi<float>(), RandomGenerator<float>());
+                v.x = sinf(theta) * cosf(phi);
+                v.y = cosf(theta);
+                v.z = sinf(theta) * sinf(phi);
+// Scale to set the magnitude of the velocity (speed)
+                velocity = glm::mix(0.5f,1.0f,RandomGenerator<float>());
+                v = v * velocity;
+            }
             auto&emitShader=particle.particle_emission;
             emitShader->Bind();
-            emitShader->SetFloat3("u_EmitterPosition",position);
-            emitShader->SetFloat3("u_EmitterVelocity",velocity);
+            glm::vec3 bias{0,1,0};
+            emitShader->SetFloat3("u_EmitterPosition",position+bias);
+            emitShader->SetFloat3("u_EmitterVelocity",v);
             emitShader->SetFloat("u_EmitterLifetime",lifetime);
             emitShader->SetInt("u_PreSimIdx",m_pre_sim_idx);
             particle.ParticleData->Bind(0);
             particle.ParticleDeadIndices->Bind(1);
             particle.ParticleAlivePreSimIndices[m_pre_sim_idx]->Bind(2);
             particle.ParticleCounter->Bind(3);
-            emitShader->Dispatch(1,1,1);
-            emitShader->SyncWait(ComputeShader::ComputeSync::SSBO_FIN);
-//            uniform vec3  u_EmitterPosition;
-//            uniform vec3  u_EmitterVelocity;
-//            uniform float u_EmitterLifetime;
-//            uniform int   u_PreSimIdx;
+            particle.EmissionDispatchArgs->BindForCShader();
+            emitShader->DispatchComputeIndirect(0);
+            emitShader->SyncWait(ComputeShader::ComputeSync::ALL_FIN);
 
-        }
-        //finally do ping pong
-        m_pre_sim_idx  = m_pre_sim_idx == 0 ? 1 : 0;
-        m_post_sim_idx = m_post_sim_idx == 0 ? 1 : 0;
 
+
+        particle.ParticleCounter->Get_Data(sizeof(uint),12,&particle.gpu_Live_count);
+//        if(emit_count>0)
+//        {
+//            CSAS_CORE_INFO("Count {0}",particle.gpu_Live_count);
+//        }
 
     }
 

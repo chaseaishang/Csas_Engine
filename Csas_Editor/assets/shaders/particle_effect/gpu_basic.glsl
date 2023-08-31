@@ -20,9 +20,8 @@ layout(std430, binding = 0) buffer ParticleData_t
 }
 ParticleData;
 
-layout(std430, binding = 1) buffer ParticleIndices_t
+layout(std430, binding = 3) buffer ParticleIndices_t
 {
-    uint count;
     uint indices[];
 }
 AliveIndicesPostSim;
@@ -49,8 +48,8 @@ in float Transp;
 layout ( location = 0 ) out vec4 FragColor;
 void main()
 {
-    vec3 color=vec3(1,Transp,Transp);
-    FragColor=vec4(color,Transp);
+
+    FragColor=vec4(1,1,0,1);
 
 
 }

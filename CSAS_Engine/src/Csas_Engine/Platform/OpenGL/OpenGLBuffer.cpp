@@ -113,4 +113,15 @@ namespace CsasEngine {
     {
         glBindBufferBase(target,index,m_RendererID);
     }
+
+    void OpenGLShaderStorageBuffer::BindForCShader() const
+    {
+        uint target_=GL_DISPATCH_INDIRECT_BUFFER;
+        glBindBuffer(target_,m_RendererID);
+    }
+
+    void OpenGLShaderStorageBuffer::Get_Data(uint size, uint offset, void *data) const
+    {
+        glGetNamedBufferSubData(m_RendererID,offset,size,data);
+    }
 }

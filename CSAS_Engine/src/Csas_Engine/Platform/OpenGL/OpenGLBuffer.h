@@ -47,6 +47,10 @@ namespace CsasEngine {
         OpenGLShaderStorageBuffer(uint32_t size,AccessModel access);
         virtual ~OpenGLShaderStorageBuffer();
         void Bind(uint index) const override;
+        void Get_Data(uint size,uint offset,void*data) const override;
+
+
+        void BindForCShader() const override;
         uint32_t GetRenderID()const{return m_RendererID;}
     private:
         uint32_t m_RendererID;

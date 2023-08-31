@@ -40,7 +40,6 @@ namespace CsasEngine
     private:
         uint max_count;
         uint Live_count=100;
-        uint gpu_Live_count=0;
         std::vector<ParticleVertex> m_vertices;
         std::list<std::shared_ptr<Particle_Data>>m_Particle;
         // share ptr

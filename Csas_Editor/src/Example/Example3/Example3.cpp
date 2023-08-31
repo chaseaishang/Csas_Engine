@@ -12,7 +12,7 @@ namespace CsasEngine {
         CSAS_PROFILE_FUNCTION();
 //          1300 fps now 8/20 debug
 //          Well As we have  refactoring the transform  .So it needn't to multi each frame.Only in dirty.
-//        Application::Get().GetWindow().SetVSync(false);
+        Application::Get().GetWindow().SetVSync(false);
 
         m_ActiveScene = CreateRef<Scene>();
         m_Scene = m_ActiveScene;

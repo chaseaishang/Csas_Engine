@@ -17,12 +17,6 @@
  * */
 namespace CsasEngine
 {
-    namespace ComputeShader {
-        enum class ComputeSync:uint
-        {
-            SSBO_FIN,ALL_FIN
-        };
-    }
     class Shader
     {
     public:
@@ -46,9 +40,21 @@ namespace CsasEngine
 
         static Ref<Shader> Create(const std::string& filepath);
         static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
-        virtual void Dispatch(uint nx, uint ny, uint nz = 1) const=0;
-        virtual void SyncWait(ComputeShader::ComputeSync barriers) const=0;
 
+
+    };
+    class ComputeShader:public Shader
+    {
+    public:
+        enum class ComputeSync:uint
+        {
+            SSBO_FIN,ALL_FIN
+        };
+        static Ref<ComputeShader> Create(const std::string& filepath);
+        virtual void Dispatch(uint nx, uint ny, uint nz = 1) const=0;
+        virtual void DispatchComputeIndirect(uint indirect) const=0;
+
+        virtual void SyncWait(ComputeSync barriers) const=0;
     };
 
     class ShaderLibrary

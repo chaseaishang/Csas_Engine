@@ -122,7 +122,7 @@ namespace CsasEngine
 
 
             CreateORGetBinaryProgram(shaderSources);
-            CSAS_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
+            CSAS_CORE_WARN("Shader creation took {0} ms,file:{1}", timer.ElapsedMillis(),filepath);
         }
 
         // Extract name from filepath
@@ -150,7 +150,7 @@ namespace CsasEngine
         {
             Timer timer;
             CreateORGetBinaryProgram(sources);
-            CSAS_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
+            CSAS_CORE_WARN("Shader creation took {0} ms,file:{1}", timer.ElapsedMillis(),name);
         }
         Reflect();
     }
@@ -311,7 +311,15 @@ namespace CsasEngine
         bool NotDebug=true;
         #ifdef ShaderDebug
         NotDebug=false;
-        CSAS_CORE_WARN("ShaderDebug ON");
+        {
+
+            if(static bool once=true;once)
+            {
+                CSAS_CORE_WARN("ShaderDebug ON");
+                once= false;
+            }
+
+        }
         #endif
         if (in.is_open()&&NotDebug)
         {
@@ -590,25 +598,79 @@ namespace CsasEngine
         }
     }
 
-    void OpenGLShader::Dispatch(uint nx, uint ny, uint nz) const
-    {
 
+    void OpenGLComputeShader::Dispatch(uint nx, uint ny, uint nz) const
+    {
         glDispatchCompute(nx, ny, nz);
     }
-
-    void OpenGLShader::SyncWait(ComputeShader::ComputeSync barriers) const
+    void OpenGLComputeShader::DispatchComputeIndirect(uint indirect) const
+    {
+        glDispatchComputeIndirect(indirect);
+    }
+    void OpenGLComputeShader::SyncWait(ComputeSync barriers) const
     {
         GLbitfield flag;
         switch (barriers)
         {
-            case ComputeShader::ComputeSync::SSBO_FIN:flag=GL_SHADER_STORAGE_BARRIER_BIT;
+            case ComputeSync::SSBO_FIN:flag=GL_SHADER_STORAGE_BARRIER_BIT;
             default:flag= GL_ALL_BARRIER_BITS;
         }
         glMemoryBarrier(flag);  // sync to ensure all writes are complete
+    }
+
+    OpenGLComputeShader::OpenGLComputeShader(const std::string &filepath)
+        : OpenGLShader(filepath)
+    {
 
     }
 
+    void OpenGLComputeShader::Bind() const {
+        OpenGLShader::Bind();
+    }
 
+    void OpenGLComputeShader::Unbind() const {
+        OpenGLShader::Unbind();
+    }
+
+    void OpenGLComputeShader::UseSubroutines(const std::string &name, Shader::Shader_Type type) {
+        OpenGLShader::UseSubroutines(name, type);
+    }
+
+    void OpenGLComputeShader::SetInt(const std::string &name, int value) {
+        OpenGLShader::SetInt(name, value);
+    }
+
+    void OpenGLComputeShader::SetuInt(const std::string &name, uint value) {
+        OpenGLShader::SetuInt(name, value);
+    }
+
+    void OpenGLComputeShader::SetIntArray(const std::string &name, int *values, uint32_t count) {
+        OpenGLShader::SetIntArray(name, values, count);
+    }
+
+    void OpenGLComputeShader::SetBoolean(const std::string &name, bool value) {
+        OpenGLShader::SetBoolean(name, value);
+    }
+
+    void OpenGLComputeShader::SetFloat(const std::string &name, float value) {
+        OpenGLShader::SetFloat(name, value);
+    }
+
+    void OpenGLComputeShader::SetFloat2(const std::string &name, const glm::vec2 &value) {
+        OpenGLShader::SetFloat2(name, value);
+    }
+
+    void OpenGLComputeShader::SetFloat3(const std::string &name, const glm::vec3 &value) {
+        OpenGLShader::SetFloat3(name, value);
+    }
+
+    void OpenGLComputeShader::SetFloat4(const std::string &name, const glm::vec4 &value) {
+        OpenGLShader::SetFloat4(name, value);
+    }
+
+    void OpenGLComputeShader::SetMat4(const std::string &name, const glm::mat4 &value) {
+        OpenGLShader::SetMat4(name, value);
+    }
 
 
 }

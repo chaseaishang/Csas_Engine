@@ -141,7 +141,8 @@ namespace CsasEngine {
         virtual ~ShaderStorageBuffer() = default;
 
         virtual void Bind(uint index) const = 0;
-
+        virtual void BindForCShader() const = 0;
+        virtual void Get_Data(uint size,uint offset,void*data) const =0;
         virtual uint32_t GetRenderID()const=0;
         static Ref<ShaderStorageBuffer> Create(uint32_t size,AccessModel access);
         //OpenGLShaderStorageBuffer

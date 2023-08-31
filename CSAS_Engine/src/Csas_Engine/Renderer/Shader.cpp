@@ -28,7 +28,16 @@ namespace CsasEngine {
         CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
         return nullptr;
     }
+    Ref <ComputeShader> ComputeShader::Create(const std::string &filepath) {
+        switch (Renderer::GetAPI())
+        {
+            case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLComputeShader>(filepath);
+        }
 
+        CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
+        return nullptr;
+    }
     void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
     {
         CSAS_CORE_ASSERT(!Exists(name), "Shader already exists!");
