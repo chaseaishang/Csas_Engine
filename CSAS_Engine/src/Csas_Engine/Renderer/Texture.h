@@ -38,7 +38,13 @@ namespace CsasEngine {
         uint32_t width;
         uint32_t height;
     };
-
+    class Texture1D : public Texture
+    {
+    public:
+        static Ref<Texture1D> Create(TextureSpecification Spec=TextureSpecification());
+    private:
+        uint32_t GetHeight() const override{CSAS_ASSERT(true,"You shouldn't access in this fun!");  return 0;}
+    };
     class Texture2D : public Texture
     {
     public:

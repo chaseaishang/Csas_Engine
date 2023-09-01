@@ -38,6 +38,30 @@ namespace CsasEngine {
         GLenum m_InternalFormat, m_DataFormat;
         TextureSpecification m_textureSpecification;
     };
+    class OpenGLTexture1D: public Texture1D
+    {
+    public:
+        OpenGLTexture1D(TextureSpecification Spec);
+        virtual ~OpenGLTexture1D();
+        uint32_t GetWidth() const override { return m_textureSpecification.width;  }
+        uint32_t GetRendererID() const override { return m_RendererID; }
+        void SetData(void* data, uint32_t size) override;
+
+        void Bind(uint32_t slot = 0) const override;
+        void BindILS(uint32_t level, uint32_t index, uint32_t access)const override;
+        void UnBindILS(uint32_t index)const;
+
+        uint32_t GetHeight() const override;
+
+        bool operator==(const Texture& other) const override
+        {
+            return m_RendererID == ((OpenGLTexture1D&)other).m_RendererID;
+        }
+    private:
+        uint32_t m_RendererID;
+        GLenum m_InternalFormat, m_DataFormat;
+        TextureSpecification m_textureSpecification;
+    };
     class OpenGLCubeTexture:public CubeTexture
     {
     public:

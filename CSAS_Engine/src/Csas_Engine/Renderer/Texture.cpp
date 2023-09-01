@@ -62,24 +62,15 @@ namespace CsasEngine {
         return nullptr;
     }
 
-//    Ref <CubeTexture> CubeTexture::PreComputeIBL(Ref <CubeTexture> &envTexture)
-//    {
-//        switch (Renderer::GetAPI())
-//        {
-//            case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-//            case RendererAPI::API::OpenGL:
-//            {
-//                TextureSpecification spec;
-//                spec.width=128;
-//                spec.height=128;
-//                auto ir= CreateRef<OpenGLCubeTexture>();
-//
-//                return ir;
-//            }
-//        }
-//
-//        CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
-//        return nullptr;
-//    }
+    Ref <Texture1D> Texture1D::Create(TextureSpecification Spec) {
+        switch (Renderer::GetAPI())
+        {
+            case RendererAPI::API::None:    CSAS_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture1D>(Spec);
+        }
+
+        CSAS_CORE_ASSERT(false, "Unknown RendererAPI!");
+        return nullptr;
+    }
 }
 

@@ -470,6 +470,55 @@ namespace CsasEngine {
     }
 
 
+    void OpenGLTexture1D::SetData(void *data, uint32_t size)
+    {
+        CSAS_PROFILE_FUNCTION();
+
+        uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
+        auto&width=m_textureSpecification.width;
+        CSAS_CORE_ASSERT(size == width* bpp, "Data must be entire texture!");
+
+        glTextureSubImage1D(m_RendererID, 0, 0, width , m_DataFormat, GL_UNSIGNED_BYTE, data);
+    }
+
+    void OpenGLTexture1D::Bind(uint32_t slot) const
+    {
+        glBindTextureUnit(slot,m_RendererID);
+    }
+
+    uint32_t OpenGLTexture1D::GetHeight() const
+    {
+        return m_textureSpecification.height;
+    }
+
+    OpenGLTexture1D::OpenGLTexture1D(TextureSpecification Spec)
+        :m_textureSpecification(Spec)
+    {
+        m_InternalFormat=Utils::TextureSpec2Opengl(Spec.format);
+
+        glCreateTextures(GL_TEXTURE_1D, 1, &m_RendererID);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
 
+        glTextureStorage1D(m_RendererID,
+                           Spec.size,
+                           m_InternalFormat,
+                           Spec.width);
+    }
+
+    OpenGLTexture1D::~OpenGLTexture1D() {
+        glDeleteTextures(1,&m_RendererID);
+    }
+
+    void OpenGLTexture1D::BindILS(uint32_t level, uint32_t index, uint32_t access) const {
+        glBindImageTexture(index, m_RendererID, level, GL_TRUE, 0, access, m_InternalFormat);
+    }
+
+    void OpenGLTexture1D::UnBindILS(uint32_t index) const {
+        // If texture is zero, then any existing binding to the image unit is broken.
+        glBindImageTexture(index, 0, 0, GL_TRUE, 0, GL_READ_ONLY, m_InternalFormat);
+
+    }
 }
